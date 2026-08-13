@@ -1,0 +1,348 @@
+/* ═══ BERGERAC.CSS — capa de instancia AISLADA [map_profundo R4] ═══
+   Único archivo de estilos propio de la marca. Se carga AL FINAL del head
+   (gana la cascada limpiamente). Rollback = quitar el <link> del index.
+   PROHIBIDO tocar components.css / base.css para cosas de Bergerac. */
+
+/* ── ACENTO ROTATIVO · paso 4b — SOLO detalles (--theme-detail) ──────────
+   Cambia: strongs, subrayados, trazos, firma, sello de la sección.
+   NO cambia: fondos, curtains (llegan en 4c/4d), duotonos. */
+[data-brand="azul"]     { --theme-detail: var(--color--azul); }
+[data-brand="morado"]   { --theme-detail: var(--color--morado); }
+[data-brand="fucsia"]   { --theme-detail: var(--color--fucsia); }
+[data-brand="amarillo"] { --theme-detail: var(--color--amarillo); }
+
+/* ── paso 4c — FONDOS EXPLÍCITOS por sección (no en cascada, map M4) ────
+   Solo donde el fondo cambia del azul default. El detail vuelve a TINTA en
+   secciones de fondo-dominador (si no, detail==fondo = invisible). */
+#galeria[data-brand="fucsia"] { --theme-bg: var(--color--fucsia);
+  --theme-detail: var(--color--ink-tint-1); }
+.fin[data-brand="amarillo"] { --theme-bg: var(--color--amarillo);
+  --theme-detail: var(--color--ink-tint-1); }
+
+/* ── paso 4e — FRANJAS SELLADAS: opacity acompaña al clip ────────────────
+   El mismo fix que el museo lleva desde S22, aplicado a las DOS capas que
+   faltaban: la cara hover del split (la franja de la captura de Pablo) y
+   el reveal del hud. Vive AQUÍ (capa aislada) — rollback = borrar bloque. */
+.retrato .cara.is-hover { opacity: 0;
+  transition: clip-path var(--animation-default),
+              opacity var(--animation-default); }
+.mundo:hover .retrato .cara.is-hover,
+.mundo:focus-visible .retrato .cara.is-hover { opacity: 1; }
+
+.lab-reveal { opacity: 0;
+  transition: clip-path var(--animation-default),
+              opacity var(--animation-default); }
+.lab-reveal.is-open { opacity: 1; }
+
+/* ── paso 5a — SPLIT dominador FUCSIA ───────────────────────────────────
+   Los data-theme internos de los mundos redefinen --theme-detail (cascada
+   del hijo gana) → reglas explícitas más específicas. El mundo B (accent)
+   pasa a FONDO fucsia con detail en tinta. */
+#split[data-brand="fucsia"] [data-theme="dark"] {
+  --theme-detail: var(--color--fucsia); }
+#split[data-brand="fucsia"] [data-theme="accent"] {
+  --theme-bg: var(--color--fucsia);
+  --theme-detail: var(--color--ink-tint-1); }
+
+/* ── paso 5b — STORE dominador MORADO ───────────────────────────────────
+   Fondo se queda papel (como carta); detalles morados via 4b; el hover del
+   CTA-marquee invierte al dominador. */
+#store[data-brand="morado"] .store-cta:hover,
+#store[data-brand="morado"] .store-cta:focus-visible {
+  color: var(--color--morado); }
+
+/* ── paso F8 — EL ENSAMBLAJE: la B se arma en el loader ─────────────────
+   El monograma heredado (TA) se retira; la B de 4 piezas es el protagonista
+   único. El lienzo va sobre los actos, junto al gag. */
+.lab-transition__arte { display: none; }
+.lab-ens { width: 13rem; height: auto; position: relative; z-index: 2;
+  overflow: visible; }
+
+/* ── paso F9 — LA MARCA EN PÁGINA ───────────────────────────────────────
+   Balimo SOLO para el texto explícito "Bergerac" (constitución §0):
+   el wordmark del hero, en caja mixta (la g/a redondas SON el carácter). */
+@font-face {
+  font-family: 'Balimo';
+  src: url('../assets/brand/fonts/Balimo-Bold.otf') format('opentype');
+  font-weight: 700; font-display: swap;
+}
+.hero-word { font-family: 'Balimo', var(--font-display);
+  text-transform: none; letter-spacing: -0.01em; }
+
+/* el sello de la carta = el isotipo B, piezas en el dominador de su sección */
+.sello-iso { width: 7rem; height: auto; overflow: visible;
+  color: var(--theme-detail, var(--color--accent)); }
+.sello-iso path { fill: currentColor; }
+
+/* ── paso F10 — MUSEO = 8 CAPACIDADES ───────────────────────────────────
+   FIX heredado (mina M7, cazado con sonda en F10): en las TRES instancias
+   el bloque ".ph { position: relative }" del inline (~260) va DESPUÉS de
+   ".museo-layer { position: absolute }" (~105) y lo pisa por orden de
+   cascada → las dos capas colapsan a 0px de alto y las fotos del museo
+   quedan invisibles (rotura silenciosa, sin banner). Especificidad 0,2,0:
+   gana al orden sin tocar el inline. DEMO y TERRA (intocables) arrastran
+   el mismo bug dormido — anotado para decisión de Pablo. */
+.museo-visual .museo-layer { position: absolute; inset: 0; }
+
+/* La línea de hover: la descripción canon viaja DENTRO de la segunda cara
+   (hereda su reveal de elipse — cero animación nueva). Centrada: el centro
+   es la única zona sólida garantizada en las 4 siluetas-pieza (flecha y
+   rayo cortan las esquinas). z-index 1 = por encima del duotono (::after)
+   para leer en paper limpio.
+   Rollback: quitar este bloque + los <p class="museo-linea"> del markup. */
+.museo-linea { position: absolute; z-index: 1; inset: 0; display: flex;
+  align-items: center; justify-content: center; margin: 0;
+  padding: 14% 20%; text-align: center;
+  font-size: 0.82rem; line-height: 1.4; color: var(--color--paper); }
+
+/* la RAYO (3ª de cada fila) es diagonal: a media altura la silueta ya no
+   llega al centro-derecha. Su zona segura es la banda alta-izquierda. */
+#museo .museo-card:nth-child(4n + 3) .museo-linea {
+  align-items: flex-start; justify-content: flex-start; text-align: left;
+  padding: 15% 30% 50% 26%; }
+
+/* hovers alternando (plan §1: las ayudas del amarillo): impares AZUL
+   (duo-acc hereda el accent) · pares MORADO — solo cambia el gradiente,
+   el blend/opacity vienen de la regla base .duo-acc::after */
+#museo .museo-card:nth-child(even) .duo-acc::after {
+  background: linear-gradient(155deg, var(--color--morado), var(--color--ink-tint-1)); }
+
+/* ── AUDITORÍA S59 — 3 roturas cazadas tras F11-F13 ──────────────────────
+   (1) duo-warm VERDE: accent-warm quedó #ffb701 y el gradiente heredado
+   amarillo→azul pasa por verde = color FUERA de constitución. Se re-ancla
+   al patrón de la casa (color→tinta), como duo-acc. */
+.duo-warm::after {
+  background: linear-gradient(155deg, var(--color--amarillo), var(--color--ink-tint-1)); }
+
+/* (2) la cápsula del hero vive SOBRE la foto: fondo del tema para que el
+   texto no muera sobre la zona oscura (era transparente). */
+.hud-capsule { background: var(--theme-bg, var(--color--paper)); }
+
+/* (3) la cápsula colisionaba con el viajero (canvas z40 > sección z1 —
+   imposible ganar por z-index sin tocar el cover): la cápsula baja del
+   blob (relative+top: su celda la alinea al fondo y el margin no opera;
+   transform queda libre para el data-exit de gsap) y la parada del hero
+   se afina a 0.85 en el markup. min() respeta pantallas bajas. */
+.hud-capsule { position: relative; top: min(6.5rem, 9vh); }
+
+/* ── REVIEW S60 (capturas de Pablo) ──────────────────────────────────────
+   (4) el blend difference del referente (cursor + píldora oval) fabrica
+   VERDE sobre fucsia, NARANJA sobre azul y AZUL-ELÉCTRICO sobre amarillo
+   — colores fuera de constitución bailando por toda la página (el
+   "cuadrado negro" suelto era el dot rezagado teñido). L1: la paleta es
+   la excepción constitucional al canon → blend fuera, contraste por
+   DOBLE TONO: núcleo tinta + filete papel (legible sobre los 4 colores,
+   papel y tinta).
+   v2 (S61, captura "algo le pasó al cursor"): los 3 filetes de 1px se
+   veían como anillo blanco difuso. Fuera filetes — UN tono limpio por
+   tema, escuchando el MISMO semáforo del nav camaleónico (data-nav-theme;
+   cursor y oval viven DESPUÉS del header para que el hermano ~ funcione):
+   dark (fondo tinta) → papel · light/accent → tinta (contrasta con los
+   4 colores). El color transiciona con la casa. */
+.lab-cursor { mix-blend-mode: normal; color: var(--color--ink);
+  transition: color var(--animation-default); }
+.lab-cursor__dot { background: currentColor; }
+.lab-cursor__halo { border-color: currentColor; }
+.lab-cursor__label { color: currentColor;
+  text-shadow: 0 0 6px var(--color--paper); }
+.lab-oval { mix-blend-mode: normal; color: var(--color--ink);
+  border-color: currentColor; transition: color var(--animation-default); }
+.lab-oval__dot { background: currentColor; }
+.lab-navbar[data-nav-theme="dark"] ~ .lab-cursor,
+.lab-navbar[data-nav-theme="dark"] ~ .lab-oval { color: var(--color--paper); }
+.lab-navbar[data-nav-theme="dark"] ~ .lab-cursor .lab-cursor__label {
+  text-shadow: 0 0 6px var(--color--ink); }
+
+/* (5) las quotes del recorrido quedaban DEBAJO de las cards (tilt crea
+   stacking) y las palabras largas del canon se leían cortadas
+   ("NO MOSTRAMO…"): la palabra manda sobre el collage. */
+.hz-quote { position: relative; z-index: 2; }
+
+/* ── F14 · WIDGET PRIMERA LECTURA (análogo NEXT RACE del canon) ─────────
+   La cápsula del hero gana la ISLA-CHILOÉ en miniatura trazándose (los
+   MISMOS 3 paths del motivo, mismo firma-trazo — un solo vocabulario) y
+   el pie "próximo cupo · {fecha}" (placeholder de Pablo). Radios grandes
+   ya vienen de .hud-capsule. */
+.hud-isla { display: block; width: 100%; height: auto;
+  margin-top: 0.7rem; color: var(--color--ink);
+  overflow: visible; }
+.hud-isla path { fill: none; stroke: currentColor; stroke-width: 7;
+  stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── F15 · ESTADOS — LAS CUATRO PUERTAS (sección-manifiesto) ────────────
+   4 verbos gigantes; cada puerta trae SU color vía data-brand (el cableado
+   4b existente pone --theme-detail — cero wiring nuevo). Fondo neutro
+   papel; el color vive en número, línea de borde y hover. Stagger diagonal
+   por los delays de las curtains (0/140/280/420 con los 4 colores). */
+.estados { background: var(--color--paper); }
+.estados-grid { display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap); margin-top: var(--pad-large); }
+.puerta { display: flex; flex-direction: column; gap: 0.55rem;
+  padding: var(--pad-small); min-height: 15rem;
+  border: 1px solid var(--color--ink-tint-2);
+  border-radius: var(--radius-small);
+  color: inherit; text-decoration: none;
+  transition: border-color var(--animation-default),
+              transform var(--animation-default),
+              box-shadow var(--animation-default); }
+.puerta-n { color: var(--theme-detail, var(--color--accent)); }
+.puerta-verbo { font-family: var(--font-display); text-transform: uppercase;
+  font-size: var(--text--title-lg); line-height: 0.92;
+  letter-spacing: var(--ls--title);
+  transition: color var(--animation-default); }
+.puerta-linea { font-size: 0.85rem; line-height: 1.4;
+  color: var(--color--ink-tint-1); }
+.puerta-cta { margin-top: auto; opacity: 0;
+  transform: translateY(4px);
+  transition: opacity var(--animation-default),
+              transform var(--animation-default); }
+.puerta:hover, .puerta:focus-visible {
+  border-color: var(--theme-detail, var(--color--accent));
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px -18px var(--color--ink-tint-2); }
+.puerta:hover .puerta-verbo, .puerta:focus-visible .puerta-verbo {
+  color: var(--theme-detail, var(--color--accent)); }
+.puerta:hover .puerta-cta, .puerta:focus-visible .puerta-cta {
+  opacity: 1; transform: none; }
+@media (max-width: 1023px) {
+  .estados-grid { grid-template-columns: repeat(2, 1fr); }
+  /* title-lg revienta la card angosta (captura móvil de Pablo S65): los
+     verbos desbordaban el borde y pisaban número y línea */
+  .puerta-verbo { font-size: var(--text--title); }
+}
+@media (max-width: 599px) {
+  .estados-grid { grid-template-columns: 1fr; }
+  .puerta { min-height: 0; gap: 0.7rem; }
+}
+
+/* ── F16 · ABANICO FÍSICO — socials como listón de fotos ────────────────
+   Rotaciones ±4-9° con solape y sombra; el hover ENDEREZA. La rotación va
+   en el HIJO .social-ph: la figure ya la transforman tilt/idle-drift y
+   pisarían la nuestra. Stagger vertical alternado = listón sobre la mesa. */
+.socials-grid { align-items: start; }
+.social-card .social-ph { border-radius: var(--radius-small);
+  box-shadow: 0 18px 38px -20px rgba(40, 40, 40, 0.55);
+  transition: transform var(--animation-default),
+              box-shadow var(--animation-default); }
+.social-card:nth-child(1) .social-ph { transform: rotate(-7deg); }
+.social-card:nth-child(2) .social-ph { transform: rotate(4.5deg); }
+.social-card:nth-child(3) .social-ph { transform: rotate(-4deg); }
+.social-card:nth-child(4) .social-ph { transform: rotate(8deg); }
+.social-card:nth-child(2n) { margin-top: 2.2rem; }
+.social-card:nth-child(3) { margin-top: 1.1rem; }
+.social-card:hover .social-ph, .social-card:focus-within .social-ph {
+  transform: rotate(0deg) scale(1.02);
+  box-shadow: 0 26px 48px -20px rgba(40, 40, 40, 0.7); }
+html[data-reduced] .social-card .social-ph { transform: none; transition: none; }
+
+/* ── F17 · MENÚ OVERLAY (gesto del canon) ───────────────────────────────
+   Overlay tinta a pantalla completa; links display GIGANTES en papel que
+   al hover toman su color dominador (data-brand → cableado 4b) y revelan
+   su pieza del isotipo — mismo mapa que el loader: caja-morado ·
+   flecha-fucsia · rayo-amarillo · D-azul. Estados en CSS (.is-open);
+   gsap solo añade la escalera. z85: sobre oval(60), bajo cursor(120). */
+.menu-toggle { display: inline-flex; align-items: center; gap: 0.5rem;
+  background: none; border: 0; padding: 0.2rem 0; cursor: pointer;
+  color: inherit; font: inherit; text-transform: inherit;
+  letter-spacing: inherit; }
+.menu-toggle__lineas { display: inline-block; width: 1.3rem; height: 0.65rem;
+  border-block: 2px solid currentColor; }
+.menu-overlay { position: fixed; inset: 0; z-index: 85;
+  background: var(--color--ink); color: var(--color--paper);
+  display: grid; align-content: center; justify-items: start;
+  padding: var(--container-padding);
+  opacity: 0; visibility: hidden;
+  transition: opacity var(--animation-default),
+              visibility var(--animation-default); }
+.menu-overlay.is-open { opacity: 1; visibility: visible; }
+.menu-overlay__nav { display: grid; gap: 0.35rem; }
+.menu-overlay__nav a { display: inline-flex; align-items: center;
+  gap: 1.1rem; color: inherit; text-decoration: none;
+  transition: color var(--animation-default); }
+.menu-word { font-family: var(--font-display); text-transform: uppercase;
+  font-size: var(--text--impact-sm); line-height: 0.95;
+  letter-spacing: var(--ls--impact-sm); }
+.menu-pieza { width: 1.25em; height: auto; font-size: var(--text--impact-sm);
+  flex: none; opacity: 0; transform: translateX(-0.4rem) scale(0.85);
+  transition: opacity var(--animation-default),
+              transform var(--animation-default); }
+.menu-pieza path { fill: var(--theme-detail, var(--color--accent)); }
+.menu-overlay__nav a:hover, .menu-overlay__nav a:focus-visible {
+  color: var(--theme-detail, var(--color--accent)); }
+.menu-overlay__nav a:hover .menu-pieza,
+.menu-overlay__nav a:focus-visible .menu-pieza {
+  opacity: 1; transform: none; }
+.menu-cerrar { position: absolute; top: var(--container-padding);
+  right: var(--container-padding); background: none; border: 0;
+  color: inherit; cursor: pointer; padding: 0.4rem; }
+.menu-cerrar:hover, .menu-cerrar:focus-visible {
+  color: var(--color--amarillo); }
+.menu-overlay__pie { margin-top: var(--pad-med); color: var(--color--ink-tint-2);
+  color: var(--color--paper); opacity: 0.55; }
+html[data-reduced] .menu-overlay { transition: none; }
+@media (max-width: 599px) {
+  .menu-word { font-size: var(--text--title-lg); }
+  .menu-pieza { font-size: var(--text--title-lg); }
+}
+
+/* ── QA INTEGRAL F19 (S64) ───────────────────────────────────────────────
+   MÓVIL: el nav del index no cabe en 390px (links + toggle) — en móvil el
+   MENÚ OVERLAY es la navegación (gesto del canon); el nav corto de la 404
+   ("inicio/taller") sí cabe y se queda. El wordmark Balimo y el claim se
+   recortaban a lo ancho: tallas móviles propias. */
+@media (max-width: 767px) {
+  /* el aria-label distintivo vive en el HEADER (la 404 dice "Navegación"
+     a secas y conserva sus 2 links cortos) */
+  .lab-navbar[aria-label="Navegación principal"] nav a { display: none; }
+}
+@media (max-width: 599px) {
+  .hero-word { font-size: 17vw; }
+  .hero-claim .t-body-display { font-size: 1.15rem; }
+}
+
+/* ── RESPONSIVE MÓVIL S65 (capturas de Pablo + barrido 492) ─────────────
+   Patrón: los slabs gigantes y grids de 2 columnas revientan bajo 600px.
+   Tallas vw para titulares (caben SIEMPRE), grids a 1 columna, y el
+   max-width inline del store cede (!important justificado: pisa un style
+   inline). El .lema y socials, preventivos del mismo patrón. */
+@media (max-width: 599px) {
+  .t-impact { font-size: 15vw; }
+  .t-impact-sm { font-size: 10.5vw; }
+  .lema { font-size: 15vw; }
+  .hz-quote p { font-size: 12vw; }
+  .carta-text { font-size: 1.35rem; }
+  .museo-grid { grid-template-columns: 1fr; }
+  .cal-fila { grid-template-columns: 1fr; gap: 0.35rem; }
+  .store-grid { grid-template-columns: 1fr; }
+  #store .t-body-display { max-width: 100% !important; }
+  .socials-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── FIX S66 — LÍNEAS DEL SPLIT CONGELADAS (captura móvil de Pablo) ─────
+   SplitText compone las líneas UNA vez al boot y les inyecta
+   white-space:nowrap inline; si el viewport luego es más angosto (resize,
+   DevTools, rotación), las líneas sangran por la derecha ("según lo que
+   el proyecto necesita" cortado). El componente es núcleo (no se toca):
+   se neutraliza el nowrap — a ancho completo no cambia NADA (cada línea
+   ya cabe en su caja); al angostar, la línea envuelve DENTRO de su caja
+   y la cortina (absolute inset 0) cubre la caja crecida. !important:
+   pisa el estilo inline del vendor. */
+.lab-wipe .line { white-space: normal !important; }
+
+/* ── S67 — FOTO + VIAJERO JUNTOS EN EL HERO (orden de Pablo) ────────────
+   El sistema traía "foto O blob": al arrancar GL, .gl-on ocultaba la
+   hero-photo (components.css:124 — intocable; se anula desde aquí con la
+   misma especificidad, esta capa carga después). Ahora conviven: la foto
+   en la sección y el viajero (canvas z40) pasando por encima — collage
+   de capas. El fallback sin GL queda igual (solo foto). */
+.gl-on .hero-photo { opacity: 1; visibility: visible; }
+
+/* ── S68 — LA FIRMA REAL (firma.png de Pablo) ───────────────────────────
+   El garabato placeholder muere: entra la firma manuscrita "bergerac"
+   (procesada: recorte + alpha de tinta + TEÑIDA al morado del sistema,
+   31KB). Revela con la cortina de la casa barriendo EN EL SENTIDO DE LA
+   ESCRITURA (right, morado). "escrito a mano" ahora es verdad literal.
+   Nota honesta: para que se DIBUJE trazo a trazo haría falta la firma
+   vectorizada en trazos (Illustrator) — con ese SVG, firma-trazo la toma. */
+.firma-real { width: min(22rem, 70vw); }
+.firma-img { display: block; width: 100%; height: auto; }

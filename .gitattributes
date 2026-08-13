@@ -1,0 +1,10 @@
+# normaliza a LF dentro del repo, sea cual sea el sistema
+* text=auto eol=lf
+
+# binarios: nunca tocar
+*.png  binary
+*.jpg  binary
+*.webm binary
+*.ttf  binary
+*.woff2 binary
+*.ico  binary

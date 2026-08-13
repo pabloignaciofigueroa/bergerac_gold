@@ -1,0 +1,136 @@
+/* ============================================================
+   BERGERAC — TOKENS
+   Fuente: sistema_bergerac.md + comanda maestra (secciones 11-13)
+   ============================================================ */
+
+:root {
+  /* ---- Paleta (cerrada — no introducir colores nuevos) ---- */
+  --warm-white: #FDFCFA;
+  --graphite:   #252522;
+  --purple:     #6F02BA;
+  --fuchsia:    #FB0278;
+  --yellow:     #FFB701;
+  --blue:       #00A1FF;
+
+  /* Feedback funcional (no forma parte de la paleta creativa) */
+  --feedback-error: #B3261E;
+
+  /* Neutros derivados (tintes del grafito sobre blanco cálido) */
+  --ink-70: #45423d;
+  --ink-60: #535049;
+  --ink-50: #6e6b64;
+  --ink-40: #98958e;
+  --line:   #d8d5ce;
+
+  /* ---- Tipografías ---- */
+  /* Sistema v9 maestro (F2). Balimo únicamente para piezas de marca. */
+  --font-brand: 'Balimo', 'DemoDisplay', sans-serif;
+  --font-display: 'DemoDisplay', Arial, sans-serif;
+  --font-body: 'Mona Sans', Arial, sans-serif;
+  --font-serif: 'DemoDisplay', Georgia, serif;
+  --font-mono: ui-monospace, Menlo, Consolas, monospace;
+
+  /* Escala tipográfica */
+  --fs-eyebrow: 11px;
+  --fs-h1: clamp(52px, 6vw, 88px);
+  --fs-h2: clamp(44px, 5.5vw, 82px);
+  --fs-h2-lg: clamp(48px, 6.8vw, 102px);
+  --fs-lead: clamp(18px, 1.55vw, 23px);
+  --fs-bajada: clamp(17px, 1.5vw, 21px);
+  --fs-body: 16px;
+  --lh-display: .98;
+  --ls-display: -.035em;
+  --ls-eyebrow: .24em;
+
+  /* ---- Layout ---- */
+  --gutter: clamp(24px, 5vw, 80px);
+  --content-max: 1440px;
+  --section-pad-y: clamp(88px, 10vw, 168px);
+
+  /* Breakpoints de referencia (uso en media queries): 360 / 768 / 1024 / 1280 / 1440 / 1920 */
+
+  /* ---- Z-index ---- */
+  --z-canvas: 0;
+  --z-content: 2;
+  --z-header: 40;
+  --z-overlay: 60;
+
+  /* ---- Motion ---- */
+  --dur-state: 380ms;             /* bisagra cromática (300-500ms) */
+  --dur-ui: 260ms;
+  --dur-reveal: 700ms;
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-inout: cubic-bezier(.45, 0, .55, 1);  /* ≈ power2.inOut */
+
+  /* ---- Tema de sección (consumido por el shell) ---- */
+  --shell-fg: var(--graphite);
+  --page-bg: var(--warm-white);
+}
+
+/* ============================================================
+   CAPA V9 (F3 — fusión aprobada)
+   Alias --color--*, temas por sección y brands, para que los
+   componentes de piel portados desde v9 funcionen sin tocarse.
+   Base cromática: los 6 tokens vgold de arriba. Los -soft y
+   tints son derivados oficiales del sistema v9 (misma familia).
+   El cableado data-theme / data-brand en el HTML se decide en
+   la fase de cada sección.
+   ============================================================ */
+:root {
+  --color--accent:       var(--blue);
+  --color--accent-soft:  #7fcdff;
+  --color--accent-zero:  #00a1ff00;
+  --color--accent-warm:  var(--yellow);
+  --color--azul:         var(--blue);
+  --color--morado:       var(--purple);
+  --color--fucsia:       var(--fuchsia);
+  --color--amarillo:     var(--yellow);
+  --color--azul-soft:    #7fcdff;
+  --color--morado-soft:  #b57ae0;
+  --color--fucsia-soft:  #ff7ab5;
+  --color--amarillo-soft:#ffd97a;
+  --color--ink:          var(--graphite);
+  --color--ink-tint-1:   #3d3844;
+  --color--ink-tint-2:   #5c5563;
+  --color--paper:        var(--warm-white);
+  --color--paper-tint-1: #f3f0ea;
+  --color--paper-tint-2: #e7e1d6;
+  --color--black-abs:    #1a1817;
+}
+
+/* Temas por sección (sistema v9) */
+[data-theme] {
+  background: var(--theme-bg);
+  color: var(--theme-ink);
+  transition: background var(--dur-state) var(--ease-inout), color var(--dur-state) var(--ease-inout);
+}
+[data-theme="accent"] { --theme-bg: var(--color--accent); --theme-ink: var(--color--ink);   --theme-detail: var(--color--ink-tint-1); }
+[data-theme="light"]  { --theme-bg: var(--color--paper);  --theme-ink: var(--color--ink);   --theme-detail: var(--color--accent); }
+[data-theme="dark"]   { --theme-bg: var(--color--ink);    --theme-ink: var(--color--paper); --theme-detail: var(--color--accent); }
+
+/* Brands por sección (sistema v9): el color dominante de cada bloque */
+[data-brand="azul"]     { --theme-detail: var(--color--azul); }
+[data-brand="morado"]   { --theme-detail: var(--color--morado); }
+[data-brand="fucsia"]   { --theme-detail: var(--color--fucsia); }
+[data-brand="amarillo"] { --theme-detail: var(--color--amarillo); }
+
+/* Selección brandeada (v9) */
+::selection { background: var(--color--accent); color: var(--color--ink); text-shadow: none; }
+[data-theme="accent"] ::selection { background: var(--color--ink); color: var(--color--accent); }
+img::selection, svg::selection { background: transparent; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme] { transition: none; }
+}
+
+/* Estados cromáticos del Método — 04A (única autoridad de color del Método) */
+[data-method-theme="purple"] {
+  --method-background: #6F02BA;
+  --method-foreground: #FDFCFA;
+  --method-line: rgba(253, 252, 250, 0.58);
+}
+[data-method-theme="fuchsia"] {
+  --method-background: #FB0278;
+  --method-foreground: #252522;
+  --method-line: rgba(37, 37, 34, 0.58);
+}

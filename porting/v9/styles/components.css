@@ -1,0 +1,217 @@
+/* LAB · styles/components.css — estructura de los componentes del motor
+   (el color/tema SIEMPRE llega por tokens y data-theme; aquí solo mecánica) */
+
+/* ── marquee ──────────────────────────────────────────────────────────── */
+.lab-marquee { display: flex; overflow: clip; white-space: nowrap; }
+.lab-marquee__mover { display: flex; flex: none; will-change: transform; }
+.lab-marquee__track { display: flex; flex: none; align-items: center;
+  gap: var(--gap); padding-right: var(--gap); }
+
+/* ── wipe-lines ───────────────────────────────────────────────────────── */
+.lab-wipe .line { position: relative; }
+.lab-wipe__inner { display: inline-block; }
+.lab-wipe__curtain { position: absolute; inset: 0; z-index: 1;
+  pointer-events: none; }
+.lab-wipe--block { position: relative; display: block; }
+.lab-wipe--block > .lab-wipe__curtain { inset: 0; }
+/* en modo bloque el inner NO puede ser inline-block: el shrink-to-fit
+   comprime el contenido (cards del museo, QA S11) */
+.lab-wipe--block > .lab-wipe__inner { display: block; }
+
+/* ── text-roll ────────────────────────────────────────────────────────── */
+.lab-roll .roll-window { display: inline-block; overflow: clip;
+  vertical-align: middle; white-space: nowrap; }
+.lab-roll .roll-char { display: inline-block; }
+
+/* ── horizontal-track (el workhorse H04) ──────────────────────────────── */
+.lab-hz { position: relative; }
+.lab-hz__viewport { position: sticky; top: 0; height: 100svh; overflow: clip;
+  display: flex; align-items: center; }
+.lab-hz__track { display: flex; align-items: center; gap: var(--pad-large);
+  padding-inline: var(--container-padding); will-change: transform; }
+.lab-hz.is-native .lab-hz__viewport { position: static; height: auto;
+  overflow-x: auto; }
+.lab-hz.is-native .lab-hz__track { will-change: auto; }
+
+/* ── nav-theme (nav camaleónico) ──────────────────────────────────────── */
+.lab-navbar { position: fixed; inset: 0 0 auto 0; z-index: 50;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: var(--gap); padding: var(--pad-mini) var(--container-padding);
+  transition: color var(--animation-default); white-space: nowrap; }
+.lab-navbar__links { display: flex; gap: var(--pad-small); align-items: center; }
+@media (max-width: 767px) {
+  .lab-navbar__links { gap: var(--pad-mini); }
+}
+[data-nav][data-nav-theme="light"]  { color: var(--color--ink);
+  --theme-ink: var(--color--ink); --theme-bg: var(--color--paper); --theme-detail: var(--color--accent); }
+[data-nav][data-nav-theme="dark"]   { color: var(--color--paper);
+  --theme-ink: var(--color--paper); --theme-bg: var(--color--ink); --theme-detail: var(--color--accent); }
+[data-nav][data-nav-theme="accent"] { color: var(--color--ink);
+  --theme-ink: var(--color--ink); --theme-bg: var(--color--accent); --theme-detail: var(--color--ink-tint-1); }
+
+/* ── reveal-surface (morfos de elipse — valores [MEDIDO] del referente) ── */
+.lab-reveal { clip-path: ellipse(100% 0% at 50% 0);
+  transition: clip-path var(--animation-default); }
+.lab-reveal.is-open { clip-path: ellipse(100% 120% at 50% 0); }
+html[data-reduced] .lab-reveal { clip-path: none; transition: none; }
+[data-reveal-hover] { clip-path: ellipse(100% 50% at 50% 50%);
+  transition: clip-path var(--animation-default); }
+[data-reveal-hover]:hover { clip-path: ellipse(80% 48% at 50% 50%); }
+html[data-reduced] [data-reveal-hover] { clip-path: none; transition: none; }
+
+/* ── silueta-mask ({SILUETA_CONTENEDORA}) ─────────────────────────────── */
+.lab-silueta { -webkit-mask-image: var(--mask-url); mask-image: var(--mask-url);
+  -webkit-mask-size: cover; mask-size: cover;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: center; mask-position: center; }
+@media (max-width: 479px) {
+  .lab-silueta { -webkit-mask-image: var(--mask-url-mobile, var(--mask-url));
+    mask-image: var(--mask-url-mobile, var(--mask-url)); }
+}
+
+/* ── countdown ────────────────────────────────────────────────────────── */
+.lab-countdown { display: flex; gap: var(--gap); align-items: flex-start; }
+.lab-countdown__cell { text-align: center; }
+.lab-countdown__digits { position: relative; overflow: clip;
+  font-family: var(--font-display); text-transform: uppercase;
+  font-size: var(--text--impact-sm); line-height: 0.95;
+  letter-spacing: var(--ls--impact-sm); min-width: 2ch; }
+.lab-countdown__digits .is-curr { display: block; }
+.lab-countdown__digits .is-next { position: absolute; left: 0; top: 100%; width: 100%; }
+.lab-countdown__label { display: block; margin-top: 0.4rem; }
+
+/* ── oval-indicator (mix-blend difference [MEDIDO en referente]) ──────── */
+.lab-oval { position: fixed; right: var(--container-padding); top: 50%;
+  transform: translateY(-50%); width: 0.55rem; height: 6.5rem; z-index: 60;
+  border: 1px solid #fff; border-radius: var(--radius-large);
+  mix-blend-mode: difference; pointer-events: none; }
+.lab-oval__dot { position: absolute; left: 50%; top: 0.15rem;
+  width: 0.28rem; height: 0.9rem; background: #fff;
+  border-radius: var(--radius-large); transform-origin: center top; }
+
+/* ── cursor propio (blend difference — patrón del referente) ──────────── */
+html[data-tier="high"] body,
+html[data-tier="high"] a,
+html[data-tier="high"] button { cursor: none; }
+html[data-tier="high"] input, html[data-tier="high"] textarea { cursor: text; }
+.lab-cursor { position: fixed; inset: 0; z-index: 120; pointer-events: none;
+  mix-blend-mode: difference; color: #fff; }
+.lab-cursor__dot { position: fixed; left: 0; top: 0; width: 0.45rem; height: 0.45rem;
+  border-radius: 50%; background: #fff; }
+.lab-cursor__halo { position: fixed; left: 0; top: 0; width: 2.6rem; height: 2.6rem;
+  border: 1px solid #fff; border-radius: 50%;
+  display: grid; place-items: center; }
+.lab-cursor__label { font-family: var(--font-utility);
+  font-variation-settings: 'wght' 600, 'wdth' 100;
+  font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: #fff; white-space: nowrap; }
+
+/* ── cursor-reveal (la cara encendida bajo la mano) ───────────────────── */
+[data-cursor-reveal] { position: relative; }
+[data-cursor-reveal] .cr-top { position: absolute; inset: 0;
+  clip-path: circle(0px at 50% 50%); }
+/* reduced: sin seguimiento del puntero — la cara se enciende entera al
+   hover/focus (mismo contenido, cero motion) [item 75] */
+html[data-reduced] [data-cursor-reveal]:hover .cr-top,
+html[data-reduced] [data-cursor-reveal]:focus-within .cr-top {
+  clip-path: circle(150% at 50% 50%); }
+
+/* ── gl-objeto (el 3D vivo de la marca; la foto queda de fallback) ────── */
+.hero-obj { position: absolute; right: 3%; top: 12%;
+  width: min(32%, 28rem); aspect-ratio: 4 / 5; z-index: 0;
+  pointer-events: none; }
+.hero-obj canvas { width: 100%; height: 100%; display: block; }
+.gl-on .hero-photo { opacity: 0; visibility: hidden; }
+.lock-btn { display: none; }
+.gl-on .lock-btn { display: inline-flex; }
+html.gl-locked .hero-obj { pointer-events: auto; cursor: grab; }
+html.gl-locked { overscroll-behavior: none; }
+/* EL VIAJERO [item 24]: el canvas pasa a viewport completo y el objeto se
+   mueve DENTRO (uniforms) — un solo contexto GL para todo el viaje */
+.hero-obj.gl-fixed { position: fixed; inset: 0; width: auto; height: auto;
+  aspect-ratio: auto; z-index: 40; pointer-events: none; }
+
+/* ── coreografía táctil [item 67]: el tier base también ENTRA ─────────── */
+.io-wait { opacity: 0; translate: 0 14px;
+  transition: opacity 0.6s var(--cubic-default), translate 0.6s var(--cubic-default); }
+.io-wait.io-in { opacity: 1; translate: 0 0; }
+.btn:active { scale: 0.96; transition: scale 0.15s ease; }
+html[data-reduced] .btn:active { scale: 1; }
+
+/* ── transition (loader + cortina en DOS ACTOS [item 44]) ─────────────── */
+.lab-transition, [data-transition] { position: fixed; inset: 0; z-index: 100;
+  background: transparent; color: var(--color--paper);
+  display: grid; align-content: center; justify-items: center;
+  gap: var(--pad-small); overflow: clip; }
+html.no-js [data-transition] { display: none; }
+.lab-transition__acto { position: absolute; inset: 0; }
+.lab-transition__acto.is-1 { background: var(--color--ink); z-index: 1; }
+.lab-transition__acto.is-2 { background: var(--color--accent); z-index: 0; }
+.lab-transition__arte, .lab-transition__gag { position: relative; z-index: 2; }
+.lab-transition__arte { width: 9rem; height: auto; color: var(--color--accent);
+  will-change: transform; }
+.lab-transition__arte path { fill: none; stroke: currentColor;
+  stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+/* el monograma firma con PESO — un óvalo de 3px no es una marca [S28] */
+.lab-transition__arte.is-mono { width: 13rem; }
+.lab-transition__arte.is-mono path { stroke-width: 16; }
+
+/* ── monograma (la firma corta — sello de carta y donde haga falta) ───── */
+.sello-mono { width: 6rem; height: auto; overflow: visible;
+  color: var(--theme-detail, var(--color--accent)); }
+.sello-mono path { fill: none; stroke: currentColor; stroke-width: 17;
+  stroke-linecap: round; stroke-linejoin: round; }
+.lab-transition__gag { opacity: 0; transform: translateY(0.5em);
+  font-family: var(--font-display); text-transform: uppercase;
+  font-size: var(--text--title); letter-spacing: var(--ls--title); }
+.lab-transition__pct { position: relative; z-index: 2; opacity: 0.55;
+  font-variant-numeric: tabular-nums; }
+
+/* ── trazos (anotaciones manuscritas — color por tema) ────────────────── */
+/* nowrap por ATRIBUTO: debe regir ANTES de que wipe-lines splitee (si no,
+   SplitText parte el strong en dos líneas y lo clona → doble marca) */
+[data-trazo] { white-space: nowrap; }
+.anota { position: relative; white-space: nowrap; }
+.trazo-svg { position: absolute; inset: -12% -6%; width: auto; height: auto;
+  pointer-events: none; color: var(--theme-detail, var(--color--accent)); }
+.trazo-svg path, .motivo-svg path { fill: none; stroke: currentColor;
+  stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ── motivo-trazo (el recorrido de la marca) ──────────────────────────── */
+.motivo { width: 100%; overflow: clip;
+  color: var(--theme-detail, var(--color--accent)); }
+.motivo-svg { display: block; width: 100%; height: auto; }
+.motivo-svg path { stroke-width: 5; } /* peso proporcional al viewport [S28] */
+
+/* ── rotate-notice (aviso de rotación — visibilidad solo por CSS) ─────── */
+.rotate-notice { position: fixed; inset: 0; z-index: 110; display: none;
+  background: var(--color--ink); color: var(--color--paper);
+  align-content: center; justify-items: center; gap: var(--pad-mini);
+  text-align: center; padding: var(--container-padding); }
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .rotate-notice { display: grid; }
+}
+.rotate-notice__glifo { width: 4rem; height: 4rem;
+  color: var(--color--accent);
+  animation: lab-rota 2.4s var(--cubic-default) infinite; }
+.rotate-notice__glifo rect, .rotate-notice__glifo line,
+.rotate-notice__glifo path { fill: none; stroke: currentColor;
+  stroke-width: 2.5; stroke-linecap: round; }
+.rotate-notice__glifo circle { fill: currentColor; }
+.rotate-notice__giro { opacity: 0.45; stroke-dasharray: 6 7; }
+@keyframes lab-rota {
+  0%, 18% { transform: rotate(0deg); }
+  50%, 68% { transform: rotate(90deg); }
+  100% { transform: rotate(360deg); }
+}
+html[data-reduced] .rotate-notice__glifo { animation: none; }
+
+/* ── flecha de botón (se dibuja al hover — CSS puro) ──────────────────── */
+.btn-fl { width: 1em; height: 0.65em; overflow: visible; flex: none; }
+.btn-fl path { fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 30; stroke-dashoffset: 30;
+  transition: stroke-dashoffset 0.45s var(--cubic-default); }
+.btn:hover .btn-fl path, .btn:focus-visible .btn-fl path {
+  stroke-dashoffset: 0; }
+html[data-reduced] .btn-fl path { stroke-dashoffset: 0; transition: none; }
