@@ -6,3 +6,7 @@ desktop.ini
 # dependencias / temporales
 node_modules/
 *.log
+
+# QA: dependencia local y capturas de salida
+node_modules/
+tools/qa/salida/

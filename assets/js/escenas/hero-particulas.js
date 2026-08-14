@@ -243,7 +243,7 @@ export async function init(mount) {
     blendDstAlpha: THREE.OneMinusSrcAlphaFactor,
   });
 
-  let TOTAL = 0, home = null, pos = null, vel = null, aRand = null, peso = null;
+  let TOTAL = 0, LETRAS = 0, home = null, pos = null, vel = null, aRand = null, peso = null;
   let geo = null, points = null;
   let REPEL_R = 200, REPEL_F = 240, TURB = 20;
   let DMIN = 30, VMAX = 70, VMAX2 = 4900;
@@ -313,6 +313,7 @@ export async function init(mount) {
     const fr = foto ? foto.getBoundingClientRect() : null;
 
     TOTAL = letras + cupo.polvo;
+    LETRAS = letras;
     home = new Float32Array(TOTAL * 3);
     pos = new Float32Array(TOTAL * 3);
     vel = new Float32Array(TOTAL * 3);
@@ -385,6 +386,25 @@ export async function init(mount) {
     const hPx = base.renderer.domElement.height || H;
     mat.uniforms.uScale.value =
       worldDot * (hPx * 0.5) / Math.tan(THREE.MathUtils.degToRad(45 * 0.5));
+
+    /* sonda de diagnóstico para el arnés de QA (tools/qa): permite medir
+       la física en vez de comparar capturas. Coste cero si no se llama. */
+    window.__particulas = {
+      total: () => TOTAL,
+      palabra: () => LETRAS,
+      /* soloPalabra: ignora el polvo ambiental, que puede estar
+         legítimamente desplazado si el cursor sigue dentro de la sección */
+      maxDesplazamiento(soloPalabra = true) {
+        const n = soloPalabra ? LETRAS : TOTAL;
+        let m = 0;
+        for (let i = 0; i < n; i++) {
+          const ix = i * 3, iy = ix + 1;
+          const d = Math.abs(pos[ix] - home[ix]) + Math.abs(pos[iy] - home[iy]);
+          if (d > m) m = d;
+        }
+        return m;
+      },
+    };
 
     if (!listo) {
       listo = true;
