@@ -33,6 +33,7 @@ función y las clases CSS, no: busca por ellos.
 | `assets/js/marquee.js` (74) | Cinta infinita reactiva al scroll. Contrato: `data-marquee` con un único hijo. |
 | `assets/js/plegables.js` (76) | Acordeones animados (`data-plegable`, `data-grupo` para exclusividad). |
 | `assets/js/trazos.js` (70) | Anotaciones manuscritas que se dibujan (`data-trazo`). Hoy sin uso en el HTML. |
+| `assets/js/videos.js` (52) | Los dos vídeos de Casos, cargados y reproducidos **por viewport**. Con `autoplay` en el markup el navegador se bajaba 6,3 MB antes de ver el hero. Contrato: `<video data-src>` sin `src` ni `autoplay`. |
 | `assets/js/instrumentos.js` (110) | **Cargador de escenas**: IntersectionObserver sobre `[data-escena]`, import dinámico, `stop()` al salir del viewport, clicks → `escena.accion(nx, ny)`. También el envío del formulario. |
 
 ## JS — escenas independientes (`assets/js/escenas/`)
@@ -68,6 +69,8 @@ assets/fonts/    Balimo (marca), DemoDisplay (display), Mona Sans (cuerpo)   160
 assets/img/      brand/ (isotipo, logotipos, firma), isla/ (3 texturas), photos/   1.2 MB
 assets/video/    SURVEC_WEBPAGE.webm, AS_ARQ_WEBPAGE.webm                     14 MB
 assets/js/vendor/ three.js r184, GSAP, ScrollTrigger, SplitText, CustomEase, Lenis  2.2 MB
+                 (OrbitControls eliminado: no lo importaba nadie — era resto del
+                  editor de vistas del Método, que ya no existe)
 porting/v9/      Material de la versión v9 ya integrado. Referencia, no se carga.
 ```
 
@@ -84,5 +87,6 @@ Buscar por estos atributos es la forma más rápida de encontrar dónde se activ
 | `data-marquee` | `marquee.js` |
 | `data-plegable`, `data-grupo` | `plegables.js` |
 | `data-menu-toggle`, `data-menu-overlay` | `menu.js` |
+| `data-src` en `<video>` | `videos.js` |
 | `data-theme`, `data-brand` | `tokens.css` |
 | `data-method-theme` | `metodo.js` + `tokens.css` |

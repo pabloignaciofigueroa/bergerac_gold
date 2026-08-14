@@ -21,7 +21,7 @@ node tools/server.mjs            # en una terminal
 node tools/qa/qa.mjs             # en otra: suite completa
 ```
 
-Pruebas sueltas: `hero` · `volver` · `movil` · `reduce` · `fps` · `color` · `foto`
+Pruebas sueltas: `arranque` · `hero` · `volver` · `movil` · `reduce` · `fps` · `color` · `foto`
 
 ```bash
 node tools/qa/qa.mjs movil       # solo responsive
@@ -35,6 +35,7 @@ Si falta el navegador automatizado: `npm i --no-save puppeteer-core`
 
 | Prueba | Qué comprueba |
 |---|---|
+| `arranque` | **La cortina de carga es lo primero que se ve.** Con la red estrangulada a 1,2 Mbps, registra fotograma a fotograma si hay algo opaco cubriendo, y que al final se retire. |
 | `hero` | Las partículas montan, el canvas existe, el `<h1>` queda oculto pero presente, consola limpia. |
 | `volver` | **Mide la física, no una captura.** Reposo → paseo lento sobre las letras → retirada: comprueba que desarma de verdad, que nada se escapa y que todo vuelve a 0px. |
 | `movil` | 390/360/768: sin scroll horizontal y ningún titular fuera de margen. |
@@ -45,6 +46,17 @@ Si falta el navegador automatizado: `npm i --no-save puppeteer-core`
 **Comparar capturas byte a byte no sirve** para las partículas: tienen un pulso
 senoidal y dos fotos nunca son idénticas. Por eso el módulo expone
 `window.__particulas.maxDesplazamiento()` — se mide el estado real.
+
+Lo mismo con la escultura del Método, que está animada: `window.__metodo.encuadre()`
+proyecta su caja envolvente y dice qué fracción cae dentro del marco (con
+`fiable: false` cuando una esquina se va detrás de la cámara y la proyección
+deja de significar nada).
+
+Y en `arranque`, ojo con cómo se mide: cuando el fallo existía, el `<div>` del
+loader **ya estaba en el DOM y era el elemento superior**, solo que transparente.
+Un `elementFromPoint` habría respondido "tapado" y no habría cazado nada. Hay que
+mirar si algo es realmente **opaco**. La prueba se validó reintroduciendo el fallo
+a propósito: sin el arreglo acusa 1291 fotogramas descubiertos.
 
 ## Diagnosticar sin adivinar
 

@@ -7,8 +7,9 @@ Actualizado: **14 agosto 2026**
 Sitio **terminado y publicado**. Las seis secciones funcionan, móvil verificado,
 suite de QA en verde. Repo: <https://github.com/pabloignaciofigueroa/bergerac_gold>
 
-Última sesión: se integró el hero en partículas, se corrigió el responsive móvil,
-se subió todo a GitHub y se creó esta documentación.
+Última sesión (14 ago): auditoría completa del sitio y cinco arreglos —
+contraste del nav en el Método, carga inicial de 9,5 MB a 3,2 MB, encuadre de la
+escultura en pantalla vertical, metadatos para compartir el enlace y limpieza.
 
 ## Pendientes reales
 
@@ -31,6 +32,11 @@ Poner las URLs verdaderas.
 No hay hosting configurado. El sitio es estático puro: cualquier hosting sirve
 (GitHub Pages, Netlify, Vercel). Nada que compilar.
 
+**Confirmar el dominio.** Los `og:` del `<head>` necesitan URL absoluta y están
+puestos con `https://bergerac.cl/`, deducido del correo del estudio. Si el sitio
+acaba en otra dirección hay que cambiarlo en tres sitios: `canonical`, `og:url`
+y `og:image`.
+
 ## Ideas mencionadas pero no abordadas
 
 - Humo volumétrico real con shader dentro de las letras (se probó y se descartó;
@@ -49,7 +55,10 @@ No "arreglar" esto sin preguntar:
   de mundos en CSS, no el viaje Z.
 - **`porting/v9/`** es material de referencia ya integrado. No se carga en runtime.
 - **`BERGERAC-particulas_v1.html`** es el demo original del efecto, se conserva
-  como referencia.
+  como referencia. (Estuvo borrado del árbol de trabajo sin commitear; recuperado.)
+- **`vendor/OrbitControls.js`** SÍ se eliminó: no lo importaba nadie en todo el
+  repo. Era resto del editor de vistas del Método, que ya no existe. Si algún día
+  hace falta re-encuadrar la escultura a mano, está en el historial de git.
 - El **texto del marquee del hero** dice "trae tu marca / proyecto / idea" sin
   acentos ni punto medio: Balimo no tiene esos glifos y el navegador los sustituye
   con otra fuente, viéndose en negrita.

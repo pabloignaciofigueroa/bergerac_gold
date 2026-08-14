@@ -24,6 +24,7 @@ const MIME = {
   '.svg': 'image/svg+xml',
   '.webp': 'image/webp',
   '.ico': 'image/x-icon',
+  '.webm': 'video/webm',   /* faltaba: los casos salían como octet-stream */
 };
 
 http.createServer((req, res) => {

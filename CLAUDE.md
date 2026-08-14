@@ -52,6 +52,20 @@ No funciona abriendo `index.html` con doble clic (módulos ES bloqueados en `fil
   en los textos que usan `--font-brand`.
 - **La slab es muy ancha.** En móvil, un titular de 9–10 letras a 15vw se sale de la
   pantalla. Las tallas móviles están acotadas al final de `sections.css`.
+- **`autoplay` gana a `preload="metadata"`.** Un `<video autoplay>` fuera de
+  pantalla se descarga igual: así se colaban 6,3 MB antes del hero. Los vídeos
+  van con `data-src` y los monta `videos.js` por viewport.
+- **El `fov` de three es vertical.** Una cámara encuadrada en apaisado pierde
+  campo horizontal en retrato y el objeto se sale por los lados. El Método lo
+  compensa alejando la cámara; ver `ajusteRetrato` en `sections/metodo.js`.
+- **La cortina de carga se pinta desde el HTML, no desde `base.css`.**
+  `loader.js` es un módulo (diferido) y sus capas opacas las crea él: hasta que
+  corría, el sitio ya estaba a la vista y la pantalla de carga entraba **después**.
+  Hoy cubren `html.cargando` y un `<style>` crítico en línea, ambos en `index.html`.
+  No mover ese bloque a un `.css` externo ni quitar `class="cargando"` del `<html>`:
+  quien lo retira es `loader.js` justo cuando monta sus cortinas.
+- **El grafito no es legible sobre morado ni fucsia** a talla de nav (1.71 y 3.48
+  contra el 4.5 que pide AA). El header tiene cuatro estados por eso, no tres.
 
 ## Estado
 

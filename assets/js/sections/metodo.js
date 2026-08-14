@@ -219,6 +219,27 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
     /* portada baja .24 (centra con METODO); el cierre solo .08 — con .24
        el anillo final salía cortado por abajo */
     const VSHIFT = [.24, .24, 0, 0, 0, 0, 0, .08, .08];
+
+    /* ---- Encuadre en retrato ----
+       Las nueve vistas se compusieron mirando una pantalla apaisada: la
+       escultura vive a un lado y el copy al otro. En vertical eso se rompe
+       por dos motivos a la vez. Uno, el `fov` de three es VERTICAL: al
+       estrecharse el marco el campo horizontal se hunde y el objeto se sale
+       por los lados. Dos, el copy ya no está al lado sino debajo, así que el
+       desplazamiento lateral de SHIFT deja de tener sentido y solo empuja la
+       figura más afuera. Se corrige alejando la cámara del target lo justo
+       para recuperar el ancho perdido, y desactivando el SHIFT lateral.
+       El umbral es el cuadrado, no la proporción de diseño (1.6): así el
+       escritorio queda intacto en CUALQUIER ventana apaisada — que es como
+       se aprobó — y el ajuste entra de forma continua, sin salto al
+       redimensionar cruzando la vertical. */
+    const RETROCESO_MAX = 2.4; /* tope: más atrás la escultura se vuelve un juguete */
+    function ajusteRetrato() {
+      const a = stageH > 0 ? stageW / stageH : 1;
+      if (a >= 1) return 1;                       /* apaisado o cuadrado: sin tocar */
+      return Math.min(1 / a, RETROCESO_MAX);
+    }
+
     let T = 0;
     function applyTimeline(t) {
       T = clamp(t, 0, 1);
@@ -230,8 +251,15 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       camera.position.fromArray(lerp3(a.cam.pos, b.cam.pos, f));
       target.fromArray(lerp3(a.cam.target, b.cam.target, f));
       camera.fov = a.cam.fov + (b.cam.fov - a.cam.fov) * f;
-      const s = (SHIFT[i] ?? 0) + ((SHIFT[i + 1] ?? 0) - (SHIFT[i] ?? 0)) * f;
+      let s = (SHIFT[i] ?? 0) + ((SHIFT[i + 1] ?? 0) - (SHIFT[i] ?? 0)) * f;
       const v = (VSHIFT[i] ?? 0) + ((VSHIFT[i + 1] ?? 0) - (VSHIFT[i] ?? 0)) * f;
+      const k = ajusteRetrato();
+      if (k > 1) {
+        /* atrás por la línea de mira: conserva el ángulo compuesto a mano
+           y solo ensancha el encuadre */
+        camera.position.sub(target).multiplyScalar(k).add(target);
+        s /= k; /* en vertical el copy va debajo: la figura se centra */
+      }
       if (stageW > 2) camera.setViewOffset(stageW, stageH, -s * stageW, -v * stageH, stageW, stageH);
       camera.updateProjectionMatrix();
       camera.lookAt(target);
@@ -323,6 +351,38 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
     }
     resize();
     window.addEventListener('resize', () => { resize(); });
+
+    /* Sonda de encuadre (misma idea que window.__particulas): comparar
+       capturas no sirve para juzgar si la escultura cabe — se mide.
+       Proyecta la caja envolvente a NDC y devuelve cuánto queda dentro
+       del marco. `dentro: 1` = la figura entera cabe en pantalla. */
+    window.__metodo = {
+      ajusteRetrato: () => ajusteRetrato(),
+      encuadre() {
+        const caja = new THREE.Box3().setFromObject(escultura.group);
+        if (caja.isEmpty()) return null;
+        const p = new THREE.Vector3();
+        let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+        let detras = false;
+        for (let i = 0; i < 8; i++) {
+          p.set(i & 1 ? caja.max.x : caja.min.x,
+                i & 2 ? caja.max.y : caja.min.y,
+                i & 4 ? caja.max.z : caja.min.z);
+          /* Una esquina detrás de la cámara hace estallar la proyección
+             (salen NDC de cientos). Se avisa en vez de devolver basura. */
+          if (p.clone().applyMatrix4(camera.matrixWorldInverse).z > -camera.near) detras = true;
+          p.project(camera);
+          x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x);
+          y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y);
+        }
+        const solape = (a0, a1) => Math.max(0, Math.min(a1, 1) - Math.max(a0, -1)) / Math.max(a1 - a0, 1e-6);
+        return {
+          dentro: detras ? null : +(solape(x0, x1) * solape(y0, y1)).toFixed(3),
+          fiable: !detras,
+          ndc: { x0: +x0.toFixed(2), x1: +x1.toFixed(2), y0: +y0.toFixed(2), y1: +y1.toFixed(2) },
+        };
+      },
+    };
 
     function render(dt) {
       if (pointerIn) {

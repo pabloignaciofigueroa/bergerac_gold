@@ -20,6 +20,7 @@ import { initPlegables } from './plegables.js';
 import { initTextRoll } from './textroll.js';
 import { initLoader } from './loader.js';
 import { initHeroFit } from './hero-fit.js';
+import { initVideos } from './videos.js';
 
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -74,14 +75,21 @@ const shellScrim = document.createElement('div');
 shellScrim.className = 'shell-scrim';
 shellScrim.setAttribute('aria-hidden', 'true');
 document.body.appendChild(shellScrim);
-/* Tres estados del shell (regla del isotipo camaleónico):
+/* Cuatro estados del shell (regla del isotipo camaleónico):
    'light' = fondo blanco → logo a colores · 'dark' = grafito → logo blanco ·
-   'color' = fondo de color de marca → logo negro. */
+   'color' = color de marca claro (azul, fucsia, amarillo) → logo negro ·
+   'color-oscuro' = color de marca oscuro (el morado del Método) → logo blanco.
+   El cuarto estado existe porque sobre morado la tinta negra no es legible
+   (1.71:1 a 11px); ver el bloque de contraste en base.css. */
 const shellSections = [
   { el: document.querySelector('#inicio'),    shell: 'color' },
   { el: document.querySelector('#estudio'),   shell: 'light' },
   { el: document.querySelector('#partida'),   shell: 'dark'  },
-  { el: document.querySelector('#metodo'),    shell: () => (document.querySelector('#metodo').dataset.methodTheme ? 'color' : 'light') },
+  { el: document.querySelector('#metodo'),    shell: () => {
+      const tema = document.querySelector('#metodo').dataset.methodTheme;
+      if (!tema) return 'light';
+      return tema === 'purple' ? 'color-oscuro' : 'color';
+    } },
   { el: document.querySelector('#proyectos'), shell: 'light' },
   { el: document.querySelector('#contacto'),  shell: 'color' },
 ];
@@ -226,6 +234,7 @@ if (gsap && !prefersReduced) {
     });
   }
 }
+initVideos();
 initMarquees(ctx);
 initTrazos(ctx);
 initPlegables(ctx);

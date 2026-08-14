@@ -31,7 +31,25 @@ Paleta **cerrada de seis**. No introducir colores nuevos.
 
 **Isotipo camaleónico** (regla explícita de Pablo): sobre fondo de color → negro;
 sobre grafito → blanco; sobre blanco → sus colores originales. Implementado con
-`data-shell` en `main.js` (`color` / `dark` / `light`).
+`data-shell` en `main.js` (`color` / `dark` / `light` / `color-oscuro`).
+
+El cuarto estado, `color-oscuro`, salió de medir el contraste del nav (11px,
+opacidad .82). Con grafito ninguno de los tres colores oscuros llegaba al 4.5:1
+que pide AA:
+
+| Fondo | Grafito | Negro puro | Blanco cálido |
+|---|---|---|---|
+| Azul `#00a1ff` | 4.24 | **6.21** | 2.26 |
+| Fucsia `#fb0278` | 3.48 | **4.79** | 2.83 |
+| Amarillo `#ffb701` | 5.91 | **9.02** | 1.54 |
+| Morado `#6f02ba` | 1.71 | 2.28 | **6.03** |
+
+De ahí la regla actual: sobre los tres colores **claros** la tinta es negro puro
+(el salto desde grafito es imperceptible a esa talla y hace pasar los tres);
+el **morado** es fondo oscuro y ninguna tinta negra lo salva, así que ahí el
+header entero se invierte a blanco cálido — que es lo que la regla camaleónica
+pide sobre cualquier fondo oscuro. Lo decide `refreshShell` leyendo la bisagra
+cromática del Método.
 
 **Un color por problema** en el Punto de partida: 01 morado, 02 fucsia, 03 amarillo,
 04 azul. Cubre número, regla, marco de la foto, esquinas y panel desplegable.
@@ -68,6 +86,26 @@ Reglas de talla ya acordadas:
 Descartados por decisión: bandada de boids del hero, campo de diagnóstico, retícula
 del Método, antes/después generativo de los casos, viaje Z de works.
 
+### La escultura en pantalla vertical
+
+Las nueve vistas del Método tienen posición de cámara y `fov` escritos a mano
+mirando una pantalla apaisada, más un `SHIFT` lateral para que la figura conviva
+al lado del copy. En retrato eso se rompía dos veces: el `fov` de three es
+**vertical**, así que al estrecharse el marco el campo horizontal se hunde y la
+escultura se sale por los lados; y el copy ya no está al lado sino debajo, con lo
+que el `SHIFT` solo la empujaba más afuera. Resultado medido en 390px: bloques de
+color plano con una esquirla de escultura en una esquina.
+
+Se corrige alejando la cámara del target lo justo para recuperar el ancho perdido
+y anulando el `SHIFT` lateral. El umbral es el **cuadrado**, no la proporción de
+diseño (1.6): así el escritorio queda intacto en cualquier ventana apaisada — que
+es como se aprobó — y el ajuste entra de forma continua, sin salto al redimensionar.
+
+Para no juzgarlo por capturas (que con la escultura animada nunca son iguales),
+`window.__metodo.encuadre()` proyecta la caja envolvente y devuelve qué fracción
+cae dentro del marco. Avisa con `fiable: false` cuando una esquina queda detrás
+de la cámara y la proyección deja de tener sentido.
+
 ## El hero en partículas — el detalle fino
 
 Es la pieza con más ingeniería. Objetivo: **que se lea como una fuente definida y
@@ -102,7 +140,12 @@ partículas escapan y no vuelven.
 
 - **Reveal estándar**: cortina de color por línea (`data-anim-high`), de v9.
 - **Loader**: el isotipo se traza con el progreso real de carga; 0.5s de grafito
-  puro antes de que aparezca nada.
+  puro antes de que aparezca nada. Lo que **cubre** desde el primer pintado no es
+  el loader sino `html.cargando` más un `<style>` crítico en línea: `loader.js`
+  es un módulo y hasta que corre no existen sus cortinas, así que antes se veía
+  el hero y la pantalla de carga llegaba después. El traspaso (quitar `cargando`
+  y el fondo del contenedor) ocurre en cuanto los dos actos están montados; si no,
+  al subir las cortinas asomaría grafito en vez de la página.
 - **Parallax del hero**: estilo v9 — el título deriva **contra** el cursor (−9px) y
   el número fantasma lo **sigue** (+30px). El movimiento opuesto es lo que crea la
   profundidad. Cuando las partículas están activas, el título lo mueve el canvas.

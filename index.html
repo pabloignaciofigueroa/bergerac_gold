@@ -1,12 +1,52 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="cargando">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BERGERAC · estudio digital</title>
 <meta name="description" content="Bergerac estudia marcas y proyectos, detecta qué está impidiendo que su valor se vea y se entienda, y construye la identidad, la estructura y el sistema digital que necesitan para avanzar.">
+<link rel="canonical" href="https://bergerac.cl/">
+<!-- Compartir el enlace (WhatsApp, LinkedIn, Slack…). Sin esto el enlace
+     salía pelado: ni título, ni imagen, ni descripción.
+     OJO: og:url, og:image y canonical necesitan URL ABSOLUTA — los
+     rastreadores no resuelven rutas relativas. El dominio de abajo está
+     tomado del correo del estudio (hola@bergerac.cl); si el sitio acaba
+     en otro, hay que cambiarlo en estas tres líneas. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="Bergerac">
+<meta property="og:url" content="https://bergerac.cl/">
+<meta property="og:title" content="Bergerac · estudio digital">
+<meta property="og:description" content="Bergerac estudia marcas y proyectos, detecta qué está impidiendo que su valor se vea y se entienda, y construye la identidad, la estructura y el sistema digital que necesitan para avanzar.">
+<meta property="og:image" content="https://bergerac.cl/assets/img/brand/og-bergerac.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bergerac — estudio digital en Castro, Chiloé">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#00A1FF">
 <link rel="icon" href="assets/isotipo-color.ico" sizes="any">
 <link rel="icon" type="image/svg+xml" href="assets/img/brand/isotipo-color.svg">
+<style>
+/* CRÍTICO EN LÍNEA — no mover a un .css externo.
+   La cortina de carga tiene que cubrir en el PRIMER pintado. Viviendo solo
+   en base.css (tercera hoja de la cascada), en una conexión lenta el
+   navegador pinta antes de que esa hoja llegue y se cuela un destello del
+   sitio: primero se veía el hero y la pantalla de carga entraba después.
+   El grafito va en <html> además de en la cortina porque el body llega
+   por partes: hay un instante en que el CSS ya está aplicado pero el
+   <div data-transition> todavía no se ha parseado, y ahí se colaba el
+   fondo claro de la página. `cargando` lo quita loader.js en el mismo
+   punto en que monta sus cortinas. */
+html.cargando, html.cargando body { background: #252522; }
+[data-transition] { position: fixed; inset: 0; z-index: 130; background: #252522; }
+[data-transition] .loader-logo path { fill-opacity: 0; }
+.no-js [data-transition] { display: none; }
+</style>
+<noscript><style>
+/* Sin JS no hay quien quite `cargando`: el sitio no puede quedarse en negro. */
+html.cargando, html.cargando body { background: #FDFCFA; }
+[data-transition] { display: none; }
+</style></noscript>
 <link rel="stylesheet" href="assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/sections.css">
@@ -51,6 +91,21 @@ if (location.protocol === 'file:') {
     </g>
   </svg>
 </div>
+
+<script>
+/* Red de seguridad de la cortina de carga. Ahora el grafito lo pinta el CSS
+   para que el loader sea lo PRIMERO que se ve; el precio es que si los
+   módulos ES no llegan a arrancar (error de carga, red caída) esa cortina
+   se quedaría tapando el sitio entero. Este guarda la retira sola.
+   8s > los 6s del temporizador de seguridad interno de loader.js, así que
+   nunca corta un arranque lento: solo uno que no ha ocurrido. */
+setTimeout(function () {
+  var t = document.querySelector('[data-transition]');
+  if (t && t.dataset.vivo) return;
+  document.documentElement.classList.remove('cargando');
+  if (t) t.style.display = 'none';
+}, 8000);
+</script>
 
 <a class="skip-link" href="#inicio">saltar al contenido</a>
 
@@ -470,7 +525,7 @@ if (location.protocol === 'file:') {
       <p class="caso-intro">Survec contaba con experiencia real en topografía, drones, GNSS y fotogrametría, pero su identidad y su presencia digital no expresaban con suficiente claridad la precisión, el conocimiento territorial ni la capacidad técnica de su trabajo.</p>
       <figure class="instrumento">
         <div class="instrumento-lienzo caso-video" role="img" aria-label="Recorrido por la página construida para Survec">
-          <video src="assets/video/SURVEC_WEBPAGE.webm" muted loop playsinline autoplay preload="metadata"></video>
+          <video data-src="assets/video/SURVEC_WEBPAGE.webm" muted loop playsinline preload="none"></video>
         </div>
         <figcaption class="t-eyebrow"><span>la página construida</span><span>survec</span></figcaption>
       </figure>
@@ -497,7 +552,7 @@ if (location.protocol === 'file:') {
       <p class="caso-intro">AS Arquitectura ya tenía proyectos residenciales de gran calidad, pero su trabajo aparecía principalmente mediante fotografías y publicaciones dispersas que no permitían comprender completamente cada obra.</p>
       <figure class="instrumento">
         <div class="instrumento-lienzo caso-video" role="img" aria-label="Recorrido por la página construida para AS Arquitectura">
-          <video src="assets/video/AS_ARQ_WEBPAGE.webm" muted loop playsinline autoplay preload="metadata"></video>
+          <video data-src="assets/video/AS_ARQ_WEBPAGE.webm" muted loop playsinline preload="none"></video>
         </div>
         <figcaption class="t-eyebrow"><span>la página construida</span><span>as arquitectura</span></figcaption>
       </figure>

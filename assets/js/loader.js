@@ -13,7 +13,12 @@ export function initLoader(ctx) {
   if (!el) return;
   const { gsap, prefersReduced } = ctx;
 
-  if (prefersReduced || !gsap) { el.style.display = 'none'; return; }
+  if (prefersReduced || !gsap) {
+    /* sin animación no hay cortina: se destapa de inmediato */
+    document.documentElement.classList.remove('cargando');
+    el.style.display = 'none';
+    return;
+  }
 
   const logo = el.querySelector('.loader-logo');
   const pct = document.createElement('span');
@@ -28,6 +33,15 @@ export function initLoader(ctx) {
   acto1.className = 'loader-acto is-1';
   el.appendChild(acto2);
   el.appendChild(acto1);
+  /* Traspaso: el grafito lo pintaba el CSS para cubrir desde el primer
+     frame; a partir de aquí cubren los actos, que son los que se van.
+     Si el contenedor siguiera opaco, al subir las cortinas asomaría
+     grafito en lugar de la página. */
+  el.style.background = 'transparent';
+  /* Mismo motivo para el grafito de <html>: ya no hace falta y, si se
+     quedara, las cortinas subirían dejando ver grafito y no la página. */
+  document.documentElement.classList.remove('cargando');
+  el.dataset.vivo = '1'; /* la red de seguridad del HTML ya no debe actuar */
   /* logo y % por encima de las cortinas */
   if (logo) el.appendChild(logo);
   el.appendChild(pct);

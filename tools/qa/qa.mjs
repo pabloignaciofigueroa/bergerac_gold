@@ -2,7 +2,7 @@
    QA — arnés de verificación en Chrome real
    Uso:
      node tools/qa/qa.mjs                 todas las pruebas
-     node tools/qa/qa.mjs hero            solo una (hero|color|volver|movil|reduce|fps|foto)
+     node tools/qa/qa.mjs hero            solo una (arranque|hero|color|volver|movil|reduce|fps|foto)
      node tools/qa/qa.mjs foto 390        captura a un ancho concreto
 
    Requisitos: el servidor corriendo (node tools/server.mjs) y puppeteer-core.
@@ -129,6 +129,91 @@ async function volver(b) {
   await page.close();
 }
 
+async function arranque(b) {
+  /* La pantalla de carga tiene que ser LO PRIMERO que se ve.
+     Ya falló una vez: `loader.js` es un módulo (diferido) y sus capas opacas
+     las crea él, así que hasta que arrancaba se veía el sitio entero con el
+     isotipo flotando encima y la cortina entraba DESPUÉS.
+
+     Ojo con cómo se mide: entonces el <div> del loader ya estaba ahí y era el
+     elemento superior, solo que transparente. Un `elementFromPoint` habría
+     dicho "tapado" y no habría cazado nada. Lo que se comprueba es que en cada
+     fotograma haya algo REALMENTE OPACO cubriendo: la clase `cargando` del
+     <html>, o el contenedor con fondo no transparente, o sus dos actos. */
+  console.log('\n[arranque] la cortina es lo primero que se ve');
+  const page = await b.newPage();
+  const errores = [];
+  page.on('pageerror', (e) => errores.push(e.message));
+  page.on('console', (m) => { if (m.type() === 'error') errores.push('console: ' + m.text()); });
+  await page.setViewport({ width: 1280, height: 800 });
+
+  /* Red estrangulada a propósito: con conexión rápida el hueco es tan corto
+     que no se ve. El segundo fallo (destello del fondo claro antes de que
+     llegara base.css) solo aparecía así. */
+  const cdp = await page.createCDPSession();
+  await cdp.send('Network.enable');
+  await cdp.send('Network.emulateNetworkConditions', {
+    offline: false, latency: 200,
+    downloadThroughput: 1.2 * 1024 * 1024 / 8, uploadThroughput: 600 * 1024 / 8,
+  });
+
+  await page.evaluateOnNewDocument(() => {
+    window.__arranque = [];
+    const opaco = (c) => !!c && c !== 'transparent' && !/rgba\(\s*0,\s*0,\s*0,\s*0\s*\)/.test(c);
+    const tick = () => {
+      const t = document.querySelector('[data-transition]');
+      const visible = t && getComputedStyle(t).display !== 'none';
+      window.__arranque.push({
+        ms: Math.round(performance.now()),
+        cargando: document.documentElement.classList.contains('cargando'),
+        cortina: !!(visible && (opaco(getComputedStyle(t).backgroundColor) || t.querySelector('.loader-acto'))),
+        fuera: !!(t && !visible),
+        /* ¿asoma el sitio? el hero pintado bajo la cortina */
+        heroVisible: (() => {
+          const h = document.querySelector('#inicio');
+          if (!h) return false;
+          const r = h.getBoundingClientRect();
+          return r.top < innerHeight && r.bottom > 0;
+        })(),
+      });
+      if (performance.now() < 12000) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+
+  await page.goto(URL, { waitUntil: 'load', timeout: 60000 });
+  await espera(9000);
+
+  const reg = await page.evaluate(() => window.__arranque);
+  ok(reg.length > 10, 'el registro de arranque tiene fotogramas', `${reg.length} muestras`);
+
+  /* Traspaso: el primer fotograma en que la cortina ya está fuera. */
+  const salida = reg.findIndex((f) => f.fuera);
+  const antes = salida === -1 ? reg : reg.slice(0, salida);
+
+  const descubierto = antes.filter((f) => !f.cargando && !f.cortina);
+  ok(descubierto.length === 0,
+    'nada del sitio se ve antes que la cortina',
+    descubierto.length ? `${descubierto.length} fotograma(s) sin cubrir, el 1º a ${descubierto[0].ms}ms` : '');
+
+  ok(antes.length > 0 && (antes[0].cargando || antes[0].cortina),
+    'el primer fotograma ya está cubierto',
+    antes[0] ? `${antes[0].ms}ms` : 'sin muestras');
+
+  /* La cortina tiene que irse: si `cargando` se quedara, el sitio no aparece. */
+  const fin = reg[reg.length - 1];
+  ok(fin && !fin.cargando, 'al terminar, el grafito de <html> se ha retirado');
+  ok(salida !== -1, 'la cortina acaba saliendo');
+
+  const st = await page.evaluate(() => ({
+    heroPintado: getComputedStyle(document.querySelector('.s-hero')).backgroundColor,
+    loader: (() => { const t = document.querySelector('[data-transition]'); return !t ? 'no existe' : getComputedStyle(t).display; })(),
+  }));
+  ok(st.loader === 'none', 'el loader queda fuera del paso', st.loader);
+  ok(errores.length === 0, 'sin errores de consola', errores[0] || '');
+  await page.close();
+}
+
 async function movil(b) {
   console.log('\n[movil] sin desbordes ni titulares cortados');
   for (const [w, h, nom] of [[390, 844, 'iphone'], [360, 780, 'android'], [768, 1024, 'ipad']]) {
@@ -195,7 +280,7 @@ async function foto(b, ancho = 1440) {
 
 /* ---- ejecución --------------------------------------------- */
 
-const PRUEBAS = { hero, color, volver, movil, reduce, fps, foto };
+const PRUEBAS = { arranque, hero, color, volver, movil, reduce, fps, foto };
 const cual = process.argv[2];
 const arg = process.argv[3];
 
@@ -207,7 +292,7 @@ try {
     console.error(`Prueba desconocida: ${cual}. Disponibles: ${Object.keys(PRUEBAS).join(', ')}`);
     process.exitCode = 1;
   } else {
-    for (const n of ['hero', 'volver', 'movil', 'reduce', 'fps']) await PRUEBAS[n](browser);
+    for (const n of ['arranque', 'hero', 'volver', 'movil', 'reduce', 'fps']) await PRUEBAS[n](browser);
   }
 } finally {
   await browser.close();
