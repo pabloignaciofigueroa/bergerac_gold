@@ -4,6 +4,22 @@ Actualizado: **14 agosto 2026**
 
 ## Situación
 
+**El sitio es ahora un proyecto Astro.** Se migró en cinco fases, cada una con su
+puerta de calidad. Lo que cambió para quien lo mantiene:
+
+| | antes | ahora |
+|---|---|---|
+| el HTML | 621 líneas con todo el copy | 21 líneas que componen seis secciones |
+| el CSS | `sections.css` de 1.521 líneas | quince archivos por sección, una hoja empaquetada |
+| bloques repetidos | 344 líneas de copiar-pegar | tres componentes y tres archivos de datos |
+| carga inicial | 3,17 MB | **1,73 MB** |
+| three.js | 2.028 KB vendorizados | **706 KB** con tree-shaking |
+| cortina de carga (red lenta) | 8,6 s | **3,5 s** |
+
+Arrancar: `npm run dev`. Verificar: `npm run build && npm run preview` y el arnés
+contra 4310.
+
+
 Sitio **terminado y publicado**. Las seis secciones funcionan, móvil verificado,
 suite de QA en verde. Repo: <https://github.com/pabloignaciofigueroa/bergerac_gold>
 
@@ -57,6 +73,19 @@ No hay hosting configurado. El sitio es estático puro: cualquier hosting sirve
 puestos con `https://bergerac.cl/`, deducido del correo del estudio. Si el sitio
 acaba en otra dirección hay que cambiarlo en tres sitios: `canonical`, `og:url`
 y `og:image`.
+
+## El peso que queda
+
+Tras la migración, la carga inicial son 1,73 MB. Los dos bultos:
+
+- **three.js, 706 KB.** Ya con tree-shaking. Bajarlo más significaría prescindir
+  de partes del motor y no compensa.
+- **`isla-satelite.jpg`, 501 KB.** Es la textura de la isla y la carga three.js en
+  runtime. Probé a pasarla a webp y solo baja a 443 KB: es imagen satelital muy
+  detallada y el formato apenas la comprime. **El recorte de verdad sería bajarle
+  la resolución** —está a 1200×2055 para mostrarse en unos 400px de pantalla—,
+  pero eso toca el acabado de una sección aprobada y lo tiene que ver Pablo.
+  A ojo, a la mitad de resolución serían unos 130 KB.
 
 ## Por dónde seguir afinando el título
 
@@ -119,10 +148,11 @@ conviene tenerlos juntos:
 
 ## Si mañana hay que retomar rápido
 
-1. `node tools/server.mjs` → <http://localhost:4300>
+1. `npm install` (si es la primera vez) y `npm run dev` → <http://localhost:4321>
 2. Leer `CLAUDE.md` (trampas conocidas) y este archivo.
 3. `docs/MAP.md` para localizar el archivo que toca.
 4. `docs/DESIGN.md` si la duda es "por qué está así".
-5. Tras cualquier cambio: `node tools/qa/qa.mjs`
+5. Tras cualquier cambio: `npm run build && npm run preview`, y el arnés
+   contra el build: `QA_URL=http://127.0.0.1:4310/ node tools/qa/qa.mjs`
 6. Si se toca el hero, además: `node tools/qa/qa.mjs titulo` (número) y
    `node tools/qa/titulo-visual.mjs` (imágenes para mirarlas).

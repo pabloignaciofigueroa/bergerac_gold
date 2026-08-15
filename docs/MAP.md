@@ -7,36 +7,43 @@ función y las clases CSS, no: busca por ellos.
 
 | Archivo | Qué es |
 |---|---|
-| `index.html` (566 líneas) | **Todo el copy del sitio.** Una sola página, seis `<section>`. También el importmap de three.js, el guardia `file://` y el markup del loader. |
-| `tools/server.mjs` | Servidor estático de desarrollo, puerto 4300. |
-| `INICIAR_MERGE.cmd` | Doble clic: levanta el servidor y abre el navegador. |
+| `src/pages/index.astro` (21 líneas) | Compone las seis secciones sobre el layout. Nada más. |
+| `src/layouts/Base.astro` | El envoltorio: `<head>`, guardias en línea, cortina de carga, shell y arranque del bundle. **Aquí está el orden de la cascada de CSS.** |
+| `src/components/shell/` | `Loader` · `SkipLink` · `Header` · `MenuOverlay`. |
+| `src/components/secciones/` | Las seis secciones, con su copy dentro. |
+| `src/components/{partida,metodo,casos}/` | `Estacion` · `Etapa` · `Caso`: un componente por bloque que se repetía. |
+| `src/data/` | `partida.js` (4 estaciones) · `metodo.js` (4 etapas) · `casos.js` (2 casos). Solo contenido. |
+| `astro.config.mjs` | Tres ajustes que NO son los de por defecto, cada uno con su motivo escrito. |
+| `tools/server.mjs` | Servidor estático de apoyo. `node tools/server.mjs 4310 dist` sirve el build. |
 
 ## CSS — tres capas, en este orden
 
 | Archivo | Contenido |
 |---|---|
-| `assets/css/tokens.css` (136) | Paleta cerrada (6 colores), alias `--color--*` de v9, temas `[data-theme]`, brands `[data-brand]`, tipografías, motion, z-index. **Todo color nuevo empieza aquí.** |
-| `assets/css/base.css` (418) | Reset, `@font-face`, shell (header/footer), loader, cursor, indicador oval, menú overlay, skip-link, wipe-lines, y el bloque final de **arreglos móviles**. |
-| `assets/css/sections.css` (1521) | Las seis secciones. Crece por el final: los ajustes de QA están añadidos al fondo, agrupados por tema. |
+| `src/styles/tokens.css` (136) | Paleta cerrada (6 colores), alias `--color--*` de v9, temas `[data-theme]`, brands `[data-brand]`, tipografías, motion, z-index. **Todo color nuevo empieza aquí.** |
+| `src/styles/base.css` (446) | Reset, `@font-face`, shell (header/footer), loader, cursor, indicador oval, menú overlay, skip-link, wipe-lines, y el bloque final de **arreglos móviles**. |
+| `src/styles/secciones.css` | **Índice de la cascada.** Quince `@import` en un orden que no se toca. |
+| `src/styles/secciones/*.css` | Los quince trozos. Aparecen dos veces varias secciones porque el CSS tiene dos generaciones —los bloques originales y una segunda tanda que los sobreescribe—; se respetó ese orden en vez de fusionarlas. `movil.css` va el último. |
 
 ## JS — boot y sistemas globales
 
 | Archivo | Responsabilidad |
 |---|---|
-| `assets/js/main.js` (240) | **Boot único.** Registra GSAP, crea el ciclo de vida de escenas (`registerScene`/`wake`, un solo rAF), el shell cromático que cambia con la sección, el `safeRefresh` con debounce, el parallax v9 del hero y el arranque de todas las secciones. El objeto `ctx` que reciben los módulos se arma aquí. |
-| `assets/js/motion.js` (158) | Lenis + reveals de cortina. Contrato: `data-anim-high="dirección, color, delay"`. Espera a `fonts.ready` y al evento `lab:open` del loader. |
-| `assets/js/loader.js` (142) | Pantalla de entrada: el isotipo se **traza con el progreso real de carga** (fuentes 25% + imágenes 75%), luego se rellena y sale en dos cortinas. Emite `lab:open`. |
-| `assets/js/pointer.js` (143) | Cursor propio con etiquetas (`data-cursor`), indicador de progreso lateral, botones magnéticos (`data-magnetic`). Todo apagado en táctil/reduced. |
-| `assets/js/menu.js` | Overlay a pantalla completa con las piezas SVG de la marca. Detiene Lenis mientras está abierto. |
-| `assets/js/hero-fit.js` | Mide y escribe el `font-size` del título del hero para que ocupe **exactamente** el ancho entre el logo y el botón menú. Es la fuente de verdad del tamaño: las partículas lo leen. |
-| `assets/js/textroll.js` | Roll de caracteres al hover (`data-anim="text-hover"`). |
-| `assets/js/marquee.js` (74) | Cinta infinita reactiva al scroll. Contrato: `data-marquee` con un único hijo. |
-| `assets/js/plegables.js` (76) | Acordeones animados (`data-plegable`, `data-grupo` para exclusividad). |
-| `assets/js/trazos.js` (70) | Anotaciones manuscritas que se dibujan (`data-trazo`). Hoy sin uso en el HTML. |
-| `assets/js/videos.js` (52) | Los dos vídeos de Casos, cargados y reproducidos **por viewport**. Con `autoplay` en el markup el navegador se bajaba 6,3 MB antes de ver el hero. Contrato: `<video data-src>` sin `src` ni `autoplay`. |
-| `assets/js/instrumentos.js` (110) | **Cargador de escenas**: IntersectionObserver sobre `[data-escena]`, import dinámico, `stop()` al salir del viewport, clicks → `escena.accion(nx, ny)`. También el envío del formulario. |
+| `src/scripts/entrada.js` | Entrada del bundle: monta `window.gsap`, `ScrollTrigger`, `SplitText`, `CustomEase` y `Lenis` desde npm, y arranca. `globales.js` va aparte para garantizar el orden. |
+| `src/scripts/main.js` (240) | **Boot único.** Registra GSAP, crea el ciclo de vida de escenas (`registerScene`/`wake`, un solo rAF), el shell cromático que cambia con la sección, el `safeRefresh` con debounce, el parallax v9 del hero y el arranque de todas las secciones. El objeto `ctx` que reciben los módulos se arma aquí. |
+| `src/scripts/motion.js` (158) | Lenis + reveals de cortina. Contrato: `data-anim-high="dirección, color, delay"`. Espera a `fonts.ready` y al evento `lab:open` del loader. |
+| `src/scripts/loader.js` (142) | Pantalla de entrada: el isotipo se **traza con el progreso real de carga** (fuentes 25% + imágenes 75%), luego se rellena y sale en dos cortinas. Emite `lab:open`. |
+| `src/scripts/pointer.js` (143) | Cursor propio con etiquetas (`data-cursor`), indicador de progreso lateral, botones magnéticos (`data-magnetic`). Todo apagado en táctil/reduced. |
+| `src/scripts/menu.js` | Overlay a pantalla completa con las piezas SVG de la marca. Detiene Lenis mientras está abierto. |
+| `src/scripts/hero-fit.js` | Mide y escribe el `font-size` del título del hero para que ocupe **exactamente** el ancho entre el logo y el botón menú. Es la fuente de verdad del tamaño: las partículas lo leen. |
+| `src/scripts/textroll.js` | Roll de caracteres al hover (`data-anim="text-hover"`). |
+| `src/scripts/marquee.js` (74) | Cinta infinita reactiva al scroll. Contrato: `data-marquee` con un único hijo. |
+| `src/scripts/plegables.js` (76) | Acordeones animados (`data-plegable`, `data-grupo` para exclusividad). |
+| `src/scripts/trazos.js` (70) | Anotaciones manuscritas que se dibujan (`data-trazo`). Hoy sin uso en el HTML. |
+| `src/scripts/videos.js` (52) | Los dos vídeos de Casos, cargados y reproducidos **por viewport**. Con `autoplay` en el markup el navegador se bajaba 6,3 MB antes de ver el hero. Contrato: `<video data-src>` sin `src` ni `autoplay`. |
+| `src/scripts/instrumentos.js` (110) | **Cargador de escenas**: IntersectionObserver sobre `[data-escena]`, import dinámico, `stop()` al salir del viewport, clicks → `escena.accion(nx, ny)`. También el envío del formulario. |
 
-## JS — escenas independientes (`assets/js/escenas/`)
+## JS — escenas independientes (`src/scripts/escenas/`)
 
 Se montan solas por viewport, tienen su propio rAF vía `crearBase`.
 
@@ -49,7 +56,7 @@ Se montan solas por viewport, tienen su propio rAF vía `crearBase`.
 | `hero.js` (220) | Bandada de boids. **Sin uso**: reemplazada por las partículas. Se conserva para volver atrás cambiando `data-escena`. |
 | `partida.js`, `metodo.js`, `estudio.js` | Escenas de v9 no montadas. Archivo muerto útil como referencia. |
 
-## JS — secciones acopladas al scroll (`assets/js/sections/`)
+## JS — secciones acopladas al scroll (`src/scripts/sections/`)
 
 Reciben `ctx` desde `main.js` y usan ScrollTrigger.
 
@@ -65,12 +72,12 @@ Reciben `ctx` desde `main.js` y usan ScrollTrigger.
 ## Recursos
 
 ```
-assets/fonts/    Balimo (marca), DemoDisplay (display), Mona Sans (cuerpo)   160 KB
-assets/img/      brand/ (isotipo, logotipos, firma), isla/ (3 texturas), photos/   1.2 MB
-assets/video/    SURVEC_WEBPAGE.webm, AS_ARQ_WEBPAGE.webm                     14 MB
-assets/js/vendor/ three.js r184, GSAP, ScrollTrigger, SplitText, CustomEase, Lenis  2.2 MB
-                 (OrbitControls eliminado: no lo importaba nadie — era resto del
-                  editor de vistas del Método, que ya no existe)
+public/assets/fonts/   Balimo (marca), DemoDisplay (display), Mona Sans (cuerpo)  160 KB
+public/assets/img/     brand/ (isotipo, logotipos) e isla/ (3 texturas que carga three.js)
+public/assets/video/   SURVEC_WEBPAGE.webm, AS_ARQ_WEBPAGE.webm                    14 MB
+src/assets/img/        las fotos del DOM: el build las convierte a webp con srcset
+node_modules/     three 0.184.0 (clavado), gsap, lenis — de npm, empaquetados por
+                  Vite con tree-shaking: three pasa de 2.028 KB a 706 KB
 porting/v9/      Material de la versión v9 ya integrado. Referencia, no se carga.
 ```
 

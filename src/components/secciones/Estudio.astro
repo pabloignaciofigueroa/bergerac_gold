@@ -1,5 +1,8 @@
 ---
-/* Sección — Estudio. */
+/* Sección 02 — El estudio.
+   La isla 3D flota libre a la derecha, sin marco, detrás de los textos. */
+import { Image } from 'astro:assets';
+import firma from '../../assets/img/brand/firma-bergerac.png';
 ---
 <section class="s estudio cover" id="estudio" data-theme="light" data-brand="morado" aria-labelledby="h-estudio">
   <span class="ghost" aria-hidden="true">02</span>
@@ -21,7 +24,7 @@
         </div>
         <div class="firma-block">
           <div>
-            <div class="firma-real" data-anim-high-block data-anim-high="right, morado, 200" role="img" aria-label="Firma Bergerac"><img class="firma-img" src="/assets/img/brand/firma-bergerac.png" alt="" decoding="async"></div>
+            <div class="firma-real" data-anim-high-block data-anim-high="right, morado, 200" role="img" aria-label="Firma Bergerac"><Image class="firma-img" src={firma} alt="" decoding="async" /></div>
             
           </div>
         </div>
