@@ -5,7 +5,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+/* Uso: node tools/server.mjs [puerto] [directorio]
+   El directorio existe para poder levantar DOS versiones a la vez —la de hoy
+   y el build de Astro— y compararlas con tools/qa/paridad.mjs. */
+const raizRepo = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const root = process.argv[3] ? path.resolve(process.argv[3]) : raizRepo;
 /* Puerto propio 4300: NUNCA el 4173 de vgold — si aquel server viejo
    queda corriendo, el navegador mostraría la página equivocada. */
 const port = Number(process.argv[2]) || 4300;
@@ -37,7 +41,7 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     res.end(data);
   });
-}).listen(port, () => console.log(`bergerac merge → http://localhost:${port}`))
+}).listen(port, () => console.log(`bergerac merge → http://localhost:${port}  (sirviendo ${path.relative(raizRepo, root) || '.'})`))
   .on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
       console.error(`\n[ERROR] El puerto ${port} ya está ocupado por otro servidor.`);

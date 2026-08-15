@@ -1,0 +1,620 @@
+---
+/* GENERADO por tools/migrar-a-astro.mjs en la fase 1 de la migración.
+   Es el index.html de siempre, servido por Astro y con el vendor sustituido
+   por dependencias de npm. La fase 2 lo trocea en componentes; hasta
+   entonces se deja de una pieza a propósito, para que la puerta de paridad
+   compare generador contra generador y no dos cosas distintas a la vez. */
+---
+<!DOCTYPE html>
+<html lang="es" class="cargando">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BERGERAC · estudio digital</title>
+<meta name="description" content="Bergerac estudia marcas y proyectos, detecta qué está impidiendo que su valor se vea y se entienda, y construye la identidad, la estructura y el sistema digital que necesitan para avanzar.">
+<link rel="canonical" href="https://bergerac.cl/">
+<!-- Compartir el enlace (WhatsApp, LinkedIn, Slack…). Sin esto el enlace
+     salía pelado: ni título, ni imagen, ni descripción.
+     OJO: og:url, og:image y canonical necesitan URL ABSOLUTA — los
+     rastreadores no resuelven rutas relativas. El dominio de abajo está
+     tomado del correo del estudio (hola@bergerac.cl); si el sitio acaba
+     en otro, hay que cambiarlo en estas tres líneas. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="Bergerac">
+<meta property="og:url" content="https://bergerac.cl/">
+<meta property="og:title" content="Bergerac · estudio digital">
+<meta property="og:description" content="Bergerac estudia marcas y proyectos, detecta qué está impidiendo que su valor se vea y se entienda, y construye la identidad, la estructura y el sistema digital que necesitan para avanzar.">
+<meta property="og:image" content="https://bergerac.cl/assets/img/brand/og-bergerac.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bergerac — estudio digital en Castro, Chiloé">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#00A1FF">
+<link rel="icon" href="/assets/isotipo-color.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/brand/isotipo-color.svg">
+<style is:inline>
+/* CRÍTICO EN LÍNEA — no mover a un .css externo.
+   La cortina de carga tiene que cubrir en el PRIMER pintado. Viviendo solo
+   en base.css (tercera hoja de la cascada), en una conexión lenta el
+   navegador pinta antes de que esa hoja llegue y se cuela un destello del
+   sitio: primero se veía el hero y la pantalla de carga entraba después.
+   El grafito va en <html> además de en la cortina porque el body llega
+   por partes: hay un instante en que el CSS ya está aplicado pero el
+   <div data-transition> todavía no se ha parseado, y ahí se colaba el
+   fondo claro de la página. `cargando` lo quita loader.js en el mismo
+   punto en que monta sus cortinas. */
+html.cargando, html.cargando body { background: #252522; }
+[data-transition] { position: fixed; inset: 0; z-index: 130; background: #252522; }
+[data-transition] .loader-logo path { fill-opacity: 0; }
+.no-js [data-transition] { display: none; }
+</style>
+<noscript><style is:inline>
+/* Sin JS no hay quien quite `cargando`: el sitio no puede quedarse en negro. */
+html.cargando, html.cargando body { background: #FDFCFA; }
+[data-transition] { display: none; }
+</style></noscript>
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/sections.css">
+</head>
+<body class="no-js">
+<script is:inline>document.body.classList.remove('no-js');</script>
+<script is:inline>
+/* Guardia file:// — con doble click sobre index.html los módulos ES no
+   pueden correr (seguridad del navegador): sin escenas 3D ni motion.
+   Se avisa con instrucciones en vez de fallar en silencio. */
+if (location.protocol === 'file:') {
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.createElement('div');
+    b.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:99998;background:#252522;color:#ffb701;font:600 14px/1.6 sans-serif;padding:14px 20px;text-align:center';
+    b.textContent = 'Estás abriendo el archivo directamente y así la página no puede funcionar. Cierra esta pestaña y usa INICIAR_MERGE.cmd (doble click) dentro de bergerac_merge — se abrirá en http://localhost:4300.';
+    document.body.appendChild(b);
+  });
+}
+</script>
+<div data-transition aria-hidden="true">
+  <svg class="loader-logo" viewBox="0 0 378.7207 415.3292" aria-hidden="true">
+    <g transform="translate(-93.4753 491.542) scale(1 -1)">
+      <path d="M0 0 C0 27.513 -0.01 55.027 0.005 82.54 C0.011 92.733 6.447 101.073 16.322 103.602 C18.237 104.092 20.267 104.344 22.245 104.349 C46 104.4 69.754 104.427 93.508 104.369 C106.467 104.338 118.937 101.663 130.762 96.422 C144.705 90.241 156.685 81.393 166.391 69.488 C176.705 56.836 183.397 42.462 186.95 26.652 C191.729 5.393 189.719 -15.453 182.153 -35.799 C174.654 -55.963 162.339 -72.555 144.967 -85.313 C134.263 -93.175 122.413 -98.663 109.464 -101.54 C104.583 -102.624 99.507 -103.294 94.513 -103.332 C70.201 -103.516 45.886 -103.414 21.572 -103.436 C17.144 -103.44 13.023 -102.481 9.319 -99.963 C3.166 -95.779 0.033 -89.953 0.023 -82.54 C-0.011 -55.027 0.01 -27.513 0.01 0 Z" fill="#00a1ff" transform="matrix(1 0 0 1 282.6662 179.6577)"/>
+      <path d="M0 0 C0 -22.638 0.001 -45.277 0 -67.915 C-0.001 -82.924 -11.493 -95.541 -26.379 -96.731 C-29.956 -97.017 -33.566 -96.944 -37.162 -96.946 C-72.279 -96.965 -107.397 -97.104 -142.514 -96.902 C-155.945 -96.824 -166.379 -90.922 -172.73 -78.748 C-175.019 -74.36 -175.947 -69.588 -175.944 -64.617 C-175.921 -29.819 -175.927 4.979 -175.927 39.776 C-175.927 47.696 -175.961 55.615 -175.946 63.535 C-175.915 78.884 -165.113 92.425 -150.119 95.812 C-147.797 96.337 -145.38 96.695 -143.006 96.698 C-105.089 96.75 -67.171 96.791 -29.254 96.693 C-17.594 96.663 -8.979 91.111 -3.282 81.041 C-0.87 76.779 0.024 72.074 0.024 67.195 C0.024 44.797 0.024 22.398 0.024 0 Z" fill="#6f02ba" transform="matrix(1 0 0 1 269.5215 394.7896)"/>
+      <path d="M0 0 C0 23.273 -0.023 46.545 0.009 69.818 C0.028 83.125 8.779 93.822 21.79 96.49 C23.342 96.808 24.961 96.922 26.55 96.924 C52.621 96.957 78.693 96.962 104.765 96.961 C113.243 96.96 119.826 93.38 124.634 86.416 C140.984 62.73 157.341 39.048 173.722 15.383 C179.983 6.337 179.88 -5.072 173.62 -14.031 C161.762 -31.006 150.008 -48.052 138.238 -65.087 C133.239 -72.322 128.426 -79.688 123.309 -86.837 C119.193 -92.587 113.447 -95.899 106.355 -96.509 C102.858 -96.81 99.325 -96.764 95.808 -96.766 C77.254 -96.776 58.7 -96.76 40.146 -96.734 C34.792 -96.727 29.401 -97.05 24.093 -96.542 C10.116 -95.204 -0.008 -83.843 -0.03 -69.818 C-0.067 -46.545 -0.04 -23.273 -0.04 0 Z" fill="#fb0278" transform="matrix(1 0 0 1 282.7249 394.5692)"/>
+      <path d="M0 0 C21.117 0 42.234 0.036 63.351 -0.015 C73.707 -0.04 82.331 -6.999 84.332 -16.914 C85.664 -23.515 83.594 -29.276 79.284 -34.231 C70.136 -44.75 60.881 -55.175 51.676 -65.644 C42.043 -76.6 32.398 -87.546 22.794 -98.527 C11.268 -111.705 -0.227 -124.911 -11.725 -138.115 C-19.443 -146.98 -27.16 -155.846 -34.845 -164.739 C-41.945 -172.956 -48.989 -181.222 -56.08 -189.447 C-64.272 -198.949 -79.177 -198.463 -86.879 -188.434 C-89.777 -184.66 -91.33 -180.413 -91.328 -175.597 C-91.315 -131.758 -91.327 -87.92 -91.333 -44.082 C-91.333 -38.815 -91.347 -33.548 -91.336 -28.281 C-91.307 -14.28 -80.625 -2.14 -66.731 -0.358 C-64.887 -0.122 -63.016 -0.005 -61.158 -0.003 C-40.772 0.022 -20.386 0.013 0 0.013 Z" fill="#ffb701" transform="matrix(1 0 0 1 184.8158 283.8627)"/>
+    </g>
+  </svg>
+</div>
+
+<script is:inline>
+/* Red de seguridad de la cortina de carga. Ahora el grafito lo pinta el CSS
+   para que el loader sea lo PRIMERO que se ve; el precio es que si los
+   módulos ES no llegan a arrancar (error de carga, red caída) esa cortina
+   se quedaría tapando el sitio entero. Este guarda la retira sola.
+   8s > los 6s del temporizador de seguridad interno de loader.js, así que
+   nunca corta un arranque lento: solo uno que no ha ocurrido. */
+setTimeout(function () {
+  var t = document.querySelector('[data-transition]');
+  if (t && t.dataset.vivo) return;
+  document.documentElement.classList.remove('cargando');
+  if (t) t.style.display = 'none';
+}, 8000);
+</script>
+
+<a class="skip-link" href="#inicio">saltar al contenido</a>
+
+<header class="site-header" data-shell="color">
+  <div class="site-header__bar">
+    <a href="#inicio" class="site-header__brand" aria-label="Bergerac — inicio">
+      <svg class="brand-iso" viewBox="0 0 378.7207 415.3292" aria-hidden="true">
+        <g transform="translate(-93.4753 491.542) scale(1 -1)">
+          <path d="M0 0 C0 27.513 -0.01 55.027 0.005 82.54 C0.011 92.733 6.447 101.073 16.322 103.602 C18.237 104.092 20.267 104.344 22.245 104.349 C46 104.4 69.754 104.427 93.508 104.369 C106.467 104.338 118.937 101.663 130.762 96.422 C144.705 90.241 156.685 81.393 166.391 69.488 C176.705 56.836 183.397 42.462 186.95 26.652 C191.729 5.393 189.719 -15.453 182.153 -35.799 C174.654 -55.963 162.339 -72.555 144.967 -85.313 C134.263 -93.175 122.413 -98.663 109.464 -101.54 C104.583 -102.624 99.507 -103.294 94.513 -103.332 C70.201 -103.516 45.886 -103.414 21.572 -103.436 C17.144 -103.44 13.023 -102.481 9.319 -99.963 C3.166 -95.779 0.033 -89.953 0.023 -82.54 C-0.011 -55.027 0.01 -27.513 0.01 0 Z" fill="#00a1ff" transform="matrix(1 0 0 1 282.6662 179.6577)"/>
+          <path d="M0 0 C0 -22.638 0.001 -45.277 0 -67.915 C-0.001 -82.924 -11.493 -95.541 -26.379 -96.731 C-29.956 -97.017 -33.566 -96.944 -37.162 -96.946 C-72.279 -96.965 -107.397 -97.104 -142.514 -96.902 C-155.945 -96.824 -166.379 -90.922 -172.73 -78.748 C-175.019 -74.36 -175.947 -69.588 -175.944 -64.617 C-175.921 -29.819 -175.927 4.979 -175.927 39.776 C-175.927 47.696 -175.961 55.615 -175.946 63.535 C-175.915 78.884 -165.113 92.425 -150.119 95.812 C-147.797 96.337 -145.38 96.695 -143.006 96.698 C-105.089 96.75 -67.171 96.791 -29.254 96.693 C-17.594 96.663 -8.979 91.111 -3.282 81.041 C-0.87 76.779 0.024 72.074 0.024 67.195 C0.024 44.797 0.024 22.398 0.024 0 Z" fill="#6f02ba" transform="matrix(1 0 0 1 269.5215 394.7896)"/>
+          <path d="M0 0 C0 23.273 -0.023 46.545 0.009 69.818 C0.028 83.125 8.779 93.822 21.79 96.49 C23.342 96.808 24.961 96.922 26.55 96.924 C52.621 96.957 78.693 96.962 104.765 96.961 C113.243 96.96 119.826 93.38 124.634 86.416 C140.984 62.73 157.341 39.048 173.722 15.383 C179.983 6.337 179.88 -5.072 173.62 -14.031 C161.762 -31.006 150.008 -48.052 138.238 -65.087 C133.239 -72.322 128.426 -79.688 123.309 -86.837 C119.193 -92.587 113.447 -95.899 106.355 -96.509 C102.858 -96.81 99.325 -96.764 95.808 -96.766 C77.254 -96.776 58.7 -96.76 40.146 -96.734 C34.792 -96.727 29.401 -97.05 24.093 -96.542 C10.116 -95.204 -0.008 -83.843 -0.03 -69.818 C-0.067 -46.545 -0.04 -23.273 -0.04 0 Z" fill="#fb0278" transform="matrix(1 0 0 1 282.7249 394.5692)"/>
+          <path d="M0 0 C21.117 0 42.234 0.036 63.351 -0.015 C73.707 -0.04 82.331 -6.999 84.332 -16.914 C85.664 -23.515 83.594 -29.276 79.284 -34.231 C70.136 -44.75 60.881 -55.175 51.676 -65.644 C42.043 -76.6 32.398 -87.546 22.794 -98.527 C11.268 -111.705 -0.227 -124.911 -11.725 -138.115 C-19.443 -146.98 -27.16 -155.846 -34.845 -164.739 C-41.945 -172.956 -48.989 -181.222 -56.08 -189.447 C-64.272 -198.949 -79.177 -198.463 -86.879 -188.434 C-89.777 -184.66 -91.33 -180.413 -91.328 -175.597 C-91.315 -131.758 -91.327 -87.92 -91.333 -44.082 C-91.333 -38.815 -91.347 -33.548 -91.336 -28.281 C-91.307 -14.28 -80.625 -2.14 -66.731 -0.358 C-64.887 -0.122 -63.016 -0.005 -61.158 -0.003 C-40.772 0.022 -20.386 0.013 0 0.013 Z" fill="#ffb701" transform="matrix(1 0 0 1 184.8158 283.8627)"/>
+        </g>
+      </svg>
+      <span>bergerac</span>
+    </a>
+    <nav class="site-header__nav" aria-label="Secciones">
+      <a href="#inicio" data-anim="text-hover">inicio</a>
+      <a href="#estudio" data-anim="text-hover">estudio</a>
+      <a href="#partida" data-anim="text-hover">punto de partida</a>
+      <a href="#metodo" data-anim="text-hover">método</a>
+      <a href="#proyectos" data-anim="text-hover">casos</a>
+      <a href="#contacto" data-anim="text-hover">contacto</a>
+      <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="menu-overlay" data-cursor="abrir"><span class="menu-toggle__lineas" aria-hidden="true"></span><span data-anim="text-hover">menú</span></button>
+    </nav>
+  </div>
+</header>
+
+<div class="menu-overlay" id="menu-overlay" data-menu-overlay role="dialog" aria-modal="true" aria-label="Menú" aria-hidden="true">
+  <button class="menu-cerrar" type="button" data-menu-cerrar>cerrar ×</button>
+  <nav class="menu-overlay__nav" aria-label="Menú principal">
+    <a href="#inicio" data-brand="azul"><svg class="menu-pieza" viewBox="0 0 400 300" aria-hidden="true"><path d="M78.3 150.6C78.3 115.6 78.3 80.7 78.3 45.8C78.3 32.8 86.5 22.3 99.0 19.0C101.5 18.4 104.0 18.1 106.5 18.1C136.7 18.0 166.9 18.0 197.0 18.1C213.5 18.1 229.3 21.5 244.3 28.2C262.0 36.0 277.2 47.2 289.5 62.4C302.6 78.4 311.1 96.7 315.6 116.7C321.7 143.7 319.2 170.2 309.6 196.0C300.0 221.6 284.4 242.7 262.3 258.9C248.8 268.9 233.7 275.8 217.3 279.5C211.1 280.9 204.6 281.7 198.3 281.8C167.4 282.0 136.6 281.9 105.7 281.9C100.1 281.9 94.8 280.7 90.1 277.5C82.3 272.2 78.3 264.8 78.3 255.4C78.3 220.4 78.3 185.5 78.3 150.6Z"/></svg><span class="menu-word">Inicio</span></a>
+    <a href="#estudio" data-brand="morado"><svg class="menu-pieza" viewBox="0 0 400 300" aria-hidden="true"><path d="M319.8 149.8C319.8 180.6 319.8 211.4 319.8 242.3C319.8 262.7 304.1 279.9 283.9 281.5C279.0 281.9 274.1 281.8 269.2 281.8C221.4 281.8 173.5 282.0 125.7 281.7C107.4 281.6 93.2 273.6 84.6 257.0C81.5 251.0 80.2 244.5 80.2 237.8C80.2 190.4 80.2 143.0 80.2 95.6C80.2 84.8 80.2 74.1 80.2 63.3C80.3 42.4 95.0 23.9 115.4 19.3C118.5 18.6 121.8 18.1 125.1 18.1C176.7 18.1 228.3 18.0 279.9 18.1C295.8 18.2 307.5 25.7 315.3 39.4C318.6 45.2 319.8 51.7 319.8 58.3C319.8 88.8 319.8 119.3 319.8 149.8Z"/></svg><span class="menu-word">El estudio</span></a>
+    <a href="#partida" data-brand="fucsia"><svg class="menu-pieza" viewBox="0 0 400 300" aria-hidden="true"><path d="M77.6 149.9C77.6 118.3 77.6 86.6 77.6 54.9C77.6 36.8 89.5 22.3 107.2 18.6C109.4 18.2 111.6 18.1 113.7 18.1C149.2 18.0 184.7 18.0 220.1 18.0C231.7 18.0 240.6 22.9 247.2 32.4C269.4 64.6 291.7 96.8 314.0 129.0C322.5 141.3 322.4 156.8 313.8 169.0C297.7 192.1 281.7 215.3 265.7 238.5C258.9 248.4 252.3 258.4 245.4 268.1C239.8 275.9 232.0 280.4 222.3 281.3C217.6 281.7 212.7 281.6 208.0 281.6C182.7 281.6 157.5 281.6 132.2 281.6C124.9 281.6 117.6 282.0 110.4 281.3C91.4 279.5 77.6 264.0 77.5 244.9C77.5 213.3 77.5 181.6 77.5 149.9Z"/></svg><span class="menu-word">Punto de partida</span></a>
+    <a href="#metodo" data-brand="amarillo"><svg class="menu-pieza" viewBox="0 0 400 300" aria-hidden="true"><path d="M203.8 18.0C231.8 18.0 259.8 18.0 287.8 18.1C301.6 18.1 313.0 27.3 315.7 40.5C317.4 49.2 314.7 56.9 309.0 63.5C296.8 77.4 284.5 91.3 272.3 105.1C259.5 119.7 246.8 134.2 234.0 148.8C218.7 166.3 203.5 183.8 188.2 201.3C178.0 213.1 167.7 224.8 157.5 236.6C148.1 247.5 138.8 258.5 129.4 269.4C118.5 282.0 98.7 281.4 88.5 268.0C84.7 263.0 82.6 257.4 82.6 251.0C82.6 192.9 82.6 134.7 82.6 76.5C82.6 69.5 82.6 62.6 82.6 55.6C82.6 37.0 96.8 20.9 115.2 18.5C117.7 18.2 120.2 18.1 122.6 18.1C149.7 18.0 176.7 18.0 203.8 18.0Z"/></svg><span class="menu-word">Método</span></a>
+    <a href="#proyectos" data-brand="fucsia"><svg class="menu-pieza" viewBox="0 0 400 300" aria-hidden="true"><path d="M77.6 149.9C77.6 118.3 77.6 86.6 77.6 54.9C77.6 36.8 89.5 22.3 107.2 18.6C109.4 18.2 111.6 18.1 113.7 18.1C149.2 18.0 184.7 18.0 220.1 18.0C231.7 18.0 240.6 22.9 247.2 32.4C269.4 64.6 291.7 96.8 314.0 129.0C322.5 141.3 322.4 156.8 313.8 169.0C297.7 192.1 281.7 215.3 265.7 238.5C258.9 248.4 252.3 258.4 245.4 268.1C239.8 275.9 232.0 280.4 222.3 281.3C217.6 281.7 212.7 281.6 208.0 281.6C182.7 281.6 157.5 281.6 132.2 281.6C124.9 281.6 117.6 282.0 110.4 281.3C91.4 279.5 77.6 264.0 77.5 244.9C77.5 213.3 77.5 181.6 77.5 149.9Z"/></svg><span class="menu-word">Casos</span></a>
+    <a href="#contacto" data-brand="amarillo"><svg class="menu-pieza" viewBox="0 0 400 300" aria-hidden="true"><path d="M203.8 18.0C231.8 18.0 259.8 18.0 287.8 18.1C301.6 18.1 313.0 27.3 315.7 40.5C317.4 49.2 314.7 56.9 309.0 63.5C296.8 77.4 284.5 91.3 272.3 105.1C259.5 119.7 246.8 134.2 234.0 148.8C218.7 166.3 203.5 183.8 188.2 201.3C178.0 213.1 167.7 224.8 157.5 236.6C148.1 247.5 138.8 258.5 129.4 269.4C118.5 282.0 98.7 281.4 88.5 268.0C84.7 263.0 82.6 257.4 82.6 251.0C82.6 192.9 82.6 134.7 82.6 76.5C82.6 69.5 82.6 62.6 82.6 55.6C82.6 37.0 96.8 20.9 115.2 18.5C117.7 18.2 120.2 18.1 122.6 18.1C149.7 18.0 176.7 18.0 203.8 18.0Z"/></svg><span class="menu-word">Contacto</span></a>
+  </nav>
+  <p class="menu-overlay__pie">bergerac · estudio digital — castro, chiloé</p>
+</div>
+
+<div data-oval-indicator></div>
+<div data-lab-cursor></div>
+
+<main>
+
+<!-- ============ 01 · HERO (v9 literal — F8) ============ -->
+<section class="s-hero" id="inicio" data-theme="accent" aria-labelledby="h1">
+  <span class="ghost" aria-hidden="true">01</span>
+  <div class="hero-escena" data-escena="hero-particulas" data-cursor="tocar" aria-hidden="true"></div>
+  <div class="c">
+    <h1 id="h1" class="hero-word"><span>Bergerac</span></h1>
+    <p class="t-eyebrow" data-anim-high="right, ink-tint-1, 120">estudio digital · castro, chiloé</p>
+  </div>
+  <div class="c hero-mid">
+    <div class="hero-claim">
+      <p class="t-body-display hero-claim-top" data-anim-high="left, ink, 380">Tu proyecto ya tiene valor.</p>
+      <p class="t-body-display" data-anim-high="left, ink, 440">Hagamos que se vea y se entienda a la altura de lo que es.</p>
+      <p class="hero-bajada" data-anim-high="left, ink, 500">Bergerac estudia marcas y proyectos, detecta qué está impidiendo que su valor se vea y se entienda, y construye la identidad, la estructura y el sistema digital que necesitan para avanzar.</p>
+      <div class="hero-ctas">
+        <a class="btn is-solid" href="#contacto" data-magnetic data-cursor="ir"><span data-anim="text-hover">trae tu proyecto</span><svg class="btn-fl" viewBox="0 0 20 14" aria-hidden="true"><path d="M2 7h14M11 2l5 5-5 5"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <defs>
+      <clipPath id="pieza-foto" clipPathUnits="objectBoundingBox">
+        <path transform="scale(0.0025, 0.0033333)" d="M78.3 150.6C78.3 115.6 78.3 80.7 78.3 45.8C78.3 32.8 86.5 22.3 99.0 19.0C101.5 18.4 104.0 18.1 106.5 18.1C136.7 18.0 166.9 18.0 197.0 18.1C213.5 18.1 229.3 21.5 244.3 28.2C262.0 36.0 277.2 47.2 289.5 62.4C302.6 78.4 311.1 96.7 315.6 116.7C321.7 143.7 319.2 170.2 309.6 196.0C300.0 221.6 284.4 242.7 262.3 258.9C248.8 268.9 233.7 275.8 217.3 279.5C211.1 280.9 204.6 281.7 198.3 281.8C167.4 282.0 136.6 281.9 105.7 281.9C100.1 281.9 94.8 280.7 90.1 277.5C82.3 272.2 78.3 264.8 78.3 255.4C78.3 220.4 78.3 185.5 78.3 150.6Z"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <figure class="hero-photo" data-anim-high-block data-anim-high="left, ink, 500">
+    <img src="/assets/img/photos/hero.jpg" alt="Bergerac — estudio digital en Castro, Chiloé" decoding="async">
+  </figure>
+  <div class="hero-marquee marquee-display" data-marquee data-marquee-reactive data-marquee-mouse data-marquee-speed="120" aria-hidden="true">
+    <div><span>trae tu marca</span><span class="dot"></span><span>trae tu proyecto</span><span class="dot"></span><span>trae tu idea</span><span class="dot"></span></div>
+  </div>
+</section>
+
+<!-- ============ 02 · EL ESTUDIO (estructura v9 — F10 · instrumento se decide en F11) ============ -->
+<section class="s estudio cover" id="estudio" data-theme="light" data-brand="morado" aria-labelledby="h-estudio">
+  <span class="ghost" aria-hidden="true">02</span>
+  <div class="c">
+    <p class="t-eyebrow" data-anim-high="right, morado">02 · el estudio</p>
+    <h2 id="h-estudio" class="t-impact" data-anim-high="right, ink">Una misma<br>dirección, de<br>principio a fin.</h2>
+    <div class="estudio-grid">
+      <div class="estudio-texto">
+        <p class="carta-text" data-anim-high="left, paper-tint-2">Bergerac es un estudio digital dirigido por Pablo Figueroa, arquitecto UC radicado en Castro, Chiloé. La arquitectura aporta el método: comprender el contexto, ordenar la complejidad y construir sistemas capaces de sostenerse.</p>
+        <p class="carta-text" data-anim-high="left, paper-tint-2, 200">Cada proyecto mantiene continuidad entre la conversación inicial, las decisiones de diseño y aquello que finalmente se construye.</p>
+        <div class="plegable" data-plegable>
+          <button class="plegable-cabeza" type="button" aria-expanded="false" data-cursor="abrir">
+            <span data-anim="text-hover">Conocer la mirada</span><span class="plegable-signo" aria-hidden="true">+</span>
+          </button>
+          <div class="plegable-cuerpo" hidden>
+            <div><h3>Mirar antes de intervenir</h3><p>La formación en arquitectura enseña a no comenzar por la forma. Primero se observa el contexto, se reconocen las relaciones y se define qué debe resolver el proyecto. Esa misma lógica guía el trabajo de Bergerac con marcas, contenidos y experiencias digitales.</p></div>
+            <div><h3>Llevar la dirección hasta el resultado</h3><p>Una buena idea pierde fuerza cuando se fragmenta entre distintas etapas. Por eso identidad, información, diseño y desarrollo se entienden como partes de un mismo sistema, no como entregas independientes.</p></div>
+          </div>
+        </div>
+        <div class="firma-block">
+          <div>
+            <div class="firma-real" data-anim-high-block data-anim-high="right, morado, 200" role="img" aria-label="Firma Bergerac"><img class="firma-img" src="/assets/img/brand/firma-bergerac.png" alt="" decoding="async"></div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="estudio-isla-franja">
+    <figure class="instrumento instrumento--isla">
+      <div class="instrumento-lienzo estudio__canvas-holder" role="img" aria-label="Modelo tridimensional de la isla de Chiloé" data-cursor="girar">
+        <canvas class="estudio__canvas"></canvas>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ 03 · EL PUNTO DE PARTIDA ============ -->
+<section id="partida" class="partida" data-section="partida">
+  <div class="partida__pin">
+    <div class="partida__track">
+
+      <div class="partida__panel partida__panel--intro">
+        <div class="partida__intro">
+          <p class="eyebrow partida__eyebrow">El punto de partida</p>
+          <h2 class="display partida__title">No necesitas llegar con el diagnóstico resuelto.</h2>
+          <p class="partida__lead">Puedes traer una marca, una página, materiales sueltos o una idea todavía abierta. Primero entendemos qué está ocurriendo, qué sigue teniendo valor y qué tendría que cambiar antes de decidir qué construir.</p>
+        </div>
+      </div>
+
+      <article class="partida__panel partida__station" data-station="1">
+        <div class="partida__station-head">
+          <span class="mono partida__num">01</span>
+          <h3 class="partida__problem">La marca ya no refleja lo que somos.</h3>
+        </div>
+        <div class="partida__visual" data-visual-slot="1">
+          <img class="partida__foto" src="/assets/img/photos/m-origen.jpg" alt="" loading="lazy" decoding="async">
+          <div class="partida__deep-panel" id="partida-deep-1">
+            <div class="partida__deep-inner">
+            <p>Puede que no sea necesario reemplazarla por completo. Primero revisamos qué sigue teniendo valor, qué perdió coherencia y qué necesita evolucionar para volver a representar correctamente al proyecto.</p>
+            <span class="partida__deep-label">Lo primero que miraríamos</span>
+            <strong>Identidad · percepción · consistencia</strong>
+          </div>
+          </div>
+        </div>
+        <div class="partida__deep">
+          <button class="partida__more" type="button" aria-expanded="false" aria-controls="partida-deep-1">
+            <span>Entender este problema</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+
+        </div>
+      </article>
+
+      <article class="partida__panel partida__station" data-station="2">
+        <div class="partida__station-head">
+          <span class="mono partida__num">02</span>
+          <h3 class="partida__problem">Lo que hacemos tiene valor, pero cuesta explicarlo.</h3>
+        </div>
+        <div class="partida__visual" data-visual-slot="2">
+          <img class="partida__foto" src="/assets/img/photos/g-archivo.jpg" alt="" loading="lazy" decoding="async">
+          <div class="partida__deep-panel" id="partida-deep-2">
+            <div class="partida__deep-inner">
+            <p>Cuando algo tiene valor, pero cuesta comprenderlo, el problema no siempre está en la calidad del proyecto. Puede estar en el mensaje, en el orden de la información o en la forma en que se presenta.</p>
+            <span class="partida__deep-label">Lo primero que miraríamos</span>
+            <strong>Propuesta · relato · jerarquía</strong>
+          </div>
+          </div>
+        </div>
+        <div class="partida__deep">
+          <button class="partida__more" type="button" aria-expanded="false" aria-controls="partida-deep-2">
+            <span>Entender este problema</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+
+        </div>
+      </article>
+
+      <article class="partida__panel partida__station" data-station="3">
+        <div class="partida__station-head">
+          <span class="mono partida__num">03</span>
+          <h3 class="partida__problem">Nuestra presencia digital quedó atrás o creció sin orden.</h3>
+        </div>
+        <div class="partida__visual" data-visual-slot="3">
+          <img class="partida__foto" src="/assets/img/photos/g-estudio.jpg" alt="" loading="lazy" decoding="async">
+          <div class="partida__deep-panel" id="partida-deep-3">
+            <div class="partida__deep-inner">
+            <p>Una página puede contener buena información y aun así no funcionar como sistema. Revisamos qué se acumuló, qué falta, cómo debe organizarse y qué recorrido necesita la persona que llega.</p>
+            <span class="partida__deep-label">Lo primero que miraríamos</span>
+            <strong>Contenido · estructura · experiencia</strong>
+          </div>
+          </div>
+        </div>
+        <div class="partida__deep">
+          <button class="partida__more" type="button" aria-expanded="false" aria-controls="partida-deep-3">
+            <span>Entender este problema</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+
+        </div>
+      </article>
+
+      <article class="partida__panel partida__station" data-station="4">
+        <div class="partida__station-head">
+          <span class="mono partida__num">04</span>
+          <h3 class="partida__problem">Tenemos una idea, pero todavía no sabemos qué forma necesita.</h3>
+        </div>
+        <div class="partida__visual" data-visual-slot="4">
+          <img class="partida__foto" src="/assets/img/photos/m-nebula.jpg" alt="" loading="lazy" decoding="async">
+          <div class="partida__deep-panel" id="partida-deep-4">
+            <div class="partida__deep-inner">
+            <p>Una idea abierta no tiene que convertirse inmediatamente en una página, una marca o una aplicación. Primero definimos qué problema busca resolver y cuál es la primera forma que permitiría comprenderla y probarla.</p>
+            <span class="partida__deep-label">Lo primero que miraríamos</span>
+            <strong>Propósito · alcance · primera versión</strong>
+          </div>
+          </div>
+        </div>
+        <div class="partida__deep">
+          <button class="partida__more" type="button" aria-expanded="false" aria-controls="partida-deep-4">
+            <span>Entender este problema</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 · MÉTODO BERGERAC ============ -->
+<section id="metodo" class="metodo" data-section="metodo" data-method-theme="purple">
+  <span class="ghost" aria-hidden="true">04</span>
+  <div class="metodo__stage" aria-hidden="true">
+    <canvas class="metodo__canvas"></canvas>
+  </div>
+  <div class="metodo__flow">
+
+    <div class="metodo__milestone metodo__milestone--open" data-view="0">
+      <div class="metodo__copy metodo__portada">
+        <h2 class="display metodo__portada-word">Metodo</h2>
+      </div>
+      <div class="metodo__copy">
+        <h3 class="display metodo__title">Antes de diseñar, decidimos qué debe cambiar y qué merece permanecer.</h3>
+        <p class="metodo__lead">El método Bergerac organiza el trabajo en cuatro etapas: comprender el contexto, definir una dirección, construir la respuesta y afinarla hasta que pueda sostenerse.</p>
+      </div>
+    </div>
+
+    <div class="metodo__milestone metodo__milestone--hinge" data-view="1" aria-hidden="true"></div>
+
+    <article class="metodo__milestone metodo__etapa" data-view="2" data-etapa="estudiar">
+      <div class="metodo__copy">
+        <div class="metodo__etapa-head">
+          <span class="metodo__num" aria-hidden="true">01</span>
+          <h3 class="metodo__name">Estudiar</h3>
+        </div>
+        <p class="metodo__etapa-lead">Reconocemos qué ya tiene valor, qué está generando distancia y qué necesita comprenderse antes de intervenir.</p>
+        <div class="disclosure metodo__disclosure">
+          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-1">
+            <span>Profundizar en esta etapa</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+          <div class="disclosure__panel" id="metodo-deep-1">
+            <div class="disclosure__inner metodo__fields">
+              <div>
+                <h4>Observamos</h4>
+                <p>Historia, contexto, audiencias, identidad, contenidos, experiencia actual y restricciones reales.</p>
+              </div>
+              <div>
+                <h4>Contrastamos</h4>
+                <p>Lo que el proyecto es, lo que intenta comunicar y lo que las personas alcanzan a percibir.</p>
+              </div>
+              <div class="metodo__result">
+                <h4>Resultado</h4>
+                <p>Una lectura compartida del punto de partida.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="metodo__milestone metodo__etapa" data-view="3" data-etapa="definir">
+      <div class="metodo__copy">
+        <div class="metodo__etapa-head">
+          <span class="metodo__num" aria-hidden="true">02</span>
+          <h3 class="metodo__name">Definir</h3>
+        </div>
+        <p class="metodo__etapa-lead">Convertimos lo aprendido en una dirección clara: qué conservar, qué cambiar y qué sistema necesita el proyecto.</p>
+        <div class="disclosure metodo__disclosure">
+          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-2">
+            <span>Profundizar en esta etapa</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+          <div class="disclosure__panel" id="metodo-deep-2">
+            <div class="disclosure__inner metodo__fields">
+              <div>
+                <h4>Idea rectora</h4>
+                <p>Definimos el principio que mantendrá unidas las decisiones posteriores.</p>
+              </div>
+              <div>
+                <h4>Estructura</h4>
+                <p>Ordenamos mensaje, contenidos, jerarquías, recorridos y prioridades.</p>
+              </div>
+              <div>
+                <h4>Alcance</h4>
+                <p>Determinamos qué corresponde construir ahora y qué puede esperar.</p>
+              </div>
+              <div class="metodo__result">
+                <h4>Resultado</h4>
+                <p>Una dirección que permite decidir sin improvisar ni acumular.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="metodo__milestone metodo__etapa" data-view="4" data-etapa="construir">
+      <div class="metodo__copy">
+        <div class="metodo__etapa-head">
+          <span class="metodo__num" aria-hidden="true">03</span>
+          <h3 class="metodo__name">Construir</h3>
+        </div>
+        <p class="metodo__etapa-lead">Traducimos la dirección en el sistema, las piezas y las experiencias que el proyecto realmente necesita.</p>
+        <div class="disclosure metodo__disclosure">
+          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-3">
+            <span>Profundizar en esta etapa</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+          <div class="disclosure__panel" id="metodo-deep-3">
+            <div class="disclosure__inner metodo__fields">
+              <div>
+                <h4>Sistema</h4>
+                <p>Definimos la identidad, el lenguaje, la estructura y las reglas que permiten mantener coherencia.</p>
+              </div>
+              <div>
+                <h4>Producción</h4>
+                <p>Diseñamos y desarrollamos las piezas necesarias según el alcance acordado.</p>
+              </div>
+              <div>
+                <h4>Integración</h4>
+                <p>Cada parte se construye considerando cómo se relaciona con las demás.</p>
+              </div>
+              <div class="metodo__result">
+                <h4>Resultado</h4>
+                <p>Una solución real, usable y preparada para mantenerse.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="metodo__milestone metodo__etapa" data-view="5" data-etapa="afinar">
+      <div class="metodo__copy">
+        <div class="metodo__etapa-head">
+          <span class="metodo__num" aria-hidden="true">04</span>
+          <h3 class="metodo__name">Afinar</h3>
+        </div>
+        <p class="metodo__etapa-lead">Probamos, corregimos y completamos la respuesta hasta que pueda funcionar, sostenerse y evolucionar.</p>
+        <div class="disclosure metodo__disclosure">
+          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-4">
+            <span>Profundizar en esta etapa</span>
+            <span class="disclosure__sym" aria-hidden="true">+</span>
+          </button>
+          <div class="disclosure__panel" id="metodo-deep-4">
+            <div class="disclosure__inner metodo__fields">
+              <div>
+                <h4>Revisión</h4>
+                <p>Evaluamos claridad, coherencia, comportamiento, legibilidad y funcionamiento en condiciones reales.</p>
+              </div>
+              <div>
+                <h4>Corrección</h4>
+                <p>Ajustamos aquello que todavía no expresa correctamente la dirección definida.</p>
+              </div>
+              <div>
+                <h4>Preparación</h4>
+                <p>Ordenamos la entrega, las reglas de uso y la base necesaria para futuras evoluciones.</p>
+              </div>
+              <div class="metodo__result">
+                <h4>Resultado</h4>
+                <p>Un sistema que no depende de la improvisación para seguir funcionando.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <div class="metodo__milestone metodo__milestone--close" data-view="6">
+      <div class="metodo__copy metodo__cierre">
+        <h2 class="display metodo__portada-word">Metodo</h2>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 05 · TRABAJO SELECCIONADO (split de mundos v9) ============ -->
+<section id="proyectos" aria-labelledby="h-proyectos">
+  <div class="s proyectos-intro cover" data-theme="light" data-brand="fucsia">
+    <span class="ghost" aria-hidden="true">05</span>
+    <div class="c">
+      <p class="t-eyebrow" data-anim-high="right, fucsia">05 · trabajo seleccionado</p>
+      <h2 id="h-proyectos" class="t-impact" data-anim-high="right, ink">Dos proyectos.<br>Dos respuestas<br>distintas.</h2>
+      <p class="t-body-display seccion-bajada" data-anim-high="left, paper-tint-2, 200">En ambos casos, la presencia digital estaba por debajo de la calidad del trabajo real. A partir de ahí, cada proyecto exigió decisiones propias.</p>
+    </div>
+  </div>
+
+  <div class="split casos-split" data-brand="fucsia">
+    <div class="mundo" data-theme="light">
+      <div>
+        <p class="t-eyebrow" data-anim-high="right, ink-tint-1">caso a · topografía de precisión</p>
+        <p class="mundo-word" data-anim-high="right, ink"><span>Caso</span><span class="l2">Survec</span></p>
+      </div>
+      <p class="t-body-display caso-claim" data-anim-high="left, ink-tint-1, 200">Convertir precisión técnica en una marca capaz de representarla.</p>
+      <p class="caso-intro">Survec contaba con experiencia real en topografía, drones, GNSS y fotogrametría, pero su identidad y su presencia digital no expresaban con suficiente claridad la precisión, el conocimiento territorial ni la capacidad técnica de su trabajo.</p>
+      <figure class="instrumento">
+        <div class="instrumento-lienzo caso-video" role="img" aria-label="Recorrido por la página construida para Survec">
+          <video data-src="/assets/video/SURVEC_WEBPAGE.webm" muted loop playsinline preload="none"></video>
+        </div>
+        <figcaption class="t-eyebrow"><span>la página construida</span><span>survec</span></figcaption>
+      </figure>
+      <div class="caso-areas t-eyebrow"><span>áreas involucradas</span>Rebranding · narrativa · arquitectura de información · diseño y desarrollo web</div>
+      <div class="plegable" data-plegable data-grupo="casos">
+        <button class="plegable-cabeza" type="button" aria-expanded="false" data-cursor="abrir"><span data-anim="text-hover">Revisar el caso</span><span class="plegable-signo" aria-hidden="true">+</span></button>
+        <div class="plegable-cuerpo caso-ficha" hidden>
+          <div><h4>Punto de partida</h4><p>Una empresa técnicamente capaz cuya identidad, discurso y presencia digital no alcanzaban a demostrar el nivel de los servicios que entregaba.</p></div>
+          <div><h4>Lo que debía permanecer</h4><p>Su relación directa con el territorio, la experiencia acumulada y la precisión técnica de su trabajo.</p></div>
+          <div><h4>La decisión</h4><p>Dejar de presentar una lista de servicios y construir una marca basada en lo que Survec realmente entrega: información territorial confiable para tomar mejores decisiones.</p></div>
+          <div><h4>Lo que se construyó</h4><p>Una nueva identidad, un sistema visual reconocible, un relato comercial y una página capaz de explicar servicios técnicos mediante aplicaciones, territorio y resultados comprensibles.</p></div>
+          <div><h4>Resultado</h4><p>Survec cuenta con una identidad coherente y una presencia digital preparada para respaldar conversaciones, propuestas y proyectos de mayor exigencia.</p></div>
+        </div>
+      </div>
+      <a class="t-eyebrow caso-visitar" href="#proyectos" data-anim="text-hover">visitar survec ↗</a>
+    </div>
+
+    <div class="mundo" data-theme="light">
+      <div>
+        <p class="t-eyebrow" data-anim-high="left, fucsia">caso b · arquitectura desde el sur</p>
+        <p class="mundo-word" data-anim-high="left, ink"><span>Caso</span><span class="l2">AS_ARQ</span></p>
+      </div>
+      <p class="t-body-display caso-claim" data-anim-high="right, ink-tint-1, 200">Dar a una obra excelente un lugar donde realmente pudiera verse.</p>
+      <p class="caso-intro">AS Arquitectura ya tenía proyectos residenciales de gran calidad, pero su trabajo aparecía principalmente mediante fotografías y publicaciones dispersas que no permitían comprender completamente cada obra.</p>
+      <figure class="instrumento">
+        <div class="instrumento-lienzo caso-video" role="img" aria-label="Recorrido por la página construida para AS Arquitectura">
+          <video data-src="/assets/video/AS_ARQ_WEBPAGE.webm" muted loop playsinline preload="none"></video>
+        </div>
+        <figcaption class="t-eyebrow"><span>la página construida</span><span>as arquitectura</span></figcaption>
+      </figure>
+      <div class="caso-areas t-eyebrow"><span>áreas involucradas</span>Dirección editorial · curaduría visual · arquitectura de información · diseño y desarrollo web</div>
+      <div class="plegable" data-plegable data-grupo="casos">
+        <button class="plegable-cabeza" type="button" aria-expanded="false" data-cursor="abrir"><span data-anim="text-hover">Revisar el caso</span><span class="plegable-signo" aria-hidden="true">+</span></button>
+        <div class="plegable-cuerpo caso-ficha" hidden>
+          <div><h4>Punto de partida</h4><p>Un estudio con arquitectura valiosa y material fotográfico disponible, pero sin un portafolio capaz de seleccionar, ordenar y presentar correctamente sus proyectos.</p></div>
+          <div><h4>Lo que debía permanecer</h4><p>Las obras, su materialidad, su relación con el paisaje y la manera sobria con que el estudio entiende la arquitectura del sur.</p></div>
+          <div><h4>La decisión</h4><p>La página no debía competir con las casas ni disfrazarlas mediante una identidad excesiva. Debía editar el material, ordenar el recorrido y permitir que la arquitectura fuera la protagonista.</p></div>
+          <div><h4>Lo que se construyó</h4><p>Una experiencia editorial basada en proyectos, fotografías de gran formato, jerarquía tipográfica y un recorrido preparado para observar cada obra con mayor profundidad.</p></div>
+          <div><h4>Resultado</h4><p>AS Arquitectura cuenta con un portafolio digital donde sus proyectos pueden comprenderse como obras completas y no como publicaciones aisladas.</p></div>
+        </div>
+      </div>
+      <a class="t-eyebrow caso-visitar" href="#proyectos" data-anim="text-hover">visitar as arquitectura ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 · CONTACTO (v9 literal — F18) ============ -->
+<section class="s contacto cover fin" id="contacto" data-theme="accent" data-brand="amarillo" aria-labelledby="h-contacto">
+  <span class="ghost" aria-hidden="true">06</span>
+  <div class="contacto-escena" data-escena="contacto" aria-hidden="true"></div>
+  <div class="c contacto-grid">
+    <div class="contacto-texto">
+      <p class="t-eyebrow" data-anim-high="right, ink-tint-1">06 · comencemos</p>
+      <h2 id="h-contacto" class="lema" data-anim-high="right, ink">Trae tu<br>empresa.<br>Tu proyecto.<br>O tu próxima<br>idea.</h2>
+      <p class="t-body-display seccion-bajada" data-anim-high="left, ink-tint-1, 200">No necesitas traducir lo que ocurre a un servicio ni preparar un brief perfecto. Cuéntanos el contexto y revisaremos cuál puede ser el siguiente paso.</p>
+      <div class="plegable" data-plegable>
+        <button class="plegable-cabeza" type="button" aria-expanded="false" data-cursor="abrir"><span data-anim="text-hover">Qué ocurre después</span><span class="plegable-signo" aria-hidden="true">+</span></button>
+        <div class="plegable-cuerpo" hidden>
+          <div><h3>01 — Revisamos el contexto</h3><p>Leemos el mensaje y el material compartido antes de responder.</p></div>
+          <div><h3>02 — Devolvemos una primera lectura</h3><p>Te contamos qué entendimos, qué parece importante y qué convendría aclarar.</p></div>
+          <div><h3>03 — Definimos el siguiente paso</h3><p>Puede ser una conversación, una solicitud de antecedentes o la recomendación de no construir todavía.</p></div>
+        </div>
+      </div>
+      <p class="contacto-directo"><span class="t-eyebrow">¿prefieres escribir directamente?</span><a href="mailto:hola@bergerac.cl" data-anim="text-hover">hola@bergerac.cl</a></p>
+    </div>
+
+    <form class="formulario" data-formulario novalidate data-anim-high-block data-anim-high="top, ink, 300">
+      <div class="campo"><label for="f-nombre">Tu nombre</label><input id="f-nombre" type="text" autocomplete="name"></div>
+      <div class="campo"><label for="f-email">¿Dónde podemos responderte?</label><input id="f-email" type="email" autocomplete="email"></div>
+      <div class="campo"><label for="f-proyecto">¿Cómo se llama, si ya tiene un nombre? <span class="campo-opcional">— opcional</span></label><input id="f-proyecto" type="text"></div>
+      <div class="campo"><label for="f-contexto">Cuéntanos qué está ocurriendo</label><span class="campo-ayuda">Qué tienes hoy, qué te preocupa y qué esperas que pueda cambiar.</span><textarea id="f-contexto" rows="4"></textarea></div>
+      <div class="campo"><label for="f-enlace">Compartir un enlace o material <span class="campo-opcional">— opcional</span></label><span class="campo-ayuda">Puedes compartir tu página, una presentación, documentos o referencias. No necesitan estar ordenados.</span><input id="f-enlace" type="text"></div>
+      <button type="submit" class="btn is-solid" data-magnetic data-cursor="enviar"><span data-anim="text-hover">compartir el punto de partida</span><svg class="btn-fl" viewBox="0 0 20 14" aria-hidden="true"><path d="M2 7h14M11 2l5 5-5 5"/></svg></button>
+      <p class="formulario-nota">Usaremos esta información únicamente para revisar tu consulta y responderte.</p>
+    </form>
+    <div class="formulario-confirmacion" hidden>
+      <h3>Recibimos tu punto de partida.</h3>
+      <p>Revisaremos el contexto y te responderemos con una primera lectura.</p>
+    </div>
+  </div>
+  <div class="contacto-marquee marquee-display" data-marquee data-marquee-mouse data-marquee-speed="90" aria-hidden="true">
+    <div><span data-anim="text-hover">trae tu proyecto</span><span class="dot"></span><span>hola@bergerac.cl</span><span class="dot"></span></div>
+  </div>
+  <div class="c legal t-eyebrow">
+    <span>© bergerac — estudio digital · castro, chiloé</span>
+    <span><a href="#inicio" data-anim="text-hover">volver arriba ↑</a></span>
+  </div>
+</section>
+
+</main>
+
+
+<script>
+  /* Entrada única: monta los globales que el código espera y arranca.
+     Va sin is:inline a propósito — así lo empaqueta Vite y three entra
+     con tree-shaking, que es la razón de haber pasado a npm. */
+  import '../scripts/entrada.js';
+</script>
+</body>
+</html>

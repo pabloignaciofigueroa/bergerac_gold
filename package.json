@@ -1,0 +1,23 @@
+{
+  "name": "bergerac",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Bergerac — estudio digital en Castro, Chiloé. Sitio estático.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "node tools/server.mjs 4310 dist",
+    "qa": "node tools/qa/qa.mjs",
+    "paridad": "node tools/qa/paridad.mjs"
+  },
+  "dependencies": {
+    "astro": "^7.2.2",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
+    "three": "0.184.0"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}

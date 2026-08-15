@@ -10,3 +10,7 @@ node_modules/
 # QA: dependencia local y capturas de salida
 node_modules/
 tools/qa/salida/
+
+# build de Astro y caché
+dist/
+.astro/

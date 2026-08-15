@@ -11,7 +11,11 @@
    nunca un scrub largo ni un efecto dibujado.
    ============================================================ */
 
-import { Sculpture } from './sculpture-v2.js';
+/* La escultura se importa DENTRO de boot(), no aquí arriba: sculpture-v2.js
+   importa three de forma estática, así que un import en la cabecera metía los
+   700 KB de three en el grafo de arranque y el loader no aparecía hasta
+   tenerlos descargados — 8,6 s con la red estrangulada. Aquí abajo, three
+   solo viaja cuando el Método entra en viewport. */
 
 /* Vistas aprobadas en la dirección v4 (editables desde el laboratorio;
    si existe una dirección guardada en localStorage, se respeta). */
@@ -152,7 +156,10 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
   async function boot() {
     if (booted) return;
     booted = true;
-    const THREE = await import('three');
+    const [THREE, { Sculpture }] = await Promise.all([
+      import('three'),
+      import('./sculpture-v2.js'),
+    ]);
 
     let views = DEFAULT_VIEWS;
     try {
