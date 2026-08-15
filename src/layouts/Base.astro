@@ -1,0 +1,112 @@
+---
+/* ============================================================
+   BASE — el envoltorio de la página
+
+   Aquí vive todo lo que no es contenido: el <head>, los guardias en línea,
+   la cortina de carga, el shell (header y menú) y el arranque del bundle.
+   El contenido entra por el <slot />.
+
+   TRES COSAS QUE NO SE PUEDEN MOVER DE SITIO, y hay pruebas que lo vigilan:
+
+   · `class="cargando"` en el <html> y el <style is:inline> de abajo son lo
+     que hace que la cortina de carga sea LO PRIMERO que se ve. Si eso se va
+     a una hoja externa, en conexión lenta el navegador pinta antes de que
+     llegue y se ve el sitio antes que la cortina. Lo vigila `arranque`.
+   · El orden de las tres hojas —tokens, base, sections— es una cascada
+     escrita a mano. No reordenar.
+   · Los <script> en línea llevan `is:inline` para que Astro no los procese
+     ni los mueva. El de la red de seguridad tiene que correr aunque el
+     bundle no llegue a arrancar; si Astro lo empaquetara, dejaría de
+     cumplir su función.
+   ============================================================ */
+import Loader from '../components/shell/Loader.astro';
+import SkipLink from '../components/shell/SkipLink.astro';
+import Header from '../components/shell/Header.astro';
+import MenuOverlay from '../components/shell/MenuOverlay.astro';
+---
+<!DOCTYPE html>
+<html lang="es" class="cargando">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BERGERAC · estudio digital</title>
+<meta name="description" content="Bergerac estudia marcas y proyectos, detecta qué está impidiendo que su valor se vea y se entienda, y construye la identidad, la estructura y el sistema digital que necesitan para avanzar.">
+<link rel="canonical" href="https://bergerac.cl/">
+<!-- Compartir el enlace (WhatsApp, LinkedIn, Slack…). Sin esto el enlace
+     salía pelado: ni título, ni imagen, ni descripción.
+     OJO: og:url, og:image y canonical necesitan URL ABSOLUTA — los
+     rastreadores no resuelven rutas relativas. El dominio de abajo está
+     tomado del correo del estudio (hola@bergerac.cl); si el sitio acaba
+     en otro, hay que cambiarlo en estas tres líneas. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:site_name" content="Bergerac">
+<meta property="og:url" content="https://bergerac.cl/">
+<meta property="og:title" content="Bergerac · estudio digital">
+<meta property="og:description" content="Bergerac estudia marcas y proyectos, detecta qué está impidiendo que su valor se vea y se entienda, y construye la identidad, la estructura y el sistema digital que necesitan para avanzar.">
+<meta property="og:image" content="https://bergerac.cl/assets/img/brand/og-bergerac.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bergerac — estudio digital en Castro, Chiloé">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#00A1FF">
+<link rel="icon" href="/assets/isotipo-color.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/assets/img/brand/isotipo-color.svg">
+<style is:inline>
+/* CRÍTICO EN LÍNEA — no mover a un .css externo.
+   La cortina de carga tiene que cubrir en el PRIMER pintado. Viviendo solo
+   en base.css (tercera hoja de la cascada), en una conexión lenta el
+   navegador pinta antes de que esa hoja llegue y se cuela un destello del
+   sitio: primero se veía el hero y la pantalla de carga entraba después.
+   El grafito va en <html> además de en la cortina porque el body llega
+   por partes: hay un instante en que el CSS ya está aplicado pero el
+   <div data-transition> todavía no se ha parseado, y ahí se colaba el
+   fondo claro de la página. `cargando` lo quita loader.js en el mismo
+   punto en que monta sus cortinas. */
+html.cargando, html.cargando body { background: #252522; }
+[data-transition] { position: fixed; inset: 0; z-index: 130; background: #252522; }
+[data-transition] .loader-logo path { fill-opacity: 0; }
+.no-js [data-transition] { display: none; }
+</style>
+<noscript><style is:inline>
+/* Sin JS no hay quien quite `cargando`: el sitio no puede quedarse en negro. */
+html.cargando, html.cargando body { background: #FDFCFA; }
+[data-transition] { display: none; }
+</style></noscript>
+<link rel="stylesheet" href="/assets/css/tokens.css">
+<link rel="stylesheet" href="/assets/css/base.css">
+<link rel="stylesheet" href="/assets/css/sections.css">
+</head>
+<body class="no-js">
+<script is:inline>document.body.classList.remove('no-js');</script>
+<script is:inline>
+/* Guardia file:// — con doble click sobre index.html los módulos ES no
+   pueden correr (seguridad del navegador): sin escenas 3D ni motion.
+   Se avisa con instrucciones en vez de fallar en silencio. */
+if (location.protocol === 'file:') {
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.createElement('div');
+    b.style.cssText = 'position:fixed;left:0;right:0;top:0;z-index:99998;background:#252522;color:#ffb701;font:600 14px/1.6 sans-serif;padding:14px 20px;text-align:center';
+    b.textContent = 'Estás abriendo el archivo directamente y así la página no puede funcionar. Cierra esta pestaña y usa INICIAR_MERGE.cmd (doble click) dentro de bergerac_merge — se abrirá en http://localhost:4300.';
+    document.body.appendChild(b);
+  });
+}
+</script>
+
+<Loader />
+<SkipLink />
+<Header />
+<MenuOverlay />
+
+<main>
+  <slot />
+</main>
+
+<script>
+  /* Entrada única del bundle: monta los globales que espera el código de
+     siempre y arranca. Va sin `is:inline` a propósito — así lo empaqueta
+     Vite y three entra con tree-shaking, que es la razón de npm. */
+  import '../scripts/entrada.js';
+</script>
+</body>
+</html>
