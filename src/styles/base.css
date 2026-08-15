@@ -6,27 +6,27 @@
 /* ---- Fuentes oficiales ---- */
 @font-face {
   font-family: 'Balimo';
-  src: url('../fonts/Balimo-Regular.ttf') format('truetype');
+  src: url('/assets/fonts/Balimo-Regular.ttf') format('truetype');
   font-weight: 400;
   font-display: block; /* palabra-marca: evitar FOUT destructivo sobre pieza central */
 }
 @font-face {
   font-family: 'Balimo';
-  src: url('../fonts/Balimo-Bold.ttf') format('truetype');
+  src: url('/assets/fonts/Balimo-Bold.ttf') format('truetype');
   font-weight: 700;
   font-display: block;
 }
 /* Sistema tipográfico v9 (maestro — F2) */
 @font-face {
   font-family: 'Mona Sans';
-  src: url('../fonts/mona-sans-var.woff2') format('woff2-variations');
+  src: url('/assets/fonts/mona-sans-var.woff2') format('woff2-variations');
   font-weight: 200 900;
   font-stretch: 75% 125%;
   font-display: swap;
 }
 @font-face {
   font-family: 'DemoDisplay';
-  src: url('../fonts/demo-display.woff2') format('woff2');
+  src: url('/assets/fonts/demo-display.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }

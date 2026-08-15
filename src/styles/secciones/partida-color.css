@@ -1,0 +1,141 @@
+/* ============================================================
+   Partida: FOTOS por estación + COLOR por problema (pedido)
+   01 morado · 02 fucsia · 03 amarillo · 04 azul
+   ============================================================ */
+.partida__station[data-station="1"] { --st: var(--purple); --st-ink: var(--warm-white); }
+.partida__station[data-station="2"] { --st: var(--fuchsia); --st-ink: var(--graphite); }
+.partida__station[data-station="3"] { --st: var(--yellow); --st-ink: var(--graphite); }
+.partida__station[data-station="4"] { --st: var(--blue); --st-ink: var(--graphite); }
+
+.partida__num::before { background: var(--st, var(--purple)); }
+.js .partida__station[data-active="true"] .partida__num { color: var(--st, var(--warm-white)); }
+.partida__visual {
+  overflow: hidden;
+  background: color-mix(in srgb, var(--st, var(--purple)) 10%, transparent);
+  border-color: color-mix(in srgb, var(--st, var(--purple)) 55%, transparent);
+}
+.partida__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .9;
+}
+.partida__deep-panel {
+  background: var(--st, var(--purple));
+  color: var(--st-ink, var(--warm-white));
+}
+.partida__deep-panel .partida__deep-label,
+.partida__deep-panel strong { color: inherit; }
+.partida__visual::before,
+.partida__visual::after { border-color: var(--st, var(--purple)); }
+
+/* Hero: bajada PEGADA al título; el marquee ancla al fondo */
+.s-hero { justify-content: flex-start; }
+.s-hero .hero-mid { margin-top: clamp(12px, 2vh, 28px); margin-bottom: clamp(32px, 6vh, 72px); padding-bottom: 0; }
+.s-hero .hero-marquee { margin-top: auto; }
+
+/* "Tu proyecto ya tiene valor." — imita al lema del Contacto:
+   misma slab display, mismas tallas, mayúsculas */
+.hero-claim-top {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 400;
+  font-size: clamp(27px, 3.6vw, 68px);
+  line-height: 1.06;
+  letter-spacing: -.015em;
+}
+.hero-claim-top + .t-body-display { margin-top: 16px; }
+.hero-claim { max-width: 720px; }
+
+/* Isla de Chiloé sin marco y al 150% (pedido QA):
+   sin borde ni sombra, y el lienzo crece 1.5× — la isla escala con él */
+.instrumento--isla .instrumento-lienzo,
+.instrumento--isla .instrumento-lienzo:hover {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.estudio .instrumento--isla .instrumento-lienzo {
+  /* +25% (pedido QA): la isla se proyectaba fuera del lienzo y se cortaba */
+  min-height: clamp(600px, 92svh, 1025px);
+  overflow: visible;
+}
+.instrumento--isla .estudio__canvas-holder {
+  aspect-ratio: auto;
+  max-height: none;
+}
+
+/* Partida: barrido final de morados fijos → color por estación (pedido QA) */
+.js .partida__station::before { background: var(--st, var(--purple)); }
+.partida__deep-panel {
+  border-color: color-mix(in srgb, var(--st-ink, var(--warm-white)) 28%, transparent);
+}
+.partida__deep-panel::before,
+.partida__deep-panel::after {
+  border-color: var(--st-ink, var(--warm-white));
+}
+.partida__deep-panel .partida__deep-inner {
+  color: color-mix(in srgb, var(--st-ink, var(--warm-white)) 92%, transparent);
+}
+.partida__deep-panel .partida__deep-label {
+  color: color-mix(in srgb, var(--st-ink, var(--warm-white)) 62%, transparent);
+}
+.partida__deep-panel .partida__deep-inner strong { color: var(--st-ink, var(--warm-white)); }
+
+/* Contacto: cierre compacto (pedido QA) — menos aire al final,
+   marquee al 50% y en equilibrio 50/50 amarillo↔grafito */
+.s.contacto { padding-bottom: 0; }
+.contacto-marquee {
+  margin-top: clamp(28px, 4vh, 48px);
+}
+.contacto-marquee.marquee-display {
+  font-size: clamp(24px, 3.5vw, 58px);
+  color: color-mix(in srgb, var(--yellow) 50%, var(--graphite));
+}
+.legal { padding-block: 14px 18px; }
+
+/* Plegables animados: la altura se recorta durante el despliegue */
+.plegable-cuerpo { overflow: hidden; }
+
+/* Isla como CAPA LIBRE a la derecha (decisión QA final): sin holder,
+   sin marco — flota junto al título/bajada. Orden de capas:
+   fondo blanco → ISLA → número fantasma 02 → textos. */
+.estudio { position: relative; }
+.estudio-isla-franja {
+  position: absolute;
+  inset-block: clamp(24px, 4vh, 64px);
+  right: 0;
+  width: min(58vw, 1040px);
+  z-index: 0;
+}
+.estudio-isla-franja .instrumento--isla,
+.estudio-isla-franja .lab-wipe__inner,
+.estudio .estudio-isla-franja .instrumento-lienzo {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: visible;
+  border: 0;
+  margin: 0;
+}
+/* red de seguridad: aunque la cadena de alturas falle, el lienzo existe */
+.estudio .estudio-isla-franja .instrumento-lienzo { min-height: clamp(420px, 60svh, 760px); }
+.estudio .ghost { z-index: 1; pointer-events: none; }
+/* la capa de texto DEJA PASAR el puntero (para clickear la isla detrás);
+   solo sus elementos reales lo capturan — patrón del hero v9 */
+.estudio > .c { position: relative; z-index: 2; pointer-events: none; }
+.estudio > .c a, .estudio > .c button, .estudio > .c p,
+.estudio > .c h2, .estudio > .c h3, .estudio > .c .plegable,
+.estudio > .c .firma-block { pointer-events: auto; }
+.estudio-grid { grid-template-columns: 1fr; }
+/* los textos capturan su propio puntero; el resto queda para la isla */
+@media (max-width: 900px) {
+  .estudio-isla-franja {
+    position: static;
+    width: 100%;
+    height: min(60svh, 520px);
+    margin-top: 24px;
+  }
+}

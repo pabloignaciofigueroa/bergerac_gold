@@ -1,0 +1,16 @@
+/* ---- Móvil: los titulares slab deben CABER ----
+   La slab es muy ancha: a 15vw una palabra de 9-10 letras se sale del
+   margen. Se acotan por ancho de pantalla, no por gusto. */
+@media (max-width: 599px) {
+  .t-impact,
+  .estudio .t-impact { font-size: 10.5vw; }
+  .partida__title { font-size: 10.5vw; }
+  .metodo__title { font-size: 9.5vw; }
+  .metodo__portada-word { font-size: 17vw; }
+  .metodo__name { font-size: 11vw; }
+  .mundo-word { font-size: 12vw; }
+  .lema { font-size: 10.5vw; }
+  .partida__problem { font-size: 8.5vw; }
+  .hero-claim-top,
+  .hero-mid .t-body-display { font-size: 7.4vw; }
+}

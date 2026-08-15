@@ -1,0 +1,88 @@
+/* ============================================================
+   06 · CONTACTO v9 (F18 — literal) + cierre
+   ============================================================ */
+.contacto-escena { position: absolute; inset: 0; z-index: 0; }
+.contacto-escena canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.contacto-grid {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: clamp(40px, 6vw, 96px); align-items: start;
+  pointer-events: none;
+}
+.contacto-grid a, .contacto-grid button, .contacto-grid input,
+.contacto-grid textarea, .contacto-grid label, .contacto-grid .plegable,
+.contacto-grid .formulario, .contacto-grid p, .contacto-grid h2 { pointer-events: auto; }
+.lema {
+  font-family: var(--font-display); text-transform: uppercase;
+  font-weight: 400;
+  /* 50% de la talla original (pedido QA) */
+  font-size: clamp(27px, 3.6vw, 68px); line-height: 1.06;
+  letter-spacing: -.015em; margin: 14px 0 0;
+}
+.contacto-directo { margin-top: 28px; display: grid; gap: 5px; }
+.contacto-directo a { color: inherit; font-weight: 650; text-decoration: none; font-size: 21px; }
+.formulario {
+  display: grid; gap: 24px;
+  padding: clamp(29px, 3vw, 51px);
+  background: var(--color--paper); color: var(--color--ink);
+  border: 1px solid var(--color--ink); border-radius: 16px;
+}
+.formulario[hidden] { display: none; }
+.formulario .btn {
+  gap: .5em; min-height: 0; padding: .9em 1.6em; border-radius: 999px;
+  border: 1px solid transparent; background: var(--color--ink);
+  color: var(--color--paper); font-weight: 600; font-size: 16px;
+  justify-self: start;
+}
+.campo { display: grid; gap: 7px; }
+.campo label { font-weight: 650; font-size: 16px; }
+.campo-opcional { font-weight: 500; color: color-mix(in srgb, currentColor 55%, transparent); }
+.campo-ayuda { font-size: 13px; line-height: 1.45; color: color-mix(in srgb, currentColor 60%, transparent); }
+.campo input {
+  width: 100%; border: 0; border-bottom: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  border-radius: 0; background: transparent; color: inherit;
+  padding: 10px 0; outline: none; font: inherit; transition: border-color .25s;
+}
+.campo input:focus { border-bottom: 2px solid var(--color--morado); }
+.campo textarea {
+  width: 100%; min-height: 112px; border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  border-radius: 0; background: transparent; color: inherit;
+  padding: 12px; outline: none; resize: vertical; font: inherit; transition: border-color .25s;
+}
+.campo textarea:focus { border-color: var(--color--morado); }
+.formulario-nota { margin: 0; font-size: 12px; color: color-mix(in srgb, currentColor 60%, transparent); }
+.formulario-confirmacion {
+  padding: clamp(32px, 4vw, 54px);
+  background: var(--color--paper); color: var(--color--ink);
+  border: 1px solid var(--color--ink); border-radius: 16px;
+}
+.formulario-confirmacion[hidden] { display: none; }
+.formulario-confirmacion h3 {
+  margin: 0; font-family: var(--font-display); text-transform: uppercase;
+  font-size: 26px; line-height: 1.1; font-weight: 400;
+}
+.formulario-confirmacion p { margin: 10px 0 0; }
+.contacto-marquee {
+  position: relative; z-index: 1; margin-top: clamp(48px, 6vh, 88px);
+  border-block: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  padding-block: 10px;
+}
+.legal {
+  position: relative; z-index: 1;
+  display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  padding-block: 20px;
+}
+.legal a { text-decoration: none; }
+/* El cierre amarillo (v9): el brand de la sección pinta el tema */
+.fin[data-brand="amarillo"] {
+  --theme-bg: var(--color--amarillo);
+  --theme-ink: var(--color--ink);
+  --theme-detail: var(--color--ink-tint-1);
+}
+
+@media (max-width: 900px) {
+  .contacto-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 599px) {
+  .lema { font-size: 6.5vw; }
+}

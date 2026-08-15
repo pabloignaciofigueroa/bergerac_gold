@@ -19,6 +19,15 @@
      bundle no llegue a arrancar; si Astro lo empaquetara, dejaría de
      cumplir su función.
    ============================================================ */
+/* LA CASCADA VA AQUÍ, Y EN ESTE ORDEN. Antes eran tres <link> en el head;
+   ahora los empaqueta Vite en una sola hoja, minificada y con hash. Lo que
+   NO cambia es que el orden importa: tokens define la paleta, base el reset
+   y el shell, y secciones.css es el índice de los quince trozos. Reordenar
+   esto rompe el tema. Lo comprueba `node tools/qa/estilos.mjs`. */
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/secciones.css';
+
 import Loader from '../components/shell/Loader.astro';
 import SkipLink from '../components/shell/SkipLink.astro';
 import Header from '../components/shell/Header.astro';
@@ -73,9 +82,7 @@ html.cargando, html.cargando body { background: #252522; }
 html.cargando, html.cargando body { background: #FDFCFA; }
 [data-transition] { display: none; }
 </style></noscript>
-<link rel="stylesheet" href="/assets/css/tokens.css">
-<link rel="stylesheet" href="/assets/css/base.css">
-<link rel="stylesheet" href="/assets/css/sections.css">
+
 </head>
 <body class="no-js">
 <script is:inline>document.body.classList.remove('no-js');</script>

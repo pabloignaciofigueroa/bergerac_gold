@@ -1,0 +1,89 @@
+/* ============================================================
+   MÉTODO — reestructura QA: portada "MÉTODO" con aire y escultura
+   completa detrás · intro aparte · ritmo LENTO (es el corazón) ·
+   cierre fucsia con "MÉTODO" despidiendo.
+   ============================================================ */
+.metodo__portada-word {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 400;
+  /* 150% (pedido QA) */
+  font-size: clamp(96px, 14.25vw, 225px);
+  line-height: .95;
+  letter-spacing: -.02em;
+  margin-top: 14px;
+}
+/* el hito de apertura ahora son DOS pantallas: portada + intro */
+.metodo__milestone--open {
+  display: block;
+  min-height: 0;
+  padding-block: 0;
+}
+.metodo__milestone--open .metodo__portada {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+.metodo__milestone--open .metodo__copy:not(.metodo__portada) {
+  min-height: 90svh;
+  display: grid;
+  align-content: center;
+}
+/* ritmo pausado: cada hito respira más (la escultura escala su
+   timeline a la altura total — más alto = más lento) */
+.metodo__milestone { min-height: 118svh; }
+.metodo__etapa { min-height: 128svh; }
+.metodo__milestone--hinge { min-height: 85svh; }
+/* cierre: MÁS fucsia aún (pedido QA) — aire para que el anillo final
+   viva completo, METODO despide con espacio ceremonial */
+.metodo__milestone--close {
+  min-height: 195svh;
+  display: grid;
+  align-items: center;
+}
+.metodo__cierre {
+  text-align: center;
+  justify-self: center;
+}
+
+/* Portada y cierre del Método: centrado REAL (los bloques de copy tenían
+   max-width y quedaban a la izquierda del milestone en display:block) */
+.metodo__milestone--open .metodo__copy { margin-inline: auto; }
+.metodo__portada,
+.metodo__cierre {
+  width: 100%;
+  max-width: none !important;
+  text-align: center;
+}
+.metodo__milestone--close { justify-items: center; }
+.metodo__portada-word { margin-inline: auto; }
+
+/* Videos de los casos (páginas reales) dentro del marco instrumento */
+.caso-video { cursor: auto; }
+.caso-video video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Ghost 04 del Método: como en las demás secciones, en la esquina de la
+   apertura, sobre el escenario pero bajo el contenido */
+.metodo > .ghost { z-index: 1; top: 40px; }
+
+/* Portada del Método: holgura morada ARRIBA del título y del 3D —
+   la sección respira antes de presentar nada */
+.metodo__milestone--open .metodo__portada {
+  padding-top: 20svh;
+  min-height: 110svh;
+}
+
+/* Con partículas activas el título vive en el canvas; el h1 real
+   permanece en el DOM (a11y + SEO) pero invisible. Nada de
+   visibility:hidden ni display:none: hacen falta su caja y sus
+   métricas para alinear el muestreo. */
+.s-hero.tiene-particulas .hero-word { opacity: 0; pointer-events: none; }

@@ -1,0 +1,21 @@
+/* ============================================================
+   NIEBLA BERGERAC (pedido): al pasar sobre BERGERAC, dentro de
+   las letras vive una niebla morado+fucsia+amarillo en movimiento
+   CONSTANTE — 6 capas de gradiente derivando a ritmos distintos y
+   recorrido asimétrico (nunca se lee como un loop fijo).
+   ============================================================ */
+/* (la niebla del título fue eliminada a pedido — el título lleva ahora
+   un parallax leve de scroll, ver main.js) */
+
+/* Títulos de 02 y 03 al 80% de su talla (pedido QA) */
+.estudio .t-impact { font-size: clamp(42px, 6.8vw, 94px); }
+.partida__title { font-size: clamp(38px, 5.6vw, 83px); }
+@media (max-width: 599px) {
+  .estudio .t-impact { font-size: 12vw; }
+}
+
+/* Título del Método: MAYÚSCULAS, al 80% de la talla 02/03 (pedido QA) */
+.metodo__title {
+  text-transform: uppercase;
+  font-size: clamp(34px, 5.44vw, 75px);
+}
