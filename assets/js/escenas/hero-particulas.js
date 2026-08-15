@@ -7,6 +7,37 @@
    cada píxel de tinta se convierte en una partícula grafito.
    El cursor las desarma; un muelle las devuelve a su letra.
 
+   DOS CAPAS — entender esto antes de tocar nada:
+
+   · En REPOSO la palabra NO la dibujan las partículas: la dibuja un quad
+     con el lienzo del glifo rasterizado a resolución de pantalla. Es
+     tipografía de verdad. Un campo de discos no puede ser nítido por
+     geometría: para no dejar huecos el disco sólido tiene que cubrir el
+     centro de su celda, y eso obliga a apilar π/2 ≈ 1.57 discos sobre
+     cada punto — un número que no cambia con la escala. 1.57 capas de
+     alpha-over convierten un borde al 50% en un 66%: la rampa de
+     antialiasing se aplasta y la letra se lee engordada.
+
+   · Las partículas aparecen SOLO al arrancarse, y a la vez abren su hueco
+     en el glifo. La máscara que hace ese borrado la dibujan ELLAS MISMAS,
+     en una pasada aparte a un render target: cada una pinta un disco en su
+     CASA con su grado de arranque, y el glifo lo resta. Así la letra se
+     abre con la forma exacta del grano que se va y se cierra sola según
+     vuelven, sin sincronizar nada con el cursor.
+     Se probó antes con una rejilla calculada en CPU y NO SIRVE: por fino
+     que se haga el paso borra en celdas y la letra se come a cuadros.
+
+   TRES COSAS QUE COSTARON, respetarlas si se toca la máscara:
+   · El render target tiene v=0 ABAJO y el lienzo del glifo v=0 ARRIBA. Sin
+     voltear la coordenada al leerlo, la máscara borra el hueco espejado en
+     vertical: casi acierta —la palabra es ancha y baja— pero deja hilos de
+     letra sin borrar alrededor del cursor.
+   · El núcleo del disco de la máscara debe ser al menos tan grande como el
+     de la tinta que borra (NUCLEO = 0.44). Más pequeño deja cerco.
+   · El umbral de aparecer/vaciar (uVisIn/uVisOut, ~1px) es MUCHO menor que
+     el de engordar el grano (uHotIn/uHotOut, decenas de px). Con un solo
+     umbral la letra aguantaba entera y se rompía de golpe.
+
    Diferencias con el demo original (fondo negro + additive):
    · alpha-over premultiplicado — el grafito en additive sería
      invisible sobre el azul; aquí la tinta satura a #252522 y
@@ -45,9 +76,28 @@ const PAD = 4;          /* holgura del canvas de muestreo, px */
    del presupuesto se gasta ahí. */
 /* El punto de CONTORNO vale ~1 píxel del glifo: reproduce el bitmap de la
    fuente casi tal cual (definición tipográfica). Lo justo para que no
-   queden costuras entre puntos vecinos: diámetro_sólido ≥ paso·√2. */
+   queden costuras entre puntos vecinos: diámetro_sólido ≥ paso·√2.
+
+   REGLA DE COBERTURA — no bajar estos diales sin rehacer la cuenta.
+   Para que una retícula cuadrada no deje hueco, el disco sólido tiene que
+   alcanzar el CENTRO de la celda, y en el relleno la celda se agranda con
+   el desorden:
+       diámetro_sólido = paso · DOT · NUCLEO · 2  ≥  (paso + 2·jitter) · √2
+   El relleno la incumplía por tres sitios a la vez —DOT_INT justo, talla
+   aleatoria por partícula y pulso— y el disco caía a 3.69 px cuando hacían
+   falta 5.61. Como el sorteo se hace UNA vez al construir, los huecos
+   salían siempre en las mismas celdas: se veían al cargar y volvían a
+   aparecer intactos después de desarmar la palabra con el cursor.
+   Lo verifica `node tools/qa/qa.mjs titulo`. */
 const DOT_BORDE = 1.82;
-const DOT_INT = 2.15;    /* íd. del relleno (mayor: tiene que tapar) */
+/* Relleno. El mínimo teórico sale de exigir que el disco sólido alcance el
+   centro de la celda de la retícula, contando el desorden que separa a dos
+   vecinos: diámetro >= (paso + 2·jitter)·raíz(2). Con JITTER 0.18 y NUCLEO
+   0.44 eso pide DOT_INT >= 2.186 — el 2.15 de antes ya se quedaba corto, y
+   con la talla aleatoria y el pulso encima el disco caía a 3.69 px cuando
+   hacían falta 5.61. Ahí estaban los huecos del interior, y siempre en las
+   mismas celdas porque el sorteo se hace una vez al construir. */
+const DOT_INT = 2.30;
 const NUCLEO = 0.44;     /* fracción opaca del punto (el resto, borde suave) */
 const JITTER = 0.18;     /* desorden del relleno, en fracción del paso */
 
@@ -107,9 +157,15 @@ function muestrear(datos, gapBorde, gapInt) {
   const H = arriba + abajo;
   if (W < 8 || H < 8) return null;
 
+  /* El lienzo se rasteriza a RESOLUCIÓN DE PANTALLA. Sirve para dos cosas:
+     muestrear las partículas con alfas más fieles, y —sobre todo— ser la
+     capa de glifo que se dibuja en reposo, que a 1x se vería borrosa. */
+  const esc = Math.min(devicePixelRatio || 1, 2);
+  const BW = Math.ceil(W * esc), BH = Math.ceil(H * esc);
   const c = document.createElement('canvas');
-  c.width = W; c.height = H;
+  c.width = BW; c.height = BH;
   const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.scale(esc, esc);
   ctx.font = font;
   ctx.textBaseline = 'alphabetic';
   ctx.fillStyle = '#fff';
@@ -122,9 +178,27 @@ function muestrear(datos, gapBorde, gapInt) {
     ctx.fillText(transformar(crudo[i]), rc.left - spanRect.left + PAD, arriba);
   }
 
-  const data = ctx.getImageData(0, 0, W, H).data;
-  const A = (x, y) => (x < 0 || y < 0 || x >= W || y >= H)
-    ? 0 : data[((y | 0) * W + (x | 0)) * 4 + 3];
+  const data = ctx.getImageData(0, 0, BW, BH).data;
+
+  /* Cobertura en una posición CONTINUA, con interpolación bilineal.
+     Antes se truncaba (`x|0`) y eso rompía la retícula: con paso 1.2 las
+     columnas caían en 0,1,2,4,5,7… — separaciones reales de 1 y 2 px
+     mezcladas. Donde tocaba 2 px el núcleo sólido del punto (1.92 px) no
+     llegaba a cubrir, y ahí estaban las fisuras. Muestreando en continuo
+     el paso es de verdad 1.2 y la cobertura queda garantizada.
+     Convenio: el píxel k cubre [k, k+1) y su centro está en k+0.5, así que
+     se interpola entre centros. Una partícula colocada en `u` mide en `u`:
+     posición y medida coinciden, sin el sesgo de medio píxel que tenía. */
+  const A = (u, v) => {
+    const x = u * esc - 0.5, y = v * esc - 0.5;
+    if (x < -0.5 || y < -0.5 || x > BW - 0.5 || y > BH - 0.5) return 0;
+    const x0 = Math.floor(x), y0 = Math.floor(y);
+    const fx = x - x0, fy = y - y0;
+    const p = (xx, yy) => (xx < 0 || yy < 0 || xx >= BW || yy >= BH)
+      ? 0 : data[(yy * BW + xx) * 4 + 3];
+    return p(x0, y0) * (1 - fx) * (1 - fy) + p(x0 + 1, y0) * fx * (1 - fy)
+         + p(x0, y0 + 1) * (1 - fx) * fy + p(x0 + 1, y0 + 1) * fx * fy;
+  };
 
   /* pts: [x, y, alpha, esBorde] por partícula */
   const pts = [];
@@ -136,6 +210,7 @@ function muestrear(datos, gapBorde, gapInt) {
         contorno acaba justo donde empieza el relleno, sin hueco entre
         ambos y sin que el relleno desborde la letra. */
   const R = Math.max(2, Math.ceil(gapInt * DOT_INT * NUCLEO));
+
   for (let y = 0; y < H; y += gapBorde) {
     for (let x = 0; x < W; x += gapBorde) {
       const a = A(x, y);
@@ -164,7 +239,7 @@ function muestrear(datos, gapBorde, gapInt) {
   }
 
   /* origen del canvas en coordenadas de pantalla */
-  return { pts, W, H, ox: spanRect.left - PAD, oy: baselineY - arriba };
+  return { pts, W, H, esc, lienzo: c, ox: spanRect.left - PAD, oy: baselineY - arriba };
 }
 
 /* ---- shaders ---------------------------------------------------- */
@@ -173,21 +248,40 @@ const VERT = /* glsl */`
   attribute float aRand;
   attribute float aAlpha;
   attribute float aGrow;
+  attribute float aPulso;
+  attribute float aPolvo;
   attribute vec3  aHome;
   uniform float uTime;
   uniform float uScale;
   uniform float uHotIn;
   uniform float uHotOut;
+  uniform float uVisIn;
+  uniform float uVisOut;
   varying float vAlpha;
   void main() {
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     float disp = length(position.xy - aHome.xy);
+    /* DOS umbrales distintos, y esto importa:
+       · vis   — aparecer y vaciar el glifo. Tiene que arrancar en cuanto la
+                 partícula se despega de su sitio (~1px), o la letra aguanta
+                 entera un buen rato y luego se rompe de golpe: se veía tosco.
+       · crece — engordar el grano. Ese sí es un gesto lento y largo. */
+    float hotVis = smoothstep(uVisIn, uVisOut, disp);
     float hot = smoothstep(uHotIn, uHotOut, disp);
-    /* MATERIALIZACIÓN: en reposo las partículas del contorno llevan la
-       opacidad parcial del antialiasing (la palabra se lee como fuente);
-       al arrancarse ganan cuerpo y se revelan como partículas. */
-    vAlpha = mix(aAlpha, 1.0, hot);
-    float pulse = 0.88 + 0.12 * sin(uTime * 1.6 + aRand * 6.2831);
+    /* EN REPOSO LAS PARTÍCULAS DE LA PALABRA NO SE DIBUJAN: la palabra la
+       pinta la capa de glifo, que es tipografía de verdad y no admite
+       comparación. Cada partícula aparece a medida que se arranca, y a la
+       vez borra su hueco en el glifo (mapa de vaciado) — así la letra se
+       desintegra en el sitio exacto del que sale el grano.
+       aPolvo=1 en el polvo ambiental, que sí vive siempre. */
+    vAlpha = mix(aAlpha * aPolvo, 1.0, hotVis);
+    /* El pulso encoge el punto hasta el 76% de su talla. En el relleno y en
+       el polvo sobra margen y ahí da la vida de grano que buscamos; en el
+       CONTORNO no: a talla mínima el núcleo sólido caía a 1.46 px cuando la
+       retícula pide 1.70, y el borde se abría y cerraba con el ciclo.
+       aPulso vale 0 en el contorno (talla exacta, cobertura garantizada) y
+       0.12 en el resto — con 0.12 la fórmula es idéntica a la de siempre. */
+    float pulse = 1.0 - aPulso + aPulso * sin(uTime * 1.6 + aRand * 6.2831);
     /* el contorno vale ~1 píxel en reposo (definición) y crece mucho al
        arrancarse (grano visible); el relleno apenas cambia */
     float ps = aSize * pulse * (1.0 + aGrow * hot) * uScale / -mv.z;
@@ -212,6 +306,75 @@ const FRAG = /* glsl */`
   }
 `;
 
+/* Capa de glifo: la palabra en reposo. Un quad con el mismo lienzo que se
+   muestrea, a resolución de pantalla, así que es EXACTAMENTE la tipografía
+   que dibujaría el navegador. `uVacio` es un mapa de baja resolución que
+   marca de qué zonas se han ido las partículas; ahí el glifo se retira. */
+/* Pasada de máscara: los mismos puntos, pero en su CASA y con el grado de
+   arranque como valor. Blending MAX = unión de discos, sin acumular. */
+const VERT_MASK = /* glsl */`
+  attribute float aSize;
+  attribute float aPolvo;
+  attribute vec3  aHome;
+  uniform float uScaleMask;
+  uniform float uVisIn;
+  uniform float uVisOut;
+  varying float vHot;
+  void main() {
+    float disp = length(position.xy - aHome.xy);
+    vHot = smoothstep(uVisIn, uVisOut, disp) * (1.0 - aPolvo);
+    /* se dibuja donde ESTABA, no donde está: lo que hay que abrir en el
+       glifo es el hueco que la partícula ha dejado */
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(aHome, 1.0);
+    gl_PointSize = aSize * uScaleMask;
+  }
+`;
+
+const FRAG_MASK = /* glsl */`
+  precision mediump float;
+  varying float vHot;
+  void main() {
+    float d = length(gl_PointCoord - 0.5);
+    /* El núcleo de la máscara tiene que ser AL MENOS tan grande como el de la
+       tinta que borra (NUCLEO = 0.44). Con 0.28 se quedaba corto y dejaba un
+       cerco de glifo sin borrar: se veían hilos rectos alrededor del cursor. */
+    float a = smoothstep(0.5, 0.44, d) * vHot;
+    if (a <= 0.0) discard;
+    gl_FragColor = vec4(a, a, a, a);
+  }
+`;
+
+const VERT_GLIFO = /* glsl */`
+  varying vec2 vUv;
+  void main() {
+    /* el lienzo tiene la fila 0 arriba; el quad, la v=1. Se voltea aquí
+       para que ambas texturas se indexen igual y no dependa de flipY. */
+    vUv = vec2(uv.x, 1.0 - uv.y);
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const FRAG_GLIFO = /* glsl */`
+  precision mediump float;
+  uniform sampler2D uGlifo;
+  uniform sampler2D uVacio;
+  uniform vec3 uColor;
+  varying vec2 vUv;
+  void main() {
+    float cobertura = texture2D(uGlifo, vUv).a;
+    /* El render target tiene v=0 ABAJO (así es como escribe WebGL), mientras
+       el lienzo del glifo la tiene ARRIBA. Sin voltear, la máscara borraba
+       el hueco espejado en vertical: casi acertaba —la palabra es ancha y
+       baja— pero dejaba hilos de letra sin borrar donde no coincidía. */
+    float vacio = texture2D(uVacio, vec2(vUv.x, 1.0 - vUv.y)).r;
+    /* resta directa: la máscara ya tiene la forma exacta del grano que se
+       ha ido, así que no hay curva que disimule nada */
+    float a = cobertura * (1.0 - vacio);
+    if (a < 0.004) discard;
+    gl_FragColor = vec4(uColor * a, a);
+  }
+`;
+
 export async function init(mount) {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
     return { start() {}, stop() {}, dispose() {} };
@@ -229,6 +392,8 @@ export async function init(mount) {
       uNucleo: { value: NUCLEO },
       uHotIn: { value: 40 },
       uHotOut: { value: 180 },
+      uVisIn: { value: 0.8 },
+      uVisOut: { value: 9 },
     },
     vertexShader: VERT,
     fragmentShader: FRAG,
@@ -245,6 +410,52 @@ export async function init(mount) {
 
   let TOTAL = 0, LETRAS = 0, home = null, pos = null, vel = null, aRand = null, peso = null;
   let geo = null, points = null;
+  /* capa de glifo + mapa de vaciado */
+  let grupo = null, glifo = null, texGlifo = null;
+  /* La máscara de vaciado la dibujan LAS PROPIAS PARTÍCULAS en un render
+     target: cada una pinta un disco en su CASA con su grado de arranque.
+     Antes era una rejilla calculada en CPU y, por fino que se hiciera el
+     paso, borraba en celdas: la letra se comía a cuadros en vez de
+     deshacerse en grano. */
+  let rt = null, escenaMask = null, camMask = null, puntosMask = null;
+  const matMask = new THREE.ShaderMaterial({
+    uniforms: {
+      uScaleMask: { value: 1 },
+      uVisIn: { value: 0.8 },
+      uVisOut: { value: 9 },
+    },
+    vertexShader: VERT_MASK,
+    fragmentShader: FRAG_MASK,
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    /* MAX: la unión de los discos. Sumando, dos vecinas darían más de 1 y el
+       vaciado se comería más de lo que le toca. */
+    blending: THREE.CustomBlending,
+    blendEquation: THREE.MaxEquation,
+    blendSrc: THREE.OneFactor,
+    blendDst: THREE.OneFactor,
+    blendEquationAlpha: THREE.MaxEquation,
+    blendSrcAlpha: THREE.OneFactor,
+    blendDstAlpha: THREE.OneFactor,
+  });
+  const matGlifo = new THREE.ShaderMaterial({
+    uniforms: {
+      uGlifo: { value: null },
+      uVacio: { value: null },
+      uColor: { value: new THREE.Vector3(...GRAFITO) },
+    },
+    vertexShader: VERT_GLIFO,
+    fragmentShader: FRAG_GLIFO,
+    transparent: true,
+    depthWrite: false,
+    depthTest: false,
+    blending: THREE.CustomBlending,
+    blendSrc: THREE.OneFactor,
+    blendDst: THREE.OneMinusSrcAlphaFactor,
+    blendSrcAlpha: THREE.OneFactor,
+    blendDstAlpha: THREE.OneMinusSrcAlphaFactor,
+  });
   let REPEL_R = 200, REPEL_F = 240, TURB = 20;
   let DMIN = 30, VMAX = 70, VMAX2 = 4900;
   let listo = false, quietos = 0;
@@ -322,6 +533,8 @@ export async function init(mount) {
     const aSize = new Float32Array(TOTAL);
     const aAlpha = new Float32Array(TOTAL);
     const aGrow = new Float32Array(TOTAL);
+    const aPulso = new Float32Array(TOTAL);
+    const aPolvo = new Float32Array(TOTAL);
 
     /* origen del canvas de muestreo, relativo al mount */
     const ox = m.ox - mr.left;
@@ -336,8 +549,15 @@ export async function init(mount) {
       home[i * 3] = ox + px - W / 2;
       home[i * 3 + 1] = H / 2 - (oy + py);
       home[i * 3 + 2] = 0;
-      aSize[i] = esBorde ? 1 : sizeInt * (0.88 + Math.random() * 0.3);
-      aGrow[i] = esBorde ? 2.4 : 0.45;
+      /* En reposo el relleno está tapado por tinta plena: su variación de
+         talla no se ve y en cambio abría celdas. Se pasa al término `hot`,
+         donde sí se ve — al desarmarse — y el reposo queda garantizado. */
+      aSize[i] = esBorde ? 1 : sizeInt;
+      aGrow[i] = esBorde ? 2.4 : 0.45 * (0.6 + Math.random() * 0.9);
+      /* Ni contorno ni relleno pulsan de tamaño: los dos tienen que cubrir
+         en reposo. El pulso se queda solo en el polvo, que es decorativo. */
+      aPulso[i] = 0;
+      aPolvo[i] = 0;   /* palabra: invisible en reposo, la pinta el glifo */
       aAlpha[i] = alfa;
       aRand[i] = Math.random();
       peso[i] = esBorde ? 0.9 + Math.random() * 0.4 : 0.8 + Math.random() * 0.55;
@@ -361,6 +581,8 @@ export async function init(mount) {
       home[i * 3 + 2] = 0;
       aSize[i] = 1.6 + Math.random() * 1.4;
       aGrow[i] = 0.6;
+      aPulso[i] = 0.12;
+      aPolvo[i] = 1;   /* polvo ambiental: siempre visible */
       aAlpha[i] = 0.10 + Math.random() * 0.12;
       aRand[i] = Math.random();
       peso[i] = 1.6 + Math.random() * 1.2;
@@ -369,17 +591,76 @@ export async function init(mount) {
     pos.set(home);
     vel.fill(0);
 
-    if (points) { base.scene.remove(points); geo.dispose(); }
+    if (!grupo) { grupo = new THREE.Group(); base.scene.add(grupo); }
+    if (points) { grupo.remove(points); geo.dispose(); }
     geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     geo.setAttribute('aHome', new THREE.BufferAttribute(home, 3));
     geo.setAttribute('aSize', new THREE.BufferAttribute(aSize, 1));
     geo.setAttribute('aAlpha', new THREE.BufferAttribute(aAlpha, 1));
     geo.setAttribute('aGrow', new THREE.BufferAttribute(aGrow, 1));
+    geo.setAttribute('aPulso', new THREE.BufferAttribute(aPulso, 1));
+    geo.setAttribute('aPolvo', new THREE.BufferAttribute(aPolvo, 1));
     geo.setAttribute('aRand', new THREE.BufferAttribute(aRand, 1));
     points = new THREE.Points(geo, mat);
     points.frustumCulled = false;
-    base.scene.add(points);
+    points.renderOrder = 2;
+    grupo.add(points);
+
+    /* ---- capa de glifo: la palabra en reposo ---------------------- */
+    if (glifo) { grupo.remove(glifo); glifo.geometry.dispose(); }
+    if (texGlifo) texGlifo.dispose();
+    texGlifo = new THREE.CanvasTexture(m.lienzo);
+    texGlifo.minFilter = THREE.LinearFilter;
+    texGlifo.magFilter = THREE.LinearFilter;
+    texGlifo.generateMipmaps = false;
+    texGlifo.flipY = false;
+    texGlifo.colorSpace = THREE.NoColorSpace;   /* es una máscara, no color */
+
+    /* ---- máscara de vaciado: un render target del tamaño del lienzo ----
+       Las partículas la dibujan solas (pasada aparte, geometría compartida),
+       cada una en su casa. Así el glifo se abre con la forma exacta del grano
+       que se ha ido, y no en celdas. */
+    const rtW = Math.max(2, Math.round(m.W * m.esc));
+    const rtH = Math.max(2, Math.round(m.H * m.esc));
+    if (rt) rt.dispose();
+    rt = new THREE.WebGLRenderTarget(rtW, rtH, {
+      minFilter: THREE.LinearFilter,
+      magFilter: THREE.LinearFilter,
+      depthBuffer: false,
+      stencilBuffer: false,
+    });
+
+    /* cámara ortográfica que encuadra EXACTAMENTE el rectángulo del lienzo,
+       en el espacio local del grupo: así el parallax no la afecta */
+    camMask = new THREE.OrthographicCamera(-m.W / 2, m.W / 2, m.H / 2, -m.H / 2, -1000, 1000);
+    camMask.position.set(ox + m.W / 2 - W / 2, H / 2 - oy - m.H / 2, 0);
+    camMask.updateProjectionMatrix();
+
+    /* el punto de la máscara mide lo mismo que el de verdad, en píxeles del
+       render target (que tiene m.esc px por unidad de mundo) */
+    /* un pelo más grande que el punto real (×1.15) para cerrar la costura
+       entre discos vecinos sin comerse la tinta de las que no se han movido */
+    matMask.uniforms.uScaleMask.value = gapBorde * DOT_BORDE * m.esc * 1.15;
+    matMask.uniforms.uVisIn.value = mat.uniforms.uVisIn.value;
+    matMask.uniforms.uVisOut.value = mat.uniforms.uVisOut.value;
+
+    if (!escenaMask) escenaMask = new THREE.Scene();
+    if (puntosMask) escenaMask.remove(puntosMask);
+    puntosMask = new THREE.Points(geo, matMask);
+    puntosMask.frustumCulled = false;
+    escenaMask.add(puntosMask);
+
+    matGlifo.uniforms.uVacio.value = rt.texture;
+
+    matGlifo.uniforms.uGlifo.value = texGlifo;
+
+    /* el quad ocupa exactamente el rectángulo del lienzo, en px CSS = mundo */
+    glifo = new THREE.Mesh(new THREE.PlaneGeometry(m.W, m.H), matGlifo);
+    glifo.position.set(ox + m.W / 2 - W / 2, H / 2 - oy - m.H / 2, 0);
+    glifo.frustumCulled = false;
+    glifo.renderOrder = 1;                      /* debajo de las partículas */
+    grupo.add(glifo);
 
     /* tamaño de punto: la unidad es el punto de CONTORNO (world = px CSS) */
     const worldDot = gapBorde * DOT_BORDE;
@@ -423,7 +704,7 @@ export async function init(mount) {
     /* parallax v9 sobre el objeto: mismas amplitudes que tenía el h1 */
     par.x = suavizar(par.x, puntero.tx, 0.05);
     par.y = suavizar(par.y, puntero.ty, 0.05);
-    points.position.set(par.x * -9, par.y * -6.3, 0);
+    grupo.position.set(par.x * -9, par.y * -6.3, 0);   /* mueve glifo y grano a la vez */
 
     puntero.x = suavizar(puntero.x, puntero.tx, 0.3);
     puntero.y = suavizar(puntero.y, puntero.ty, 0.3);
@@ -491,6 +772,18 @@ export async function init(mount) {
        palabra quedaba mal cerrada tras cada interacción */
     quietos = (!puntero.dentro && maxV < 0.04 && maxD < 0.35) ? quietos + 1 : 0;
     geo.attributes.position.needsUpdate = true;
+
+    /* PASADA DE MÁSCARA. Va aquí, justo antes de que crearBase pinte la
+       escena: las partículas dibujan en su casa el hueco que han dejado y
+       el glifo lo lee en el mismo frame. */
+    if (rt && escenaMask && camMask) {
+      const previo = base.renderer.getRenderTarget();
+      base.renderer.setRenderTarget(rt);
+      base.renderer.setClearColor(0x000000, 0);
+      base.renderer.clear(true, false, false);
+      base.renderer.render(escenaMask, camMask);
+      base.renderer.setRenderTarget(previo);
+    }
   }
 
   /* ---- puntero, acción, resize ------------------------------------ */
@@ -532,6 +825,11 @@ export async function init(mount) {
     (seccion || mount).removeEventListener('pointermove', despertar);
     seccion && seccion.classList.remove('tiene-particulas');
     if (geo) geo.dispose();
+    if (glifo) glifo.geometry.dispose();
+    if (texGlifo) texGlifo.dispose();
+    if (rt) rt.dispose();
+    matMask.dispose();
+    matGlifo.dispose();
     mat.dispose();
     dispose();
   };

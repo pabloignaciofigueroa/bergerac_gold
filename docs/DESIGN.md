@@ -129,12 +129,28 @@ parcial (invisibles como partículas, perfectas como tipografía). Al arrancarse
 **Sin color de excitación** (decisión de Pablo): siempre grafito. El desarme se lee
 por movimiento y tamaño.
 
-Diales, todos al inicio de `hero-particulas.js`: `DOT_BORDE`, `DOT_INT`, `NUCLEO`
-(fracción opaca del punto), `JITTER`, y el `presupuesto()` por tamaño de pantalla.
+### Dos capas: por qué el reposo no lo dibujan las partículas
 
-Física: muelle `SPRING 0.024` + `DAMPING 0.90`, repulsión con **distancia mínima**
-(satura la fuerza bajo el cursor) y **techo de velocidad** — sin esos dos, las
-partículas escapan y no vuelven.
+El título en reposo es un **quad con el glifo rasterizado a resolución de
+pantalla**. No es comodidad: un campo de discos no puede ser nítido, por
+geometría. Para no dejar huecos, el disco sólido debe alcanzar el centro de su
+celda (`diámetro ≥ celda·√2`), y eso obliga a **1,57 discos apilados sobre cada
+punto**, un número que no cambia con la escala. Con 1,57 capas de alpha-over un
+píxel al 50% se pinta al 66%: la rampa de antialiasing se aplasta y la letra se
+lee engordada. Por eso también se descartó muestrear a DPR: pagaba ×4 partículas
+para conservar el mismo error.
+
+Las partículas aparecen solo al arrancarse, y **la máscara que abre el glifo la
+dibujan ellas mismas** en una pasada a un render target: cada una pinta un disco
+en su casa con su grado de arranque. La letra se abre con la forma del grano y se
+cierra sola según vuelven.
+
+Se probó antes con una rejilla en CPU y no sirve: borra en celdas y la letra se
+come a cuadros. Tres detalles que costaron y que no hay que repetir: el render
+target tiene la v invertida respecto al lienzo (sin voltearla deja hilos de letra
+sin borrar); el disco de la máscara debe ser al menos tan grande como la tinta
+que borra; y el umbral para aparecer (~1px) tiene que ser mucho menor que el de
+engordar el grano, o la letra aguanta entera y se rompe de golpe.
 
 ## Motion
 

@@ -43,7 +43,7 @@ Se montan solas por viewport, tienen su propio rAF vía `crearBase`.
 | Archivo | Escena |
 |---|---|
 | `util.js` (91) | **Base compartida**: `crearBase(mount, {fov, z, onFrame, onResize})` crea renderer con alpha, monta el canvas, gestiona resize y expone `start/stop/dispose`. También `seguirPuntero` y `suavizar`, y la `PALETA`. |
-| `hero-particulas.js` (519) | **BERGERAC en partículas.** Lo más elaborado del sitio: muestrea el `<h1>` en dos poblaciones (contorno fino con el antialiasing real de la fuente + relleno granulado), física de muelle, repulsión del cursor con saturación y techo de velocidad. Ver `docs/DESIGN.md`. |
+| `hero-particulas.js` (660) | **BERGERAC en partículas.** Lo más elaborado del sitio. **Dos capas**: en reposo la palabra la dibuja un quad con el glifo a resolución de pantalla; las partículas aparecen solo al arrancarse y abren su hueco con una máscara que dibujan ellas mismas en un render target. Muestrea el `<h1>` en dos poblaciones (contorno fino con el antialiasing real de la fuente + relleno granulado), física de muelle, repulsión del cursor con saturación y techo de velocidad. Ver `docs/DESIGN.md`. |
 | `contacto.js` (130) | Campo de partículas del cierre, en amarillo oscurecido. |
 | `proyectos.js` (195) | Antes/después con shader de transición. **Sin uso**: los casos llevan vídeo real. |
 | `hero.js` (220) | Bandada de boids. **Sin uso**: reemplazada por las partículas. Se conserva para volver atrás cambiando `data-escena`. |

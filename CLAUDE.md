@@ -58,6 +58,18 @@ No funciona abriendo `index.html` con doble clic (módulos ES bloqueados en `fil
 - **El `fov` de three es vertical.** Una cámara encuadrada en apaisado pierde
   campo horizontal en retrato y el objeto se sale por los lados. El Método lo
   compensa alejando la cámara; ver `ajusteRetrato` en `sections/metodo.js`.
+- **El título son DOS capas.** En reposo lo dibuja un quad con el glifo a
+  resolución de pantalla; las partículas solo aparecen al arrancarse y abren el
+  hueco mediante una máscara que dibujan ellas mismas en un render target. La
+  máscara con rejilla de CPU ya se probó y borra a cuadros. Ojo: el render
+  target tiene la coordenada v invertida respecto al lienzo del glifo.
+- **Las partículas del título tienen una regla de cobertura.** El disco
+  sólido debe alcanzar el centro de la celda de su retícula, contando el
+  desorden: `paso·DOT·NUCLEO·2 ≥ (paso + 2·jitter)·√2`. Nada que encoja el
+  punto en reposo —talla aleatoria, pulso, bajar `DOT_INT`— sin rehacer esa
+  cuenta: abre fisuras dentro de las letras, siempre en las mismas celdas.
+  Se mide con `node tools/qa/qa.mjs titulo`, y hay que mirarlo **a DPR 2**:
+  a DPR 1 el defecto no se ve.
 - **La cortina de carga se pinta desde el HTML, no desde `base.css`.**
   `loader.js` es un módulo (diferido) y sus capas opacas las crea él: hasta que
   corría, el sitio ya estaba a la vista y la pantalla de carga entraba **después**.
