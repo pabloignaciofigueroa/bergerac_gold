@@ -1,5 +1,10 @@
 ---
-/* Sección — Casos. */
+/* Sección 05 — Casos.
+   Split de dos mundos (v9): los dos en blanco cálido, y al hover el mundo
+   entero pasa a grafito. Los dos casos son el mismo markup con distinto
+   contenido: viven en src/data/casos.js. */
+import { casos } from '../../data/casos.js';
+import Caso from '../casos/Caso.astro';
 ---
 <section id="proyectos" aria-labelledby="h-proyectos">
   <div class="s proyectos-intro cover" data-theme="light" data-brand="fucsia">
@@ -12,60 +17,7 @@
   </div>
 
   <div class="split casos-split" data-brand="fucsia">
-    <div class="mundo" data-theme="light">
-      <div>
-        <p class="t-eyebrow" data-anim-high="right, ink-tint-1">caso a · topografía de precisión</p>
-        <p class="mundo-word" data-anim-high="right, ink"><span>Caso</span><span class="l2">Survec</span></p>
-      </div>
-      <p class="t-body-display caso-claim" data-anim-high="left, ink-tint-1, 200">Convertir precisión técnica en una marca capaz de representarla.</p>
-      <p class="caso-intro">Survec contaba con experiencia real en topografía, drones, GNSS y fotogrametría, pero su identidad y su presencia digital no expresaban con suficiente claridad la precisión, el conocimiento territorial ni la capacidad técnica de su trabajo.</p>
-      <figure class="instrumento">
-        <div class="instrumento-lienzo caso-video" role="img" aria-label="Recorrido por la página construida para Survec">
-          <video data-src="/assets/video/SURVEC_WEBPAGE.webm" muted loop playsinline preload="none"></video>
-        </div>
-        <figcaption class="t-eyebrow"><span>la página construida</span><span>survec</span></figcaption>
-      </figure>
-      <div class="caso-areas t-eyebrow"><span>áreas involucradas</span>Rebranding · narrativa · arquitectura de información · diseño y desarrollo web</div>
-      <div class="plegable" data-plegable data-grupo="casos">
-        <button class="plegable-cabeza" type="button" aria-expanded="false" data-cursor="abrir"><span data-anim="text-hover">Revisar el caso</span><span class="plegable-signo" aria-hidden="true">+</span></button>
-        <div class="plegable-cuerpo caso-ficha" hidden>
-          <div><h4>Punto de partida</h4><p>Una empresa técnicamente capaz cuya identidad, discurso y presencia digital no alcanzaban a demostrar el nivel de los servicios que entregaba.</p></div>
-          <div><h4>Lo que debía permanecer</h4><p>Su relación directa con el territorio, la experiencia acumulada y la precisión técnica de su trabajo.</p></div>
-          <div><h4>La decisión</h4><p>Dejar de presentar una lista de servicios y construir una marca basada en lo que Survec realmente entrega: información territorial confiable para tomar mejores decisiones.</p></div>
-          <div><h4>Lo que se construyó</h4><p>Una nueva identidad, un sistema visual reconocible, un relato comercial y una página capaz de explicar servicios técnicos mediante aplicaciones, territorio y resultados comprensibles.</p></div>
-          <div><h4>Resultado</h4><p>Survec cuenta con una identidad coherente y una presencia digital preparada para respaldar conversaciones, propuestas y proyectos de mayor exigencia.</p></div>
-        </div>
-      </div>
-      <a class="t-eyebrow caso-visitar" href="#proyectos" data-anim="text-hover">visitar survec ↗</a>
-    </div>
-
-    <div class="mundo" data-theme="light">
-      <div>
-        <p class="t-eyebrow" data-anim-high="left, fucsia">caso b · arquitectura desde el sur</p>
-        <p class="mundo-word" data-anim-high="left, ink"><span>Caso</span><span class="l2">AS_ARQ</span></p>
-      </div>
-      <p class="t-body-display caso-claim" data-anim-high="right, ink-tint-1, 200">Dar a una obra excelente un lugar donde realmente pudiera verse.</p>
-      <p class="caso-intro">AS Arquitectura ya tenía proyectos residenciales de gran calidad, pero su trabajo aparecía principalmente mediante fotografías y publicaciones dispersas que no permitían comprender completamente cada obra.</p>
-      <figure class="instrumento">
-        <div class="instrumento-lienzo caso-video" role="img" aria-label="Recorrido por la página construida para AS Arquitectura">
-          <video data-src="/assets/video/AS_ARQ_WEBPAGE.webm" muted loop playsinline preload="none"></video>
-        </div>
-        <figcaption class="t-eyebrow"><span>la página construida</span><span>as arquitectura</span></figcaption>
-      </figure>
-      <div class="caso-areas t-eyebrow"><span>áreas involucradas</span>Dirección editorial · curaduría visual · arquitectura de información · diseño y desarrollo web</div>
-      <div class="plegable" data-plegable data-grupo="casos">
-        <button class="plegable-cabeza" type="button" aria-expanded="false" data-cursor="abrir"><span data-anim="text-hover">Revisar el caso</span><span class="plegable-signo" aria-hidden="true">+</span></button>
-        <div class="plegable-cuerpo caso-ficha" hidden>
-          <div><h4>Punto de partida</h4><p>Un estudio con arquitectura valiosa y material fotográfico disponible, pero sin un portafolio capaz de seleccionar, ordenar y presentar correctamente sus proyectos.</p></div>
-          <div><h4>Lo que debía permanecer</h4><p>Las obras, su materialidad, su relación con el paisaje y la manera sobria con que el estudio entiende la arquitectura del sur.</p></div>
-          <div><h4>La decisión</h4><p>La página no debía competir con las casas ni disfrazarlas mediante una identidad excesiva. Debía editar el material, ordenar el recorrido y permitir que la arquitectura fuera la protagonista.</p></div>
-          <div><h4>Lo que se construyó</h4><p>Una experiencia editorial basada en proyectos, fotografías de gran formato, jerarquía tipográfica y un recorrido preparado para observar cada obra con mayor profundidad.</p></div>
-          <div><h4>Resultado</h4><p>AS Arquitectura cuenta con un portafolio digital donde sus proyectos pueden comprenderse como obras completas y no como publicaciones aisladas.</p></div>
-        </div>
-      </div>
-      <a class="t-eyebrow caso-visitar" href="#proyectos" data-anim="text-hover">visitar as arquitectura ↗</a>
-    </div>
+        {casos.map((c) => <Caso {...c} />)}
   </div>
 </section>
 
-<!-- ============ 06 · CONTACTO (v9 literal — F18) ============ -->

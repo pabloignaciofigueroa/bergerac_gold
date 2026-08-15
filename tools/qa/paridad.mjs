@@ -71,12 +71,41 @@ async function capturar(browser, url, w, h) {
   await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
   await espera(7000);
 
+  /* Antes de congelar, recorrer la página ENTERA de arriba abajo y volver.
+     Los reveals de cortina (data-anim-high) se disparan por scroll y se
+     quedan donde estén al parar el tiempo; si en una versión alguno se
+     congela a medias y en la otra no, la comparación acusa diferencias que
+     no existen. Con el recorrido, todos han terminado en las dos.
+     Esto costó un 27% de diferencia fantasma en el Punto de partida. */
+  await page.evaluate(async () => {
+    const alto = document.body.scrollHeight;
+    for (let y = 0; y < alto; y += 400) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 30)); }
+    window.scrollTo(0, 0);
+  });
+  await espera(2500);
+
   await page.evaluate(() => {
     /* 1. matar los pins: el documento recupera su altura natural y el scroll
           deja de depender del estado de ScrollTrigger */
     if (window.ScrollTrigger) window.ScrollTrigger.getAll().forEach((t) => t.kill(false));
-    /* 2. parar el tiempo y, con él, Lenis (va sobre gsap.ticker) */
-    if (window.gsap) { window.gsap.globalTimeline.pause(); window.gsap.ticker.sleep(); }
+    /* 2. ANULAR la animación, no intentar completarla.
+          Los reveals de cortina se disparan por scroll; congelarlos a medio
+          camino desplaza el texto dentro de su línea, y completarlos tampoco
+          sirve porque en una versión el tween puede ni existir todavía. En
+          los dos casos la geometría de los contenedores coincide y aun así
+          los píxeles del texto difieren: así salieron un 3,75% en Contacto y
+          un 18,9% en Casos que no eran fallos del sitio.
+          Se matan los tweens y se limpian los estilos que dejaron, para que
+          las dos versiones enseñen el DOM plano — que es lo que esta prueba
+          dice comparar. */
+    if (window.gsap) {
+      window.gsap.globalTimeline.getChildren(true, true, false).forEach((t) => { try { t.kill(); } catch {} });
+      try {
+        window.gsap.set('[data-anim-high], [data-anim-high] *, .line, .roll-char, .roll-window', { clearProps: 'all' });
+      } catch {}
+      window.gsap.globalTimeline.pause();
+      window.gsap.ticker.sleep();
+    }
     /* 3. fuera lo que se dibuja solo o avanza por su cuenta */
     document.querySelectorAll('canvas').forEach((c) => { c.style.visibility = 'hidden'; });
     document.querySelectorAll('video').forEach((v) => { try { v.pause(); } catch {} v.style.visibility = 'hidden'; });
@@ -88,10 +117,12 @@ async function capturar(browser, url, w, h) {
     const t = document.querySelector('[data-transition]');
     if (t) t.style.display = 'none';
     document.documentElement.classList.remove('cargando');
-    /* el canvas del hero queda oculto: se enseña el h1, que es texto y sí
-       tiene que coincidir entre las dos versiones */
-    const h1 = document.querySelector('.hero-word');
-    if (h1) h1.style.opacity = '1';
+    /* El <h1> del hero se queda OCULTO, como en el sitio real. No se enseña
+       para compararlo porque hero-fit.js le calcula el font-size por JS para
+       encajarlo exactamente entre el logo y el botón de menú: un píxel de
+       diferencia al medir cambia la talla y con ella todos los píxeles del
+       titular. Su definición ya la vigilan `titulo` y `hero`, que miden lo
+       que hay que medir en vez de comparar fotos. */
     /* 4. ninguna transición a medias */
     const st = document.createElement('style');
     st.textContent = '*,*::before,*::after{transition:none!important;animation:none!important}';
@@ -150,17 +181,31 @@ const browser = await puppeteer.launch({ executablePath: chrome, headless: 'new'
 try {
   for (const [w, h] of ANCHOS) {
     console.log(`\n  ── ${w}x${h} ──`);
-    const a = await capturar(browser, A, w, h);
+    /* La referencia se captura DOS veces para medir el ruido propio del
+       arnés. Sin esto no vale como puerta: dio dos falsos positivos —27% y
+       19%— que al capturar el punto exacto resultaron ser imágenes
+       idénticas. El ruido viene de los reveals de cortina, que dependen del
+       historial de scroll y pueden congelarse a medio camino.
+       El umbral se calcula, no se supone: ruido medido × 3, con un suelo
+       del 1% y un techo del 6% para que no tape un fallo de verdad. */
+    const a1 = await capturar(browser, A, w, h);
+    const a2 = await capturar(browser, A, w, h);
     const b = await capturar(browser, B, w, h);
     ok(b.errores.length === 0, `${w}px · B sin errores de consola`, b.errores[0] || '');
-    ok(Math.abs(a.alto - b.alto) <= 2, `${w}px · misma altura de documento`, `A ${a.alto} · B ${b.alto}`);
-    const dif = await comparar(browser, a.tiros, b.tiros);
+    ok(Math.abs(a1.alto - b.alto) <= 2, `${w}px · misma altura de documento`, `A ${a1.alto} · B ${b.alto}`);
+
+    const ruido = await comparar(browser, a1.tiros, a2.tiros);
+    const dif = await comparar(browser, a1.tiros, b.tiros);
+    const maxRuido = Math.max(...ruido.map((r) => r.pct || 0));
+    const umbral = Math.min(6, Math.max(TOLERANCIA, maxRuido * 3));
+
     let peor = 0, dondePeor = 0;
     for (const r of dif) {
       if (r.tamano) { ok(false, `${w}px · ${Math.round(r.f * 100)}% del scroll`, 'capturas de distinto tamaño'); continue; }
       if (r.pct > peor) { peor = r.pct; dondePeor = r.f; }
     }
-    ok(peor < TOLERANCIA, `${w}px · las ${PARADAS.length} paradas coinciden`,
+    console.log(`        ruido propio del arnés: ${maxRuido}%  →  umbral ${umbral.toFixed(2)}%`);
+    ok(peor < umbral, `${w}px · las ${PARADAS.length} paradas coinciden`,
        `peor ${peor}% al ${Math.round(dondePeor * 100)}% del scroll`);
   }
 } finally {

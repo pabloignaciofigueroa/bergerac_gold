@@ -1,5 +1,11 @@
 ---
-/* Sección — Metodo. */
+/* Sección 04 — Método.
+   Flujo escultórico de 7 vistas ligado al scroll, con anclaje de lectura de
+   ~1 pantalla por etapa. Las cuatro etapas son el mismo markup con distinto
+   contenido: viven en src/data/metodo.js.
+   La bisagra cromática morado → fucsia salta en el anclaje de Construir. */
+import { etapas } from '../../data/metodo.js';
+import Etapa from '../metodo/Etapa.astro';
 ---
 <section id="metodo" class="metodo" data-section="metodo" data-method-theme="purple">
   <span class="ghost" aria-hidden="true">04</span>
@@ -20,145 +26,7 @@
 
     <div class="metodo__milestone metodo__milestone--hinge" data-view="1" aria-hidden="true"></div>
 
-    <article class="metodo__milestone metodo__etapa" data-view="2" data-etapa="estudiar">
-      <div class="metodo__copy">
-        <div class="metodo__etapa-head">
-          <span class="metodo__num" aria-hidden="true">01</span>
-          <h3 class="metodo__name">Estudiar</h3>
-        </div>
-        <p class="metodo__etapa-lead">Reconocemos qué ya tiene valor, qué está generando distancia y qué necesita comprenderse antes de intervenir.</p>
-        <div class="disclosure metodo__disclosure">
-          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-1">
-            <span>Profundizar en esta etapa</span>
-            <span class="disclosure__sym" aria-hidden="true">+</span>
-          </button>
-          <div class="disclosure__panel" id="metodo-deep-1">
-            <div class="disclosure__inner metodo__fields">
-              <div>
-                <h4>Observamos</h4>
-                <p>Historia, contexto, audiencias, identidad, contenidos, experiencia actual y restricciones reales.</p>
-              </div>
-              <div>
-                <h4>Contrastamos</h4>
-                <p>Lo que el proyecto es, lo que intenta comunicar y lo que las personas alcanzan a percibir.</p>
-              </div>
-              <div class="metodo__result">
-                <h4>Resultado</h4>
-                <p>Una lectura compartida del punto de partida.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="metodo__milestone metodo__etapa" data-view="3" data-etapa="definir">
-      <div class="metodo__copy">
-        <div class="metodo__etapa-head">
-          <span class="metodo__num" aria-hidden="true">02</span>
-          <h3 class="metodo__name">Definir</h3>
-        </div>
-        <p class="metodo__etapa-lead">Convertimos lo aprendido en una dirección clara: qué conservar, qué cambiar y qué sistema necesita el proyecto.</p>
-        <div class="disclosure metodo__disclosure">
-          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-2">
-            <span>Profundizar en esta etapa</span>
-            <span class="disclosure__sym" aria-hidden="true">+</span>
-          </button>
-          <div class="disclosure__panel" id="metodo-deep-2">
-            <div class="disclosure__inner metodo__fields">
-              <div>
-                <h4>Idea rectora</h4>
-                <p>Definimos el principio que mantendrá unidas las decisiones posteriores.</p>
-              </div>
-              <div>
-                <h4>Estructura</h4>
-                <p>Ordenamos mensaje, contenidos, jerarquías, recorridos y prioridades.</p>
-              </div>
-              <div>
-                <h4>Alcance</h4>
-                <p>Determinamos qué corresponde construir ahora y qué puede esperar.</p>
-              </div>
-              <div class="metodo__result">
-                <h4>Resultado</h4>
-                <p>Una dirección que permite decidir sin improvisar ni acumular.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="metodo__milestone metodo__etapa" data-view="4" data-etapa="construir">
-      <div class="metodo__copy">
-        <div class="metodo__etapa-head">
-          <span class="metodo__num" aria-hidden="true">03</span>
-          <h3 class="metodo__name">Construir</h3>
-        </div>
-        <p class="metodo__etapa-lead">Traducimos la dirección en el sistema, las piezas y las experiencias que el proyecto realmente necesita.</p>
-        <div class="disclosure metodo__disclosure">
-          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-3">
-            <span>Profundizar en esta etapa</span>
-            <span class="disclosure__sym" aria-hidden="true">+</span>
-          </button>
-          <div class="disclosure__panel" id="metodo-deep-3">
-            <div class="disclosure__inner metodo__fields">
-              <div>
-                <h4>Sistema</h4>
-                <p>Definimos la identidad, el lenguaje, la estructura y las reglas que permiten mantener coherencia.</p>
-              </div>
-              <div>
-                <h4>Producción</h4>
-                <p>Diseñamos y desarrollamos las piezas necesarias según el alcance acordado.</p>
-              </div>
-              <div>
-                <h4>Integración</h4>
-                <p>Cada parte se construye considerando cómo se relaciona con las demás.</p>
-              </div>
-              <div class="metodo__result">
-                <h4>Resultado</h4>
-                <p>Una solución real, usable y preparada para mantenerse.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <article class="metodo__milestone metodo__etapa" data-view="5" data-etapa="afinar">
-      <div class="metodo__copy">
-        <div class="metodo__etapa-head">
-          <span class="metodo__num" aria-hidden="true">04</span>
-          <h3 class="metodo__name">Afinar</h3>
-        </div>
-        <p class="metodo__etapa-lead">Probamos, corregimos y completamos la respuesta hasta que pueda funcionar, sostenerse y evolucionar.</p>
-        <div class="disclosure metodo__disclosure">
-          <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls="metodo-deep-4">
-            <span>Profundizar en esta etapa</span>
-            <span class="disclosure__sym" aria-hidden="true">+</span>
-          </button>
-          <div class="disclosure__panel" id="metodo-deep-4">
-            <div class="disclosure__inner metodo__fields">
-              <div>
-                <h4>Revisión</h4>
-                <p>Evaluamos claridad, coherencia, comportamiento, legibilidad y funcionamiento en condiciones reales.</p>
-              </div>
-              <div>
-                <h4>Corrección</h4>
-                <p>Ajustamos aquello que todavía no expresa correctamente la dirección definida.</p>
-              </div>
-              <div>
-                <h4>Preparación</h4>
-                <p>Ordenamos la entrega, las reglas de uso y la base necesaria para futuras evoluciones.</p>
-              </div>
-              <div class="metodo__result">
-                <h4>Resultado</h4>
-                <p>Un sistema que no depende de la improvisación para seguir funcionando.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </article>
+    {etapas.map((e) => <Etapa {...e} />)}
 
     <div class="metodo__milestone metodo__milestone--close" data-view="6">
       <div class="metodo__copy metodo__cierre">
@@ -169,4 +37,3 @@
   </div>
 </section>
 
-<!-- ============ 05 · TRABAJO SELECCIONADO (split de mundos v9) ============ -->
