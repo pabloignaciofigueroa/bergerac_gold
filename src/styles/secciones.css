@@ -1,0 +1,28 @@
+/* ============================================================
+   LAS SEIS SECCIONES — índice de la cascada
+
+   EL ORDEN DE ESTOS IMPORTS ES LA CASCADA. No reordenar sin comprobarlo con
+   `node tools/qa/estilos.mjs`, que compara los estilos computados elemento
+   por elemento contra la versión anterior.
+
+   Aparecen dos veces varias secciones porque el CSS tiene dos generaciones:
+   los bloques originales y una segunda tanda (v9 y arreglos de QA) que los
+   sobreescribe. Se respetó ese orden en vez de fusionarlas, porque hay
+   reglas transversales que se pisan entre secciones distintas.
+   ============================================================ */
+
+@import './secciones/hero.css';   /* 01 · Hero */
+@import './secciones/estudio.css';   /* 02 · El estudio */
+@import './secciones/partida.css';   /* 03 · El punto de partida */
+@import './secciones/metodo.css';   /* 04 · Método */
+@import './secciones/casos.css';   /* 05 · Trabajo seleccionado */
+@import './secciones/contacto.css';   /* 06 · Contacto */
+@import './secciones/responsive-fino.css';   /* ajustes responsive del primer pase */
+@import './secciones/hero-v9.css';   /* 01 · Hero — pase v9 (roles t-*, estructura) */
+@import './secciones/estudio-v9.css';   /* 02 · Estudio v9 + piezas transversales (.s, .cover, t-impact, plegable) */
+@import './secciones/contacto-v9.css';   /* 06 · Contacto v9 + cierre */
+@import './secciones/partida-color.css';   /* 03 · Partida: fotos y un color de marca por problema */
+@import './secciones/casos-split.css';   /* 05 · Casos: split de mundos v9 */
+@import './secciones/niebla.css';   /* niebla de color dentro de las letras del hero */
+@import './secciones/metodo-qa.css';   /* 04 · Método: reestructura de QA (portada, ritmo, cierre) */
+@import './secciones/movil.css';   /* móvil: los titulares slab tienen que caber. VA EL ÚLTIMO. */

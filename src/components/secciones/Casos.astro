@@ -1,0 +1,23 @@
+---
+/* Sección 05 — Casos.
+   Split de dos mundos (v9): los dos en blanco cálido, y al hover el mundo
+   entero pasa a grafito. Los dos casos son el mismo markup con distinto
+   contenido: viven en src/data/casos.js. */
+import { casos } from '../../data/casos.js';
+import Caso from '../casos/Caso.astro';
+---
+<section id="proyectos" aria-labelledby="h-proyectos">
+  <div class="s proyectos-intro cover" data-theme="light" data-brand="fucsia">
+    <span class="ghost" aria-hidden="true">05</span>
+    <div class="c">
+      <p class="t-eyebrow" data-anim-high="right, fucsia">05 · trabajo seleccionado</p>
+      <h2 id="h-proyectos" class="t-impact" data-anim-high="right, ink">Dos proyectos.<br>Dos respuestas<br>distintas.</h2>
+      <p class="t-body-display seccion-bajada" data-anim-high="left, paper-tint-2, 200">En ambos casos, la presencia digital estaba por debajo de la calidad del trabajo real. A partir de ahí, cada proyecto exigió decisiones propias.</p>
+    </div>
+  </div>
+
+  <div class="split casos-split" data-brand="fucsia">
+        {casos.map((c) => <Caso {...c} />)}
+  </div>
+</section>
+

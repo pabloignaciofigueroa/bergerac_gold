@@ -1,0 +1,32 @@
+---
+/* Una de las cuatro estaciones del Punto de partida.
+   El markup sale tal cual del sitio: `data-station` es lo que el CSS usa
+   para darle su color de marca, y el id del panel es lo que enlaza el
+   botón con `aria-controls` para que el desplegable sea accesible. */
+import { Image } from 'astro:assets';
+const { station, num, problema, foto, parrafo, etiqueta, campos, accion } = Astro.props;
+const idPanel = `partida-deep-${station}`;
+---
+<article class="partida__panel partida__station" data-station={station}>
+  <div class="partida__station-head">
+    <span class="mono partida__num">{num}</span>
+    <h3 class="partida__problem">{problema}</h3>
+  </div>
+  <div class="partida__visual" data-visual-slot={station}>
+    <Image class="partida__foto" src={foto} alt="" loading="lazy" decoding="async" widths={[420, 840, 1260]} sizes="(max-width: 1023px) 92vw, 34vw" />
+    <div class="partida__deep-panel" id={idPanel}>
+      <div class="partida__deep-inner">
+      <p>{parrafo}</p>
+      <span class="partida__deep-label">{etiqueta}</span>
+      <strong>{campos}</strong>
+    </div>
+    </div>
+  </div>
+  <div class="partida__deep">
+    <button class="partida__more" type="button" aria-expanded="false" aria-controls={idPanel}>
+      <span>{accion}</span>
+      <span class="disclosure__sym" aria-hidden="true">+</span>
+    </button>
+
+  </div>
+</article>

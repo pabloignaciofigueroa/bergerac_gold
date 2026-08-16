@@ -1,0 +1,10 @@
+/* ================= Responsive fino ================= */
+@media (max-width: 767px) {
+  :root { --section-pad-y: clamp(72px, 16vw, 110px); }
+  .hero__brandword { font-size: clamp(64px, 19vw, 120px); }
+  .works__media { min-height: clamp(280px, 44svh, 420px); }
+}
+
+/* Fallback sin 3D: la seccion conserva su lectura editorial, sin huecos */
+.estudio--sin3d .estudio__piece { display: none; }
+.estudio--sin3d .estudio__layout { grid-template-columns: 1fr; }

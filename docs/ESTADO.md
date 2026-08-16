@@ -4,6 +4,22 @@ Actualizado: **14 agosto 2026**
 
 ## Situación
 
+**El sitio es ahora un proyecto Astro.** Se migró en cinco fases, cada una con su
+puerta de calidad. Lo que cambió para quien lo mantiene:
+
+| | antes | ahora |
+|---|---|---|
+| el HTML | 621 líneas con todo el copy | 21 líneas que componen seis secciones |
+| el CSS | `sections.css` de 1.521 líneas | quince archivos por sección, una hoja empaquetada |
+| bloques repetidos | 344 líneas de copiar-pegar | tres componentes y tres archivos de datos |
+| carga inicial | 3,17 MB | **1,73 MB** |
+| three.js | 2.028 KB vendorizados | **706 KB** con tree-shaking |
+| cortina de carga (red lenta) | 8,6 s | **3,5 s** |
+
+Arrancar: `npm run dev`. Verificar: `npm run build && npm run preview` y el arnés
+contra 4310.
+
+
 Sitio **terminado y publicado**. Las seis secciones funcionan, móvil verificado,
 suite de QA en verde. Repo: <https://github.com/pabloignaciofigueroa/bergerac_gold>
 
@@ -57,6 +73,59 @@ No hay hosting configurado. El sitio es estático puro: cualquier hosting sirve
 puestos con `https://bergerac.cl/`, deducido del correo del estudio. Si el sitio
 acaba en otra dirección hay que cambiarlo en tres sitios: `canonical`, `og:url`
 y `og:image`.
+
+## Auditoría y rendimiento (15 ago)
+
+Tras migrar se auditó el sitio en seis perfiles —de escritorio con fibra a
+un móvil con 3G y la CPU frenada seis veces— con `tools/qa/auditoria.mjs`.
+Salió bien lo importante: cero errores de consola en los seis, controles
+funcionando en todos, y los modos degradados correctos (sin WebGL avisa y
+funciona; con reduced-motion no monta escenas y la página pasa de 21.799 a
+15.311px al soltar los pins).
+
+**Fase 1 — bloqueo del hilo principal.** El plan era trocear la construcción
+de las partículas, y medir antes de tocar demostró que estaba mal: construir
+cuesta 32 ms en escritorio y 130-206 ms con la CPU frenada, y el bucle de
+física 9 ms por frame. El perfilador de CPU señaló a otros: la creación de
+los CUATRO contextos WebGL, la subida de uniforms de three, y GSAP con
+ScrollTrigger (1.700 ms de JavaScript puro). Lo que sí se arregló fue que
+`construir()` corría tres veces; ahora hay una firma que lo evita.
+
+  tareas largas 30 -> 25 · bloqueo 9.015 -> 7.953 ms · peor 1.268 -> 1.035 ms
+
+**Fase 2 — los vídeos.** De 13,59 MB a 3,27 en escritorio y 1,55 en móvil.
+Ya eran VP9 sin audio a 30 fps: sobraba bitrate, no resolución. Recodificados
+a CRF 34 (SSIM 0,9855 y 0,9936, verificado además con fotogramas 1:1 en
+zonas de texto pequeño). Hay dos codificaciones y videos.js elige midiendo
+el hueco real por la densidad de pantalla. En 3G, de 68 s a 8.
+
+**Lo que queda del plan**, con la fase 3 ya replanteada por lo que enseñó el
+perfilador:
+
+- **Fase 3** — bajar de cuatro contextos WebGL a uno, y ver si GSAP puede
+  arrancar más tarde. Toca la arquitectura de escenas.
+- **Fase 4** — la textura de la isla y auditar qué de three.js sigue entrando.
+- **Fase 5** — decidir la duración de la cortina de carga (5,9 s en
+  escritorio, 8,3 en tablet lenta: es la coreografía diseñada, pero ahora hay
+  número) y auditoría final.
+
+Cuidado con una cosa al leer los números de bloqueo: el entorno de QA usa
+WebGL por software, sin GPU, y crear un contexto así es mucho más caro que
+en una máquina real. Lo estructural —cuatro contextos en vez de uno— sí se
+sostiene; los milisegundos exactos, no.
+
+## El peso que queda
+
+Tras la migración, la carga inicial son 1,73 MB. Los dos bultos:
+
+- **three.js, 706 KB.** Ya con tree-shaking. Bajarlo más significaría prescindir
+  de partes del motor y no compensa.
+- **`isla-satelite.jpg`, 501 KB.** Es la textura de la isla y la carga three.js en
+  runtime. Probé a pasarla a webp y solo baja a 443 KB: es imagen satelital muy
+  detallada y el formato apenas la comprime. **El recorte de verdad sería bajarle
+  la resolución** —está a 1200×2055 para mostrarse en unos 400px de pantalla—,
+  pero eso toca el acabado de una sección aprobada y lo tiene que ver Pablo.
+  A ojo, a la mitad de resolución serían unos 130 KB.
 
 ## Por dónde seguir afinando el título
 
@@ -119,10 +188,11 @@ conviene tenerlos juntos:
 
 ## Si mañana hay que retomar rápido
 
-1. `node tools/server.mjs` → <http://localhost:4300>
+1. `npm install` (si es la primera vez) y `npm run dev` → <http://localhost:4321>
 2. Leer `CLAUDE.md` (trampas conocidas) y este archivo.
 3. `docs/MAP.md` para localizar el archivo que toca.
 4. `docs/DESIGN.md` si la duda es "por qué está así".
-5. Tras cualquier cambio: `node tools/qa/qa.mjs`
+5. Tras cualquier cambio: `npm run build && npm run preview`, y el arnés
+   contra el build: `QA_URL=http://127.0.0.1:4310/ node tools/qa/qa.mjs`
 6. Si se toca el hero, además: `node tools/qa/qa.mjs titulo` (número) y
    `node tools/qa/titulo-visual.mjs` (imágenes para mirarlas).

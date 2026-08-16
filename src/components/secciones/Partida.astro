@@ -1,0 +1,26 @@
+---
+/* Sección 03 — Punto de partida.
+   Travelling horizontal pineado (vgold). Las cuatro estaciones son el mismo
+   markup con distinto contenido, así que viven en src/data/partida.js.
+   Ojo con el pin: partida.js crea un ScrollTrigger con `pin`, y un refresh()
+   mientras está activo descoloca la sección — para eso está `safeRefresh`. */
+import { estaciones } from '../../data/partida.js';
+import Estacion from '../partida/Estacion.astro';
+---
+<section id="partida" class="partida" data-section="partida">
+  <div class="partida__pin">
+    <div class="partida__track">
+
+      <div class="partida__panel partida__panel--intro">
+        <div class="partida__intro">
+          <p class="eyebrow partida__eyebrow">El punto de partida</p>
+          <h2 class="display partida__title">No necesitas llegar con el diagnóstico resuelto.</h2>
+          <p class="partida__lead">Puedes traer una marca, una página, materiales sueltos o una idea todavía abierta. Primero entendemos qué está ocurriendo, qué sigue teniendo valor y qué tendría que cambiar antes de decidir qué construir.</p>
+        </div>
+      </div>
+
+      {estaciones.map((e) => <Estacion {...e} />)}
+
+    </div>
+  </div>
+</section>

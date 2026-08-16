@@ -1,0 +1,123 @@
+/* ================= 06 · CONTACTO ================= */
+.contacto {
+  position: relative;
+  background: var(--yellow);
+  color: var(--graphite);
+  border-top: 1px solid var(--graphite);
+  overflow: clip;
+}
+.contacto__grid {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-canvas);
+}
+.contacto__layout {
+  position: relative;
+  z-index: var(--z-content);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: clamp(54px, 8vw, 128px);
+  align-items: start;
+  padding-block: clamp(88px, 9vw, 136px);
+  min-height: 100svh;
+}
+.contacto__title {
+  font-size: clamp(44px, 6vw, 90px);
+  margin-top: 28px;
+}
+.contacto__lead {
+  margin-top: 32px;
+  max-width: 720px;
+  font-size: var(--fs-bajada);
+  line-height: 1.62;
+}
+.contacto__disclosure { margin-top: 38px; border-color: var(--graphite); }
+.contacto__despues { display: grid; gap: 22px; max-width: 690px; }
+.contacto__despues h3 {
+  font: 800 17px/1.3 var(--font-display);
+  margin-bottom: 6px;
+}
+.contacto__direct { margin-top: 34px; }
+.contacto__direct-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+.contacto__mail { font-weight: 800; }
+
+.contacto__panel { position: relative; }
+.contacto__form {
+  display: grid;
+  gap: 26px;
+  padding: clamp(30px, 4vw, 56px);
+  background: var(--warm-white);
+  border: 1px solid var(--graphite);
+}
+.contacto__group { display: grid; gap: 8px; }
+.contacto__label { font-weight: 800; }
+.contacto__optional { font-weight: 500; color: var(--ink-50); }
+.contacto__hint { font-size: 13px; color: var(--ink-50); line-height: 1.45; }
+.contacto__input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--ink-40);
+  border-radius: 0;
+  background: transparent;
+  padding: 10px 0;
+  outline-offset: 6px;
+  font-size: 16px;
+  transition: border-color var(--dur-ui) var(--ease-out);
+}
+.contacto__input:focus { border-bottom-color: var(--graphite); outline: none; }
+.contacto__textarea {
+  width: 100%;
+  min-height: 120px;
+  border: 1px solid var(--ink-40);
+  border-radius: 0;
+  background: transparent;
+  padding: 12px;
+  resize: vertical;
+  font-size: 16px;
+  transition: border-color var(--dur-ui) var(--ease-out);
+}
+.contacto__textarea:focus { border-color: var(--graphite); outline: none; }
+.contacto__group.has-error .contacto__input,
+.contacto__group.has-error .contacto__textarea { border-color: var(--feedback-error); }
+.contacto__error { font-size: 13px; color: var(--feedback-error); min-height: 0; }
+.contacto__submit { justify-self: start; }
+.contacto__submit[disabled] { opacity: .6; cursor: default; }
+.contacto__privacy { margin-top: -12px; font-size: 12px; color: var(--ink-50); }
+
+.contacto__sent {
+  position: relative;
+  min-height: 420px; /* la confirmación mantiene presencia, no colapsa */
+  display: grid;
+  align-content: center;
+  padding: clamp(38px, 5vw, 54px);
+  padding-bottom: clamp(96px, 12vh, 128px); /* aire para Chiki */
+  background: var(--warm-white);
+  border: 1px solid var(--graphite);
+  scroll-margin-top: 110px; /* siempre bajo el header fijo */
+}
+.contacto__sent-title { font: 800 32px/1.1 var(--font-display); }
+.contacto__sent-body { margin-top: 12px; }
+/* El premio: pequeño, cálido, imperfecto. Nunca antes del envío. */
+.contacto__chiki {
+  position: absolute;
+  right: clamp(22px, 4vw, 44px);
+  bottom: 16px;
+  width: 128px;
+  height: auto;
+}
+.contacto__benito {
+  position: absolute;
+  top: -45px; /* se asoma por el borde superior de la tarjeta */
+  right: clamp(48px, 8vw, 96px);
+  width: 96px;
+  height: auto;
+}

@@ -1,0 +1,32 @@
+---
+/* Uno de los dos casos, dentro del split de mundos.
+   El vídeo va con `data-src` y sin `autoplay`: lo monta videos.js por
+   viewport. Con autoplay en el markup, el navegador se lo bajaba entero al
+   abrir la página aunque la sección esté a 15.000px de scroll.
+   Van dos codificaciones: `data-src` para pantallas grandes y `data-src-sm`
+   a 1024px para móvil y tablet. La elección la hace videos.js midiendo el
+   hueco de verdad, no adivinando por el ancho de la ventana. */
+const { videoSm, animEyebrow, animPalabra, animClaim, eyebrow, palabra, claim, intro, video, videoAlt, pie, areas, accion, enlace, ficha } = Astro.props;
+---
+<div class="mundo" data-theme="light">
+  <div>
+    <p class="t-eyebrow" data-anim-high={animEyebrow}>{eyebrow}</p>
+    <p class="mundo-word" data-anim-high={animPalabra}><span>{palabra[0]}</span><span class="l2">{palabra[1]}</span></p>
+  </div>
+  <p class="t-body-display caso-claim" data-anim-high={animClaim}>{claim}</p>
+  <p class="caso-intro">{intro}</p>
+  <figure class="instrumento">
+    <div class="instrumento-lienzo caso-video" role="img" aria-label={videoAlt}>
+      <video data-src={video} data-src-sm={videoSm} muted loop playsinline preload="none"></video>
+    </div>
+    <figcaption class="t-eyebrow"><span>{pie[0]}</span><span>{pie[1]}</span></figcaption>
+  </figure>
+  <div class="caso-areas t-eyebrow"><span>{areas[0]}</span>{areas[1]}</div>
+  <div class="plegable" data-plegable data-grupo="casos">
+    <button class="plegable-cabeza" type="button" aria-expanded="false" data-cursor="abrir"><span data-anim="text-hover">{accion}</span><span class="plegable-signo" aria-hidden="true">+</span></button>
+    <div class="plegable-cuerpo caso-ficha" hidden>
+      {ficha.map((f) => <div><h4>{f.titulo}</h4><p>{f.texto}</p></div>)}
+    </div>
+  </div>
+  <a class="t-eyebrow caso-visitar" href={enlace[0]} data-anim="text-hover">{enlace[1]}</a>
+</div>

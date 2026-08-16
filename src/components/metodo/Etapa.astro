@@ -1,0 +1,31 @@
+---
+/* Una de las cuatro etapas del Método.
+   `data-view` es el índice de vista de la escultura: metodo.js lo lee para
+   saber qué encuadre ancla en esta etapa. No inventarlo — sale de los datos. */
+const { view, slug, num, nombre, lead, accion, panel, campos } = Astro.props;
+---
+<article class="metodo__milestone metodo__etapa" data-view={view} data-etapa={slug}>
+  <div class="metodo__copy">
+    <div class="metodo__etapa-head">
+      <span class="metodo__num" aria-hidden="true">{num}</span>
+      <h3 class="metodo__name">{nombre}</h3>
+    </div>
+    <p class="metodo__etapa-lead">{lead}</p>
+    <div class="disclosure metodo__disclosure">
+      <button class="disclosure__toggle" type="button" aria-expanded="false" aria-controls={panel}>
+        <span>{accion}</span>
+        <span class="disclosure__sym" aria-hidden="true">+</span>
+      </button>
+      <div class="disclosure__panel" id={panel}>
+        <div class="disclosure__inner metodo__fields">
+          {campos.map((c) => (
+            <div class={c.resultado ? 'metodo__result' : undefined}>
+              <h4>{c.titulo}</h4>
+              <p>{c.texto}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

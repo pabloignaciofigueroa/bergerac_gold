@@ -1,0 +1,20 @@
+---
+/* La página. Seis secciones, en orden. Todo el copy vive dentro de cada
+   una; los bloques repetitivos (estaciones, etapas, casos) salen de
+   src/data en sus propios componentes. */
+import Base from '../layouts/Base.astro';
+import Hero from '../components/secciones/Hero.astro';
+import Estudio from '../components/secciones/Estudio.astro';
+import Partida from '../components/secciones/Partida.astro';
+import Metodo from '../components/secciones/Metodo.astro';
+import Casos from '../components/secciones/Casos.astro';
+import Contacto from '../components/secciones/Contacto.astro';
+---
+<Base>
+  <Hero />
+  <Estudio />
+  <Partida />
+  <Metodo />
+  <Casos />
+  <Contacto />
+</Base>

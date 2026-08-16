@@ -1,0 +1,173 @@
+/* ============================================================
+   01 · HERO v9 (F8 — literal). Roles t-* mínimos del sistema v9
+   + estructura del hero. Balimo SOLO en la palabra-marca (F2).
+   ============================================================ */
+.t-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.t-body-display {
+  font-family: var(--font-body);
+  font-size: clamp(22px, 2.4vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  font-weight: 500;
+}
+.c {
+  width: 100%;
+  max-width: var(--content-max);
+  padding-inline: var(--gutter);
+  margin-inline: auto;
+}
+.ghost {
+  position: absolute; right: var(--gutter); top: 24px;
+  font-family: var(--font-display);
+  font-size: clamp(144px, 17vw, 368px);
+  line-height: .8; opacity: .06;
+  pointer-events: none; user-select: none; z-index: 0;
+}
+
+.s-hero {
+  position: relative;
+  min-height: min(100svh, 1088px);
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding-block: clamp(120px, 14vh, 176px) 0;
+  overflow: clip;
+}
+.hero-escena { position: absolute; inset: 0; z-index: 0; }
+.hero-escena canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.s-hero > .c, .s-hero > .hero-marquee { position: relative; z-index: 1; pointer-events: none; }
+.s-hero .c a, .s-hero .c button, .s-hero .c p, .s-hero .c h1 { pointer-events: auto; }
+/* Intercambio de fuentes (pedido): el título toma la display del marquee
+   y el marquee toma la fuente de marca que tenía el título. */
+.hero-word {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 400;
+  /* talla base de respaldo; hero-fit.js la ajusta al ancho exacto
+     del contenedor (alineado logo ←→ botón menú) */
+  font-size: clamp(96px, 13.5vw, 320px);
+  line-height: .8;
+  letter-spacing: -.01em;
+  margin-block: .1em .08em;
+}
+.hero-word span { display: inline-block; white-space: nowrap; }
+.hero-meta { display: flex; gap: clamp(20px, 3vw, 44px); flex-wrap: wrap; margin-top: 16px; }
+.hero-mid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: end;
+  margin-top: clamp(24px, 3vh, 44px);
+  padding-bottom: clamp(24px, 3vh, 44px);
+}
+.hero-claim { max-width: 608px; }
+.hero-bajada { max-width: 528px; margin-top: 16px; font-size: 16px; line-height: 1.5; }
+.hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 18px; }
+
+/* Botones estilo v9 dentro del hero (pill + flecha dibujada) */
+.s-hero .btn {
+  gap: .5em;
+  min-height: 0;
+  padding: .9em 1.6em;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  font-size: 16px;
+}
+.s-hero .btn.is-solid {
+  background: var(--theme-ink, var(--graphite));
+  color: var(--theme-bg, var(--warm-white));
+  border-color: transparent;
+}
+.s-hero .btn:active { transform: scale(.96); }
+.btn-fl { width: 1em; height: .65em; overflow: visible; flex: none; }
+.btn-fl path {
+  fill: none; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 30; stroke-dashoffset: 30;
+  transition: stroke-dashoffset .45s var(--ease-out);
+}
+.btn:hover .btn-fl path, .btn:focus-visible .btn-fl path { stroke-dashoffset: 0; }
+
+/* Marquee (cinta infinita v9) */
+.lab-marquee { display: flex; overflow: clip; white-space: nowrap; }
+.lab-marquee__mover { display: flex; flex: none; will-change: transform; }
+.lab-marquee__track { display: flex; flex: none; align-items: center; gap: 40px; padding-right: 40px; }
+.marquee-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-size: clamp(48px, 7vw, 117px);
+  line-height: 1.05;
+  letter-spacing: -.03em;
+}
+.marquee-display .dot {
+  width: .35em; height: .35em; border-radius: 50%;
+  background: currentColor; display: inline-block; align-self: center; flex: none;
+}
+.hero-marquee {
+  margin-top: clamp(24px, 3vh, 44px);
+  border-block-start: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  padding-block: 10px;
+}
+/* El marquee del hero calca a "TU PROYECTO YA TIENE VALOR."
+   (misma slab, mayúsculas, mismo peso) con la talla un 15% menor */
+.hero-marquee.marquee-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: -.015em;
+  font-size: clamp(23px, 3.06vw, 58px);
+  /* equilibrio 50/50 entre el azul del fondo y el grafito */
+  color: color-mix(in srgb, var(--blue) 50%, var(--graphite));
+}
+/* Puntos separadores sin peso (pedido: nada de círculos gordos) */
+.hero-marquee .dot { width: .14em; height: .14em; opacity: .55; }
+
+/* Foto del hero al doble (pedido): capa propia — sobre el fondo y la
+   bandada, bajo todos los textos. */
+.s-hero > .c { z-index: 2; }
+.hero-photo {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(24px, 5vh, 64px);
+  z-index: 1;
+  margin: 0;
+  width: min(46vw, 940px);
+  /* la pieza "D" del isotipo como marco: proporción de la pieza (4:3),
+     nada de rectángulos — la foto vive dentro de la forma de la marca */
+  aspect-ratio: 4 / 3;
+  max-height: 72svh;
+  overflow: hidden;
+  clip-path: url(#pieza-foto);
+  pointer-events: none;
+}
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+@media (max-width: 900px) {
+  .hero-photo { position: relative; right: auto; bottom: auto; width: min(80vw, 420px); margin: 20px var(--gutter) 40px; }
+}
+
+/* Trazos (anotación manuscrita sobre "valor") */
+.anota { position: relative; white-space: nowrap; }
+.trazo-svg {
+  position: absolute; inset: -12% -6%; width: auto; height: auto;
+  pointer-events: none; color: var(--theme-detail, var(--color--accent));
+}
+.trazo-svg path {
+  fill: none; stroke: currentColor; stroke-width: 5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
+@media (max-width: 900px) {
+  .hero-mid { grid-template-columns: 1fr; }
+}
+@media (max-width: 599px) {
+  .hero-word { font-size: 17vw; }
+  .t-body-display { font-size: 19px; }
+}

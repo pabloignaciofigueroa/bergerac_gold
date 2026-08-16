@@ -1,0 +1,39 @@
+---
+/* Sección 04 — Método.
+   Flujo escultórico de 7 vistas ligado al scroll, con anclaje de lectura de
+   ~1 pantalla por etapa. Las cuatro etapas son el mismo markup con distinto
+   contenido: viven en src/data/metodo.js.
+   La bisagra cromática morado → fucsia salta en el anclaje de Construir. */
+import { etapas } from '../../data/metodo.js';
+import Etapa from '../metodo/Etapa.astro';
+---
+<section id="metodo" class="metodo" data-section="metodo" data-method-theme="purple">
+  <span class="ghost" aria-hidden="true">04</span>
+  <div class="metodo__stage" aria-hidden="true">
+    <canvas class="metodo__canvas"></canvas>
+  </div>
+  <div class="metodo__flow">
+
+    <div class="metodo__milestone metodo__milestone--open" data-view="0">
+      <div class="metodo__copy metodo__portada">
+        <h2 class="display metodo__portada-word">Metodo</h2>
+      </div>
+      <div class="metodo__copy">
+        <h3 class="display metodo__title">Antes de diseñar, decidimos qué debe cambiar y qué merece permanecer.</h3>
+        <p class="metodo__lead">El método Bergerac organiza el trabajo en cuatro etapas: comprender el contexto, definir una dirección, construir la respuesta y afinarla hasta que pueda sostenerse.</p>
+      </div>
+    </div>
+
+    <div class="metodo__milestone metodo__milestone--hinge" data-view="1" aria-hidden="true"></div>
+
+    {etapas.map((e) => <Etapa {...e} />)}
+
+    <div class="metodo__milestone metodo__milestone--close" data-view="6">
+      <div class="metodo__copy metodo__cierre">
+        <h2 class="display metodo__portada-word">Metodo</h2>
+      </div>
+    </div>
+
+  </div>
+</section>
+

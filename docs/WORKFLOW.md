@@ -17,9 +17,14 @@
 Varias veces se reportó "listo" sin verificar y estaba roto. **Nunca más.**
 
 ```bash
-node tools/server.mjs            # en una terminal
-node tools/qa/qa.mjs             # en otra: suite completa
+npm run build                    # el arnés mide el BUILD, no el dev
+npm run preview                  # sirve dist/ en 4310
+QA_URL=http://127.0.0.1:4310/ node tools/qa/qa.mjs
 ```
+
+Sin `QA_URL` apunta a 4300, que es donde se sirve la versión anterior cuando se
+está comparando. Para el día a día basta `npm run dev` (4321), pero **lo que se
+verifica antes de entregar es el build**.
 
 Pruebas sueltas: `arranque` · `hero` · `titulo` · `volver` · `movil` · `reduce` · `fps` · `color` · `foto`
 
@@ -70,6 +75,43 @@ Un `elementFromPoint` habría respondido "tapado" y no habría cazado nada. Hay 
 mirar si algo es realmente **opaco**. La prueba se validó reintroduciendo el fallo
 a propósito: sin el arreglo acusa 1291 fotogramas descubiertos.
 
+## Los dos comparadores de la migración
+
+Existen porque al pasar a Astro hacía falta demostrar que el sitio no cambiaba.
+Siguen siendo útiles para cualquier cambio grande.
+
+```bash
+node tools/qa/estilos.mjs http://127.0.0.1:4300 http://127.0.0.1:4310
+node tools/qa/paridad.mjs http://127.0.0.1:4300 http://127.0.0.1:4310
+```
+
+**`estilos.mjs` es el bueno para tocar CSS.** Compara los estilos computados
+elemento por elemento: si se rompe el orden de la cascada, sale el elemento y la
+propiedad exactos. Es determinista.
+
+**`paridad.mjs` compara píxeles** y es útil en escritorio, donde su ruido propio
+es 0%. En móvil no: llegó a un 3,64% midiendo la referencia contra sí misma, y no
+se le puede pedir un veredicto ahí. Por eso calcula su propio umbral capturando
+la referencia dos veces.
+
+### La lección que costó toda una tarde
+
+Los dos comparadores dieron diagnósticos FALSOS antes de ser fiables, y siempre
+por el mismo motivo: **al intentar estabilizar la medida, la medida deja de medir
+lo que dice medir**.
+
+- Pausar la animación y navegar con `scrollIntoView` → 56% comparando el sitio
+  consigo mismo. Lenis va sobre `gsap.ticker`; al dormirlo, los pins quedaban
+  indefinidos.
+- El marquee es una cinta infinita: nunca se asienta → 1,9%.
+- Los reveals de cortina congelados a medias → 3,75% y 18,9%.
+- `gsap.set('*', {clearProps:'all'})` borra estilos que GSAP puso legítimamente
+  —alturas de desplegables— y cuáles borra depende de qué había corrido: acusaba
+  un nav de 39px contra 21px cuando en la página real los dos miden 26.
+
+**Ningún comparador vale hasta que da verde contra sí mismo.** Es lo primero que
+hay que comprobar antes de creerle nada.
+
 ## Diagnosticar sin adivinar
 
 Cuando algo no se ve como debería, medir antes de tocar:
@@ -94,8 +136,8 @@ const W = document.documentElement.clientWidth;
 ## Errores que ya cometimos — no repetir
 
 1. **Reportar sin verificar.** Coste: varias rondas perdidas.
-2. **Servidor viejo en el puerto 4173.** Parecía que el sitio no se actualizaba;
-   era la versión antigua sirviendo. El puerto propio es **4300**.
+2. **Medir el dev en vez del build.** `npm run dev` no minifica ni empaqueta
+   igual. Lo que se verifica antes de entregar es `dist/`, servido en 4310.
 3. **Tocar varias cosas a la vez** y no saber cuál rompió qué.
 4. **Procesos de Chrome sin cerrar.** Nueve instancias zombis de pruebas
    anteriores dieron 29 fps donde en realidad había 84 — y casi provocan que se

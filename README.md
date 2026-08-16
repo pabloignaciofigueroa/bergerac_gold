@@ -3,26 +3,28 @@
 Sitio de **Bergerac**, estudio digital en Castro, Chiloé.
 
 Una sola página con seis secciones, cada una con su propio instrumento interactivo
-en WebGL. Sin dependencias externas: todo se sirve desde esta carpeta.
+en WebGL. Proyecto **Astro** que compila a estático: lo que se publica no pide
+nada a ningún servidor ni CDN.
 
-## Cómo verlo
+## Arrancar
 
-Doble clic en `INICIAR_MERGE.cmd`, o bien:
-
+```bash
+npm install
+npm run dev          # → http://localhost:4321   con recarga en caliente
 ```
-node tools/server.mjs
+
+Para ver exactamente lo que se va a publicar:
+
+```bash
+npm run build        # → dist/
+npm run preview      # → http://localhost:4310
 ```
-
-y abrir <http://localhost:4300>.
-
-> No funciona abriendo `index.html` con doble clic: el sitio usa módulos ES y el
-> navegador los bloquea en `file://`. La propia página lo advierte si ocurre.
 
 ## Las seis secciones
 
 | # | Sección | Instrumento |
 |---|---|---|
-| 01 | Hero | **BERGERAC en partículas** — la palabra se lee como tipografía y se disgrega al paso del cursor |
+| 01 | Hero | **BERGERAC en partículas** — en reposo es tipografía real; al pasar el cursor la palabra se deshace en grano |
 | 02 | El estudio | **Isla de Chiloé en 3D** con textura satelital y elevación real |
 | 03 | Punto de partida | Travelling horizontal pineado, un color de marca por problema |
 | 04 | Método | **Escultura de 7 vistas** que muta a lo largo de las cuatro etapas, con bisagra cromática morado → fucsia |
@@ -32,48 +34,54 @@ y abrir <http://localhost:4300>.
 ## Arquitectura
 
 ```
-index.html              una sola página, todo el copy
-assets/
-  css/
-    tokens.css          paleta cerrada, tipografía, motion, temas por sección
-    base.css            reset, fuentes, shell, loader, cursor, menú
-    sections.css        las seis secciones
-  js/
-    main.js             boot único: GSAP, ciclo de vida de escenas, shell cromático
-    motion.js           Lenis + reveals de cortina (contrato data-anim-high)
-    loader.js           pantalla de entrada: el isotipo se traza con la carga real
-    pointer.js          cursor con etiquetas, indicador de progreso, magnetismo
-    menu.js             overlay a pantalla completa con las piezas de la marca
-    hero-fit.js         alinea el título del hero entre el logo y el menú
-    instrumentos.js     carga perezosa de escenas por viewport
-    escenas/            escenas WebGL independientes (partículas, contacto…)
-    sections/           escenas acopladas al scroll (isla, partida, método, works)
-    vendor/             three.js, GSAP, ScrollTrigger, SplitText, Lenis
-  fonts/  img/  video/
-tools/server.mjs        servidor estático de desarrollo
+src/
+  pages/index.astro          compone las seis secciones
+  layouts/Base.astro         head, cortina de carga, shell, arranque del bundle
+  components/
+    shell/                   Loader · SkipLink · Header · MenuOverlay
+    secciones/               Hero · Estudio · Partida · Metodo · Casos · Contacto
+    partida/ metodo/ casos/  Estacion · Etapa · Caso  (uno por bloque repetido)
+  data/                      estaciones, etapas y casos: solo contenido
+  styles/
+    tokens.css               paleta cerrada, tipografía, motion, temas
+    base.css                 reset, @font-face, shell, loader, cursor, menú
+    secciones.css            ÍNDICE de la cascada — su orden importa
+    secciones/               los quince trozos por sección
+  scripts/
+    entrada.js               entrada del bundle: globales y arranque
+    main.js                  boot único: GSAP, ciclo de escenas, shell cromático
+    escenas/                 escenas WebGL independientes (partículas, contacto…)
+    sections/                escenas acopladas al scroll (isla, método, partida)
+  assets/img/                fotos que optimiza el build (webp + srcset)
+public/assets/               fuentes, vídeo, texturas de la isla, favicon
+tools/                       servidor de apoyo y arnés de QA
 ```
 
-**Autocontenido:** ningún recurso se pide a un CDN ni a rutas externas.
+**Lo que se publica es autocontenido.** Las dependencias (three.js, GSAP, Lenis)
+son de npm y viajan empaquetadas y con tree-shaking dentro de `dist/`.
 
 ## Decisiones que conviene conocer antes de tocar el código
 
-- **Un solo `requestAnimationFrame`.** El boot registra las escenas y las despierta;
-  ninguna abre su propio bucle salvo las de `escenas/`, que además se apagan al salir
-  del viewport.
-- **Los pins de scroll son frágiles.** Partida, Método y el anclaje de lectura de cada
-  etapa usan `pin` de ScrollTrigger. Cualquier `refresh()` durante un pin activo
-  descoloca la sección: para eso existe el `safeRefresh` con debounce de `main.js`.
-- **El hero mide el DOM.** Las partículas del título muestrean el `<h1>` real
-  (fuente, talla y posición que le da `hero-fit.js`), así que el `<h1>` debe seguir
-  en el DOM y con su caja intacta — se oculta con `opacity`, nunca con `display`.
-- **Blending premultiplicado.** Las partículas grafito sobre el azul usan alpha-over
-  premultiplicado, no aditivo: en aditivo el grafito sería invisible.
-- **Accesibilidad.** Todo texto vive en el DOM aunque se dibuje en canvas.
-  Con `prefers-reduced-motion` las escenas decorativas no se montan y el contenido
-  queda estático y legible.
+- **El JS no son islas de Astro.** Es un boot global único con un `ctx`
+  compartido, un solo `requestAnimationFrame` y pins de ScrollTrigger que se
+  coordinan entre sí. Astro aquí es capa de plantillas y build, no de runtime.
+- **Nada debe importar `three` estáticamente** desde el grafo de `main.js`: son
+  700 KB y retrasan la cortina de carga. Las escenas lo cargan al entrar en
+  viewport.
+- **Los pins de scroll son frágiles.** Cualquier `refresh()` durante un pin activo
+  descoloca la sección: para eso está el `safeRefresh` con debounce de `main.js`.
+- **El hero mide el DOM.** Las partículas muestrean el `<h1>` real, así que debe
+  seguir presente con su caja intacta —se oculta con `opacity`, nunca con
+  `display`.
+- **El título son dos capas.** En reposo lo dibuja el glifo real a resolución de
+  pantalla; las partículas solo aparecen al arrancarse y abren su hueco con una
+  máscara que dibujan ellas mismas.
+- **El orden del CSS es la cascada** y está escrito a mano. Los imports de
+  `Base.astro` y el índice `secciones.css` no se reordenan sin comprobarlo.
+- **Accesibilidad.** Todo texto vive en el DOM aunque se dibuje en canvas. Con
+  `prefers-reduced-motion` las escenas decorativas no se montan.
 
 ## Pendientes
 
-- Backend del formulario de contacto: definir `data-endpoint` en
-  `<form class="formulario">` (POST JSON). Sin endpoint, el flujo se completa en local.
-- Imágenes definitivas para las cuatro estaciones del Punto de partida.
+Ver `docs/ESTADO.md`. Los principales: el backend del formulario de contacto, las
+fotos definitivas de las cuatro estaciones y los enlaces reales de los casos.
