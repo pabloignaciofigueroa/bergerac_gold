@@ -74,6 +74,46 @@ puestos con `https://bergerac.cl/`, deducido del correo del estudio. Si el sitio
 acaba en otra dirección hay que cambiarlo en tres sitios: `canonical`, `og:url`
 y `og:image`.
 
+## Auditoría y rendimiento (15 ago)
+
+Tras migrar se auditó el sitio en seis perfiles —de escritorio con fibra a
+un móvil con 3G y la CPU frenada seis veces— con `tools/qa/auditoria.mjs`.
+Salió bien lo importante: cero errores de consola en los seis, controles
+funcionando en todos, y los modos degradados correctos (sin WebGL avisa y
+funciona; con reduced-motion no monta escenas y la página pasa de 21.799 a
+15.311px al soltar los pins).
+
+**Fase 1 — bloqueo del hilo principal.** El plan era trocear la construcción
+de las partículas, y medir antes de tocar demostró que estaba mal: construir
+cuesta 32 ms en escritorio y 130-206 ms con la CPU frenada, y el bucle de
+física 9 ms por frame. El perfilador de CPU señaló a otros: la creación de
+los CUATRO contextos WebGL, la subida de uniforms de three, y GSAP con
+ScrollTrigger (1.700 ms de JavaScript puro). Lo que sí se arregló fue que
+`construir()` corría tres veces; ahora hay una firma que lo evita.
+
+  tareas largas 30 -> 25 · bloqueo 9.015 -> 7.953 ms · peor 1.268 -> 1.035 ms
+
+**Fase 2 — los vídeos.** De 13,59 MB a 3,27 en escritorio y 1,55 en móvil.
+Ya eran VP9 sin audio a 30 fps: sobraba bitrate, no resolución. Recodificados
+a CRF 34 (SSIM 0,9855 y 0,9936, verificado además con fotogramas 1:1 en
+zonas de texto pequeño). Hay dos codificaciones y videos.js elige midiendo
+el hueco real por la densidad de pantalla. En 3G, de 68 s a 8.
+
+**Lo que queda del plan**, con la fase 3 ya replanteada por lo que enseñó el
+perfilador:
+
+- **Fase 3** — bajar de cuatro contextos WebGL a uno, y ver si GSAP puede
+  arrancar más tarde. Toca la arquitectura de escenas.
+- **Fase 4** — la textura de la isla y auditar qué de three.js sigue entrando.
+- **Fase 5** — decidir la duración de la cortina de carga (5,9 s en
+  escritorio, 8,3 en tablet lenta: es la coreografía diseñada, pero ahora hay
+  número) y auditoría final.
+
+Cuidado con una cosa al leer los números de bloqueo: el entorno de QA usa
+WebGL por software, sin GPU, y crear un contexto así es mucho más caro que
+en una máquina real. Lo estructural —cuatro contextos en vez de uno— sí se
+sostiene; los milisegundos exactos, no.
+
 ## El peso que queda
 
 Tras la migración, la carga inicial son 1,73 MB. Los dos bultos:
