@@ -15,7 +15,7 @@
    ============================================================ */
 
 import { buildIsland, fieldContour, findPeaks } from './isla-geo.js';
-import { protegerContexto } from '../resiliencia.js';
+import { protegerContexto, liberarEscena, soportaWebGL, estaCaida } from '../resiliencia.js';
 
 export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake }) {
   const section = document.querySelector('#estudio');
@@ -27,6 +27,9 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
 
   async function boot() {
     if (booted) return;
+    /* Sin WebGL no se intenta: `marcarSinWebGL()` ya dejó el estado fijo en
+       el hueco. Y si el contexto ya cayó en esta sesión, tampoco se rehace. */
+    if (!soportaWebGL() || estaCaida(holder)) return;
     booted = true;
 
     const THREE = await import('three');
@@ -214,6 +217,11 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     /* Resiliencia: si este contexto se pierde, la isla se para y en su hueco
        aparece el estado fijo, en vez de quedarse un rectángulo en blanco. */
     let escenaViva = null;
+    /* Todo lo que hay que deshacer al desmontar. Las escuchas del DOM van
+       con `signal`: abortar el controlador las quita todas de golpe. */
+    const limpieza = new AbortController();
+    const { signal } = limpieza;
+    const alDesmontar = [];
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     const scene3 = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(36, 1, .05, 10);
@@ -394,7 +402,10 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
       camera.updateProjectionMatrix();
     }
     resize();
-    new ResizeObserver(() => { resize(); renderOnce(); }).observe(holder);
+    /* con referencia: siendo anónimo no había forma de desconectarlo */
+    const roHolder = new ResizeObserver(() => { resize(); renderOnce(); });
+    roHolder.observe(holder);
+    alDesmontar.push(() => roHolder.disconnect());
 
     /* --- Interacción --- */
     const gsap = window.gsap;
@@ -470,18 +481,18 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
       } else {
         setHover(false);
       }
-    });
+    }, { signal });
     section.addEventListener('pointerleave', () => {
       par.tx = 0; par.ty = 0;
       setHover(false);
-    });
+    }, { signal });
 
     canvas.addEventListener('click', (ev) => {
       if (mapMode) { setMap(false); return; }
       const h = islandHit(ev);
       if (h && (h.onLand || hovering)) setMap(true);
       else if (ev.pointerType === 'touch' || !window.matchMedia('(hover: hover)').matches) setMap(true);
-    });
+    }, { signal });
     /* El canvas ES un control: alterna el modo mapa con Enter o Espacio.
        Necesita NOMBRE, o un lector de pantalla anuncia "botón" y nada más.
        El aria-label del contenedor no sirve: describe la imagen, no la acción. */
@@ -491,7 +502,7 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     canvas.setAttribute('aria-label', 'Ver la isla como mapa');
     canvas.addEventListener('keydown', (ev) => {
       if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); setMap(!mapMode); }
-    });
+    }, { signal });
 
     /* --- Render --- */
     function render(dt, t) {
@@ -513,13 +524,27 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     } else {
       const scene = registerScene({ active: true, render });
       escenaViva = scene;
-      protegerContexto(renderer, holder, {
+      alDesmontar.push(protegerContexto(renderer, holder, {
         alPerder() {
           scene.active = false;
           unregisterScene(scene);
           escenaViva = null;
         },
-      });
+      }));
+
+      /* Desmontaje: escuchas, observers, la escena fuera del bucle y la
+         memoria de GPU liberada. Lo usa la prueba de resiliencia, y la
+         fase 4 lo necesitará para poder bajar un instrumento a SAFE. */
+      section._desmontar = () => {
+        limpieza.abort();
+        alDesmontar.forEach((f) => { try { f(); } catch {} });
+        alDesmontar.length = 0;
+        if (escenaViva) { escenaViva.active = false; unregisterScene(escenaViva); escenaViva = null; }
+        liberarEscena(scene3);
+        renderer.dispose();
+        renderer.forceContextLoss?.();
+        section._desmontar = null;
+      };
       if (ScrollTrigger) {
         ScrollTrigger.create({
           trigger: section,

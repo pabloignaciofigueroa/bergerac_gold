@@ -21,20 +21,15 @@ const MODULOS = {
   contacto: () => import('./escenas/contacto.js'),
 };
 
-import { mostrarFijo, estaCaida } from './resiliencia.js';
-
-function soportaWebGL() {
-  try {
-    const c = document.createElement('canvas');
-    return !!(c.getContext('webgl2') || c.getContext('webgl'));
-  } catch (e) { return false; }
-}
+import { estaCaida, soportaWebGL, marcarSinWebGL } from './resiliencia.js';
 
 if (!soportaWebGL()) {
   /* Mismo camino que la pérdida de contexto: un solo estado fijo para las
      dos situaciones, con estilos en la hoja y no incrustados aquí. En la
-     fase 5 este hueco lo ocupa el fotograma de la escena real. */
-  document.querySelectorAll('.instrumento-lienzo').forEach((m) => mostrarFijo(m, 'sin-webgl'));
+     fase 5 este hueco lo ocupa el fotograma de la escena real.
+     Marca los cuatro huecos, no solo los que cuelgan de esta carga: el
+     estudio y el método arrancan por su cuenta desde main.js. */
+  marcarSinWebGL();
 } else {
   const montajes = Array.from(document.querySelectorAll('[data-escena]'));
 

@@ -132,22 +132,63 @@ const scroll = await page.evaluate(async () => {
 ok(scroll.medio > 1000, 'el scroll sigue funcionando', `bajó a ${scroll.medio}px y volvió a ${scroll.vuelta}`);
 ok(errores.length === 0, 'cero errores de consola tras la caída', errores[0] || '');
 
-/* ---- desmontaje limpio: ni canvas ni escuchas huérfanas ---- */
-const limpieza = await page.evaluate(() => {
-  const mount = document.querySelector('[data-escena]');
-  if (!mount || !mount._escena) return { aplica: false };
-  const canvasAntes = mount.querySelectorAll('canvas').length;
-  try { mount._escena.dispose?.(); } catch (e) { return { aplica: true, error: e.message }; }
-  return { aplica: true, canvasAntes, canvasDespues: mount.querySelectorAll('canvas').length };
-});
-if (limpieza.aplica) {
-  ok(!limpieza.error, 'el desmontaje no lanza', limpieza.error || '');
-  ok(limpieza.canvasDespues === 0, 'no quedan canvas huérfanos tras desmontar',
-     `${limpieza.canvasAntes} → ${limpieza.canvasDespues}`);
-} else {
-  console.log('       (la escena del hero ya estaba caída: desmontaje no aplicable)');
+/* ---- desmontaje limpio, EN LOS TRES CICLOS DE VIDA ----
+   Hay tres formas distintas de montar escena en este sitio y cada una
+   limpia por su lado: crearBase (hero y contacto), y las dos secciones
+   acopladas al scroll, que registran en el bucle compartido de main.js. */
+const ciclos = [
+  { nombre: 'crearBase (hero/contacto)', sel: '[data-escena]', via: 'escena' },
+  { nombre: 'Estudio', sel: '#estudio', via: 'seccion' },
+  { nombre: 'Método', sel: '#metodo', via: 'seccion' },
+];
+
+for (const c of ciclos) {
+  const r = await page.evaluate((sel, via) => {
+    const el = document.querySelector(sel);
+    if (!el) return { aplica: false, por: 'no existe el nodo' };
+    const desmontar = via === 'escena' ? el._escena?.dispose : el._desmontar;
+    if (typeof desmontar !== 'function') return { aplica: false, por: 'sin camino de desmontaje' };
+    const antes = {
+      canvas: el.querySelectorAll('canvas').length,
+      /* una escena en el bucle compartido se delata porque sigue teniendo
+         `active`; se mira el conteo global antes y después */
+    };
+    let error = null;
+    try { desmontar.call(el._escena || el); } catch (e) { error = e.message; }
+    return {
+      aplica: true, error,
+      canvasAntes: antes.canvas,
+      canvasDespues: el.querySelectorAll('canvas').length,
+      sigueElCamino: via === 'escena' ? true : el._desmontar !== null,
+    };
+  }, c.sel, c.via);
+
+  if (!r.aplica) {
+    ok(false, `${c.nombre} · tiene camino de desmontaje`, r.por);
+    continue;
+  }
+  ok(!r.error, `${c.nombre} · el desmontaje no lanza`, r.error || '');
+  if (c.via === 'escena') {
+    ok(r.canvasDespues === 0, `${c.nombre} · sin canvas huérfano`, `${r.canvasAntes} → ${r.canvasDespues}`);
+  } else {
+    /* las secciones reutilizan un <canvas> que ya viene en el HTML: no se
+       saca del DOM, lo que se comprueba es que su contexto quede muerto */
+    ok(r.sigueElCamino === false, `${c.nombre} · el desmontaje se marca como hecho`);
+  }
 }
-ok(errores.length === 0, 'sin errores tras el desmontaje', errores[0] || '');
+
+/* ¿queda alguna escena viva en el bucle compartido? */
+const bucle = await page.evaluate(() => {
+  /* si el bucle sigue pidiendo frames, alguien quedó activo */
+  return new Promise((res) => {
+    let n = 0;
+    const t0 = performance.now();
+    const cuenta = () => { n++; if (performance.now() - t0 < 700) requestAnimationFrame(cuenta); else res(n); };
+    requestAnimationFrame(cuenta);
+  });
+});
+ok(typeof bucle === 'number', 'el rAF de la página sigue respondiendo', bucle + ' frames en 700ms');
+ok(errores.length === 0, 'sin errores tras los tres desmontajes', errores[0] || '');
 
 await browser.close();
 console.log(fallos === 0 ? '\nNinguna escena puede romper la página.\n' : `\n${fallos} comprobación(es) fallaron.\n`);

@@ -47,7 +47,7 @@ const MATTER = {
   fuchsia: { rib: '#f6ece4', emissive: '#7a1638', key: '#fff2ea', rim: '#ffd9e9', hemiSky: '#ffe9f2', hemiGround: '#7c1240' },
 };
 
-import { protegerContexto } from '../resiliencia.js';
+import { protegerContexto, liberarEscena, soportaWebGL, estaCaida } from '../resiliencia.js';
 
 export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake, refreshShell, setScrim }) {
   const section = document.querySelector('#metodo');
@@ -157,6 +157,9 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
   let booted = false;
   async function boot() {
     if (booted) return;
+    /* Igual que en Estudio: sin WebGL no se construye nada. La bisagra
+       cromática y el recorrido de etapas son independientes y siguen. */
+    if (!soportaWebGL() || estaCaida(stage)) return;
     booted = true;
     const [THREE, { Sculpture }] = await Promise.all([
       import('three'),
@@ -169,6 +172,9 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       if (Array.isArray(stored) && stored.length >= 2) views = stored;
     } catch (e) { /* dirección por defecto */ }
 
+    const limpieza = new AbortController();
+    const { signal } = limpieza;
+    const alDesmontar = [];
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -318,6 +324,8 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       return Math.max(0, Math.min(1, eff / (1 - spanTotal)));
     }
     ScrollTrigger.addEventListener('refresh', computeSpans);
+    /* ScrollTrigger no es DOM: su escucha se quita por su propia API */
+    alDesmontar.push(() => ScrollTrigger.removeEventListener('refresh', computeSpans));
     computeSpans();
 
     /* ---- Hover local (raycasting real de la v4) + click = profundizar ---- */
@@ -330,11 +338,11 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       const r = stage.getBoundingClientRect();
       ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
       pointerIn = true;
-    });
+    }, { signal });
     stage.addEventListener('pointerleave', () => {
       pointerIn = false;
       escultura.hoverIndex = -1;
-    });
+    }, { signal });
     stage.addEventListener('click', () => {
       if (escultura.hoverIndex < 0) return;
       /* profundizar en la ETAPA ACTIVA: la geometría no adelanta etapas */
@@ -346,7 +354,7 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
         const btn = active.m.querySelector('.disclosure__toggle');
         if (btn && btn.getAttribute('aria-expanded') !== 'true') btn.click();
       }
-    });
+    }, { signal });
 
     /* ---- Render ---- */
     function resize() {
@@ -359,7 +367,7 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       applyTimeline(T);
     }
     resize();
-    window.addEventListener('resize', () => { resize(); });
+    window.addEventListener('resize', () => { resize(); }, { signal });
 
     /* Sonda de encuadre (misma idea que window.__particulas): comparar
        capturas no sirve para juzgar si la escultura cabe — se mide.
@@ -410,9 +418,22 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       const scene = registerScene({ active: true, render });
       /* Resiliencia: si se pierde el contexto, la escultura se para y el
          hueco enseña su estado fijo. No se reconstruye. */
-      protegerContexto(renderer, stage, {
+      alDesmontar.push(protegerContexto(renderer, stage, {
         alPerder() { scene.active = false; unregisterScene(scene); },
-      });
+      }));
+
+      /* Desmontaje limpio: escuchas, observers, escena y memoria de GPU. */
+      section._desmontar = () => {
+        limpieza.abort();
+        alDesmontar.forEach((f) => { try { f(); } catch {} });
+        alDesmontar.length = 0;
+        scene.active = false;
+        unregisterScene(scene);
+        liberarEscena(scene3);
+        renderer.dispose();
+        renderer.forceContextLoss?.();
+        section._desmontar = null;
+      };
       ScrollTrigger.create({
         trigger: section,
         start: 'top bottom',

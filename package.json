@@ -9,7 +9,11 @@
     "build": "astro build",
     "preview": "node tools/server.mjs 4310 dist",
     "qa": "node tools/qa/qa.mjs",
-    "paridad": "node tools/qa/paridad.mjs"
+    "paridad": "node tools/qa/paridad.mjs",
+    "resiliencia": "node tools/qa/resiliencia.mjs",
+    "sin-webgl": "node tools/qa/sin-webgl.mjs",
+    "estilos": "node tools/qa/estilos.mjs",
+    "qa:todo": "npm run qa && npm run resiliencia && npm run sin-webgl && npm run estilos"
   },
   "dependencies": {
     "astro": "^7.2.2",

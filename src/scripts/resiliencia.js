@@ -36,8 +36,51 @@ export function estaCaida(mount) {
 const TEXTOS = {
   'sin-webgl': 'Este instrumento necesita aceleración gráfica. El contenido de la sección está completo más abajo.',
   perdido: 'El instrumento se detuvo para no afectar al resto de la página. Recarga si quieres volver a verlo.',
+  'sin-webgl-fondo': '',   /* capa decorativa: no falta nada que explicar */
   safe: '',   /* la fase 4 lo usa cuando decide no montar por rendimiento */
 };
+
+/* ¿Hay WebGL en esta máquina? Se pregunta una vez y se recuerda: crear un
+   canvas y pedirle contexto no es gratis, y lo consultan cuatro sitios. */
+let _soporta = null;
+export function soportaWebGL() {
+  if (_soporta !== null) return _soporta;
+  try {
+    const c = document.createElement('canvas');
+    _soporta = !!(c.getContext('webgl2') || c.getContext('webgl'));
+  } catch { _soporta = false; }
+  return _soporta;
+}
+
+/* Los CUATRO huecos que de verdad necesitan WebGL.
+
+   No vale `.instrumento-lienzo`: esa clase la llevan también los vídeos de
+   los casos, que no tocan WebGL. Marcarlos habría puesto un aviso de
+   "necesita aceleración gráfica" encima de un vídeo que se ve perfectamente,
+   y a la vez dejaba sin marcar el hero, el método y el contacto.
+
+   `texto: true`  → el instrumento ES el contenido y su ausencia deja un
+                    hueco que hay que explicar (la isla, la escultura).
+   `texto: false` → capa decorativa sobre contenido que se lee completo por
+                    sí solo: el hero tiene su título en tipografía real y el
+                    contacto su formulario. Los dos van `aria-hidden` en el
+                    HTML por esta misma razón, así que tampoco hay nada que
+                    contarle a un lector de pantalla. */
+export const HUECOS_WEBGL = [
+  { sel: '.hero-escena',            texto: false },
+  { sel: '.estudio__canvas-holder', texto: true  },
+  { sel: '.metodo__stage',          texto: true  },
+  { sel: '.contacto-escena',        texto: false },
+];
+
+/* Deja los cuatro huecos en su estado sin-WebGL. */
+export function marcarSinWebGL() {
+  for (const { sel, texto } of HUECOS_WEBGL) {
+    document.querySelectorAll(sel).forEach((m) => {
+      mostrarFijo(m, texto ? 'sin-webgl' : 'sin-webgl-fondo');
+    });
+  }
+}
 
 /* Pinta el estado fijo dentro del hueco del instrumento.
    Se crea al vuelo y no vive en el HTML: así el DOM normal queda intacto y
