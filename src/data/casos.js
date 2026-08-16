@@ -2,6 +2,8 @@
    CASOS — los dos proyectos
 
    El copy es de Pablo: no se reescribe.
+   Cada caso lleva dos codificaciones del vídeo: la normal y una a 1024px
+   para móvil y tablet. videos.js elige según el ancho real del hueco.
    OJO: `enlace[0]` sigue apuntando a #proyectos en los dos. Son los enlaces
    de verdad que faltan por poner (ver docs/ESTADO.md).
    ============================================================ */
@@ -16,6 +18,7 @@ export const casos = [
     claim: 'Convertir precisión técnica en una marca capaz de representarla.',
     intro: 'Survec contaba con experiencia real en topografía, drones, GNSS y fotogrametría, pero su identidad y su presencia digital no expresaban con suficiente claridad la precisión, el conocimiento territorial ni la capacidad técnica de su trabajo.',
     video: '/assets/video/SURVEC_WEBPAGE.webm',
+    videoSm: '/assets/video/SURVEC_WEBPAGE-sm.webm',
     videoAlt: 'Recorrido por la página construida para Survec',
     pie: ['la página construida', 'survec'],
     areas: ['áreas involucradas', 'Rebranding · narrativa · arquitectura de información · diseño y desarrollo web'],
@@ -38,6 +41,7 @@ export const casos = [
     claim: 'Dar a una obra excelente un lugar donde realmente pudiera verse.',
     intro: 'AS Arquitectura ya tenía proyectos residenciales de gran calidad, pero su trabajo aparecía principalmente mediante fotografías y publicaciones dispersas que no permitían comprender completamente cada obra.',
     video: '/assets/video/AS_ARQ_WEBPAGE.webm',
+    videoSm: '/assets/video/AS_ARQ_WEBPAGE-sm.webm',
     videoAlt: 'Recorrido por la página construida para AS Arquitectura',
     pie: ['la página construida', 'as arquitectura'],
     areas: ['áreas involucradas', 'Dirección editorial · curaduría visual · arquitectura de información · diseño y desarrollo web'],

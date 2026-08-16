@@ -2,8 +2,11 @@
 /* Uno de los dos casos, dentro del split de mundos.
    El vídeo va con `data-src` y sin `autoplay`: lo monta videos.js por
    viewport. Con autoplay en el markup, el navegador se lo bajaba entero al
-   abrir la página aunque la sección esté a 15.000px de scroll. */
-const { animEyebrow, animPalabra, animClaim, eyebrow, palabra, claim, intro, video, videoAlt, pie, areas, accion, enlace, ficha } = Astro.props;
+   abrir la página aunque la sección esté a 15.000px de scroll.
+   Van dos codificaciones: `data-src` para pantallas grandes y `data-src-sm`
+   a 1024px para móvil y tablet. La elección la hace videos.js midiendo el
+   hueco de verdad, no adivinando por el ancho de la ventana. */
+const { videoSm, animEyebrow, animPalabra, animClaim, eyebrow, palabra, claim, intro, video, videoAlt, pie, areas, accion, enlace, ficha } = Astro.props;
 ---
 <div class="mundo" data-theme="light">
   <div>
@@ -14,7 +17,7 @@ const { animEyebrow, animPalabra, animClaim, eyebrow, palabra, claim, intro, vid
   <p class="caso-intro">{intro}</p>
   <figure class="instrumento">
     <div class="instrumento-lienzo caso-video" role="img" aria-label={videoAlt}>
-      <video data-src={video} muted loop playsinline preload="none"></video>
+      <video data-src={video} data-src-sm={videoSm} muted loop playsinline preload="none"></video>
     </div>
     <figcaption class="t-eyebrow"><span>{pie[0]}</span><span>{pie[1]}</span></figcaption>
   </figure>

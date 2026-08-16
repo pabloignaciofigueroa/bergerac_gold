@@ -10,6 +10,20 @@
    Contrato: <video data-src="…"> (sin src, sin autoplay).
    ============================================================ */
 
+/* Cuál de las dos codificaciones toca.
+   Se mide el hueco DE VERDAD y se multiplica por la densidad de la
+   pantalla, en vez de adivinar por el ancho de la ventana: un móvil de
+   390px con DPR 3 necesita 1026 píxeles reales —más que una tablet de
+   1024 con DPR 2, que necesita 820—, y por ancho de ventana se elegiría
+   justo al revés. Por encima de 1100 va la grande (1742px). */
+function fuenteDe(v) {
+  const sm = v.dataset.srcSm;
+  if (!sm) return v.dataset.src;
+  const hueco = (v.closest('.caso-video') || v).getBoundingClientRect().width;
+  const reales = hueco * (window.devicePixelRatio || 1);
+  return reales > 1100 ? v.dataset.src : sm;
+}
+
 export function initVideos() {
   const videos = [...document.querySelectorAll('video[data-src]')];
   if (!videos.length) return;
@@ -17,7 +31,7 @@ export function initVideos() {
   /* Sin IntersectionObserver no hay carga diferida posible: se asigna
      todo de una y que el navegador decida. */
   if (!('IntersectionObserver' in window)) {
-    videos.forEach((v) => { v.src = v.dataset.src; v.play?.().catch(() => {}); });
+    videos.forEach((v) => { v.src = fuenteDe(v); v.play?.().catch(() => {}); });
     return;
   }
 
@@ -27,7 +41,7 @@ export function initVideos() {
     entradas.forEach((en) => {
       if (!en.isIntersecting) return;
       const v = en.target;
-      if (!v.src) v.src = v.dataset.src;
+      if (!v.src) v.src = fuenteDe(v);
       obs.unobserve(v);
     });
   }, { rootMargin: '600px 0px' });
@@ -36,7 +50,7 @@ export function initVideos() {
     entradas.forEach((en) => {
       const v = en.target;
       if (en.isIntersecting) {
-        if (!v.src) v.src = v.dataset.src;
+        if (!v.src) v.src = fuenteDe(v);
         /* play() rechaza si el navegador aún no lo permite: no es un
            error que deba ensuciar la consola. */
         v.play?.().catch(() => {});
