@@ -15,8 +15,12 @@
    NO ENTRA el BERGERAC del hero: las partículas muestrean esa caja para
    colocarse, así que su tracking no es una decisión revisable.
 
-   La referencia la puso la propia página: los titulares que se leen bien
-   están en -.015em.
+   Y LO QUE DE VERDAD CIERRA LAS LETRAS ES EL PESO, no el tracking.
+   DemoDisplay solo existe en 400. Cuando el CSS pide 700 u 800, el navegador
+   falsifica la negrita engordando el trazo hacia los lados, y ese engorde
+   sale del blanco entre perfiles. La correlación es total: todos los
+   titulares que se leen mal piden 700 u 800; todos los que se leen bien
+   están en 400. Sin una sola excepción.
 
    Uso:
      node tools/qa/tipografia.mjs            (1440 y 390)
@@ -108,21 +112,15 @@ for (const ancho of ANCHOS) {
       const ls = cs.letterSpacing === 'normal' ? 0 : parseFloat(cs.letterSpacing);
       /* una sola línea del texto, para que la comparación sea justa */
       const linea = texto.split(/(?<=\.)\s/)[0].slice(0, 60);
-      const suelto = anchoSuelto(linea, cs);
-      const huecos = Math.max(1, linea.length - 1);
 
       out.push({
         sec,
         clase: (el.className || el.tagName).toString().split(' ').slice(0, 2).join(' '),
-        texto: texto.slice(0, 34),
+        texto: texto.slice(0, 30),
         px: +px.toFixed(1),
-        ls: +ls.toFixed(2),
         em: +(ls / px).toFixed(4),
-        alto: +(parseFloat(cs.lineHeight) / px).toFixed(2),
-        /* cuánto se come de cada hueco, en px, medido de verdad */
-        apriete: +(suelto ? (ls) : 0).toFixed(2),
-        anchoSuelto: Math.round(suelto),
-        huecos,
+        familia: (cs.fontFamily.split(',')[0] || '').replace(/["']/g, ''),
+        peso: cs.fontWeight,
       });
     }
     sonda.remove();
@@ -135,14 +133,15 @@ for (const ancho of ANCHOS) {
     if (f.sec !== secActual) {
       secActual = f.sec;
       console.log(`\n  ${SECCIONES[f.sec] || f.sec}`);
-      console.log('    tracking    talla   interlínea   texto');
+      console.log('    peso    tracking    talla   tipografía      texto');
     }
     const em = f.em === 0 ? '0' : (f.em > 0 ? '+' : '') + f.em.toFixed(3).replace('0.', '.');
-    /* El umbral no sale de un manual: lo puso la propia página. Lo que se
-       lee bien está en -.010/-.015em; en -.020/-.025 empieza a cerrar, y
-       desde -.030 los perfiles de la slab se sueldan. */
-    const aviso = f.em <= -0.030 ? '  ← APRETADO' : (f.em <= -0.020 ? '  ← al límite' : '');
-    console.log(`    ${em.padStart(7)}em   ${String(f.px).padStart(5)}   ${String(f.alto).padStart(6)}       ${f.texto}${aviso}`);
+    /* LO QUE DE VERDAD CIERRA LAS LETRAS. DemoDisplay solo trae el peso
+       400. Cualquier otro peso se lo inventa el navegador engordando el
+       trazo horizontalmente: se come el blanco entre perfiles y deja un
+       borde doblado. El tracking no tiene nada que ver. */
+    const falso = /demodisplay/i.test(f.familia) && f.peso !== '400';
+    console.log(`    ${String(f.peso).padStart(4)}   ${em.padStart(7)}em   ${String(f.px).padStart(5)}   ${(f.familia || '').padEnd(12)}  ${f.texto}${falso ? '  ← NEGRITA FALSA' : ''}`);
   }
   await page.close();
 }
