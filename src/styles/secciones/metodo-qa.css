@@ -10,7 +10,7 @@
   /* 150% (pedido QA) */
   font-size: clamp(96px, 14.25vw, 225px);
   line-height: .95;
-  letter-spacing: -.02em;
+  letter-spacing: -.015em;
   margin-top: 14px;
 }
 /* el hito de apertura ahora son DOS pantallas: portada + intro */

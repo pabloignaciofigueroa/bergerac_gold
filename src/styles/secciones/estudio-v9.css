@@ -10,7 +10,7 @@
   font-weight: 400;
   font-size: clamp(52px, 8.5vw, 117px);
   line-height: 1.05; /* +30% respiración sobre el token (pedido de Pablo, v9) */
-  letter-spacing: -.025em;
+  letter-spacing: -.015em;
   margin-top: 14px;
 }
 .seccion-bajada { max-width: 608px; margin-top: 28px; }

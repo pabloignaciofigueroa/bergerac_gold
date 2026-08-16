@@ -14,7 +14,7 @@
   font-family: var(--font-body);
   font-size: clamp(22px, 2.4vw, 36px);
   line-height: 1.1;
-  letter-spacing: -.02em;
+  letter-spacing: -.015em;
   font-weight: 500;
 }
 .c {
@@ -105,7 +105,7 @@
   text-transform: uppercase;
   font-size: clamp(48px, 7vw, 117px);
   line-height: 1.05;
-  letter-spacing: -.03em;
+  letter-spacing: -.015em;
 }
 .marquee-display .dot {
   width: .35em; height: .35em; border-radius: 50%;

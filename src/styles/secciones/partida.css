@@ -60,7 +60,7 @@
 .js .partida__station[data-active="true"] .partida__num { color: var(--warm-white); }
 .partida__problem {
   font: 700 clamp(28px, 3.2vw, 54px)/1.1 var(--font-display);
-  letter-spacing: -.02em;
+  letter-spacing: -.015em;
   max-width: 20ch;
   padding-top: 4px;
 }
