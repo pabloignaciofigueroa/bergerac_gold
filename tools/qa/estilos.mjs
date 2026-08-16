@@ -45,9 +45,19 @@ const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 const ARGS = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--no-sandbox'];
 const ANCHOS = [[1440, 900], [390, 844]];
 
-/* dos valores que quieren decir lo mismo escritos distinto */
+/* Diferencias que NO son regresiones.
+   · 0% 0% y 0px 0px son lo mismo: el minificador normaliza la escritura.
+   · aspect-ratio pasando de `auto` a `auto W / H` es <Image> declarando las
+     dimensiones intrínsecas. Es deseable —el navegador reserva el hueco y
+     desaparece el salto de layout— y las cajas siguen siendo idénticas.
+     OJO: solo se acepta AÑADIR la proporción. Si una proporción ya
+     declarada CAMBIA, eso sí es un fallo y tiene que saltar. */
 const EQUIV = [['0% 0%', '0px 0px'], ['0px 0px', '0% 0%']];
-const equivale = (x, y) => x === y || EQUIV.some(([u, v]) => x === u && y === v);
+const ratioAnadida = (x, y) => x === 'auto' && /^auto \d+(\.\d+)? \/ \d+(\.\d+)?$/.test(y);
+const equivale = (x, y, prop) =>
+  x === y
+  || EQUIV.some(([u, v]) => x === u && y === v)
+  || (prop === 'aspect-ratio' && ratioAnadida(x, y));
 
 let fallos = 0;
 const ok = (cond, etiqueta, detalle = '') => {
@@ -137,7 +147,7 @@ try {
         /* Equivalencias de ESCRITURA, no de efecto: el minificador de CSS
            normaliza algunas formas (0% 0% pasa a 0px 0px) y el navegador las
            devuelve tal cual se escribieron. Significan lo mismo. */
-        if (equivale(a[i].props[p], b[i].props[p])) continue;
+        if (equivale(a[i].props[p], b[i].props[p], p)) continue;
         if (a[i].props[p] !== b[i].props[p]) {
           difProps.push(`${a[i].via}  ·  ${p}:  ${a[i].props[p]}  →  ${b[i].props[p]}`);
         }

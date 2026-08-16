@@ -484,9 +484,24 @@ export async function init(mount) {
   base.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
   /* ---- construcción ---------------------------------------------- */
+  /* Firma de lo que determina el muestreo. Si no ha cambiado, reconstruir
+     es tirar entre 130 y 206 ms de CPU en un móvil, y se hacía TRES veces:
+     una al arrancar, otra en el doble rAF que espera a hero-fit, y otra
+     cuando el ResizeObserver de crearBase dispara su primer resize. Ahora
+     las dos últimas salen gratis si nada se movió. */
+  let firmaUltima = null;
+  const firmaDe = (d) => [
+    Math.round(d.spanRect.width), Math.round(d.spanRect.height),
+    Math.round(d.baselineY), d.cs.fontSize, d.cs.fontFamily,
+    mount.clientWidth, mount.clientHeight,
+  ].join('|');
+
   function construir() {
     const datos = medirTitulo();
     if (!datos) return false;
+    const firma = firmaDe(datos);
+    if (firma === firmaUltima && points) return true;   /* nada cambió */
+    firmaUltima = firma;
 
     const cupo = presupuesto();
     /* los pasos escalan con la altura de la tinta: fijos, se ven finos en

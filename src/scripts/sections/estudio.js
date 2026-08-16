@@ -478,9 +478,13 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, wake
       if (h && (h.onLand || hovering)) setMap(true);
       else if (ev.pointerType === 'touch' || !window.matchMedia('(hover: hover)').matches) setMap(true);
     });
+    /* El canvas ES un control: alterna el modo mapa con Enter o Espacio.
+       Necesita NOMBRE, o un lector de pantalla anuncia "botón" y nada más.
+       El aria-label del contenedor no sirve: describe la imagen, no la acción. */
     canvas.tabIndex = 0;
     canvas.setAttribute('role', 'button');
     canvas.setAttribute('aria-pressed', 'false');
+    canvas.setAttribute('aria-label', 'Ver la isla como mapa');
     canvas.addEventListener('keydown', (ev) => {
       if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); setMap(!mapMode); }
     });
