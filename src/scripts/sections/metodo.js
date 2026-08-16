@@ -47,8 +47,11 @@ const MATTER = {
   fuchsia: { rib: '#f6ece4', emissive: '#7a1638', key: '#fff2ea', rim: '#ffd9e9', hemiSky: '#ffe9f2', hemiGround: '#7c1240' },
 };
 
-import { protegerContexto, liberarEscena, soportaWebGL, estaCaida, mostrarFijo } from '../resiliencia.js';
-import { crearObservador, nivelDe, ratioDe, ratioReducido, REDUCED } from '../calidad.js';
+import {
+  protegerContexto, liberarEscena, soportaWebGL, estaCaida,
+  mostrarFijo, marcarMontada, vigilarMontaje,
+} from '../resiliencia.js';
+import { crearObservador, nivelDe, ratioDe, ratioReducido, paraCaptura, REDUCED } from '../calidad.js';
 
 export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake, refreshShell, setScrim }) {
   const section = document.querySelector('#metodo');
@@ -80,6 +83,48 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       start: 'top 62%',
       onEnter: () => setTheme('fuchsia'),
       onLeaveBack: () => setTheme('purple'),
+    });
+  }
+
+  /* ---- LOS CUATRO FOTOGRAMAS, cuando la escultura no está -------------
+
+     Uno por etapa, para que el relato de transformación se sostenga: la
+     materia abierta en ESTUDIAR, apretándose en DEFINIR, el giro en
+     CONSTRUIR y la forma resuelta en AFINAR.
+
+     Y aquí hay una trampa que costaría cara: LA BISAGRA CROMÁTICA LA MUEVE
+     LA PROPIA ESCULTURA, desde los anclajes que crea `boot()`. Sin escena no
+     hay bisagra, así que la sección se quedaría morada de principio a fin y
+     los dos fotogramas iluminados en fucsia caerían sobre fondo morado.
+     Por eso el mismo disparador cambia el fotograma Y el tema: van juntos
+     por construcción, no por coincidencia de umbrales.
+
+     Se llama solo cuando la escultura NO va a correr. Si corre, manda ella. */
+  const TEMA_ETAPA = { estudiar: 'purple', definir: 'purple', construir: 'fuchsia', afinar: 'fuchsia' };
+  let fotogramaPuesto = null;
+  let respaldoMontado = false;
+
+  function ponerFotograma(slug) {
+    if (fotogramaPuesto === slug) return;
+    fotogramaPuesto = slug;
+    mostrarFijo(stage, 'fotograma', { fotograma: 'metodo-' + slug });
+  }
+
+  function montarFotogramas() {
+    if (respaldoMontado) return;
+    respaldoMontado = true;
+    ponerFotograma('estudiar');
+    section.querySelectorAll('.metodo__etapa').forEach((etapa) => {
+      const slug = etapa.dataset.etapa;
+      if (!TEMA_ETAPA[slug]) return;
+      const entrar = () => { ponerFotograma(slug); setTheme(TEMA_ETAPA[slug]); };
+      ScrollTrigger.create({
+        trigger: etapa,
+        start: 'top 62%',
+        end: 'bottom 38%',
+        onEnter: entrar,
+        onEnterBack: entrar,
+      });
     });
   }
 
@@ -160,7 +205,21 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
     if (booted) return;
     /* Igual que en Estudio: sin WebGL no se construye nada. La bisagra
        cromática y el recorrido de etapas son independientes y siguen. */
-    if (!soportaWebGL() || estaCaida(stage)) return;
+    if (estaCaida(stage)) return;
+    if (!soportaWebGL()) {
+      booted = true;
+      montarFotogramas();
+      marcarMontada(stage);
+      return;
+    }
+    /* Con menos movimiento pedido, los cuatro fotogramas: cuentan lo mismo
+       —cuatro estados de una transformación— sin morph ni cámara viva. */
+    if (prefersReduced) {
+      booted = true;
+      montarFotogramas();
+      marcarMontada(stage);
+      return;
+    }
     booted = true;
     const [THREE, { Sculpture }] = await Promise.all([
       import('three'),
@@ -182,7 +241,11 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
        el ratio de píxel, que es el que más rinde aquí. */
     const nivel0 = nivelDe('metodo');
     let vigilante = null;
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: nivel0 !== REDUCED });
+    const renderer = new THREE.WebGLRenderer({
+      canvas, alpha: true,
+      antialias: nivel0 !== REDUCED,
+      preserveDrawingBuffer: paraCaptura(),
+    });
     renderer.setPixelRatio(ratioDe(nivel0));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     let stageW = 0, stageH = 0;
@@ -420,10 +483,28 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
     }
 
     applyTimeline(0);
+
+    /* Costura de captura (solo con `?fotograma=1`).
+
+       Los cuatro fotogramas de las etapas tienen que salir con SU encuadre
+       —el que definió la dirección en DEFAULT_VIEWS—, no con el que toque a
+       mitad de una interpolación. Adivinando posiciones de scroll salían
+       recortados por el borde. Aquí se pide la vista exacta.
+
+       El tema cromático va aparte a propósito: lo mueve un ScrollTrigger, no
+       la línea de tiempo, así que forzar una vista no lo cambiaría y las dos
+       últimas etapas saldrían con la luz morada en vez de la fucsia. */
+    if (paraCaptura()) {
+      section._vistas = views.map((v) => v.name);
+      section._vista = (i) => { applyTimeline(i / (views.length - 1)); render(0); };
+      section._tema = (t) => setTheme(t);
+    }
+
     if (prefersReduced) {
       gsap.ticker.add(() => render(0));
     } else {
       const scene = registerScene({ active: true, render });
+      marcarMontada(stage);
 
       /* Vigilancia de calidad: mira los primeros segundos útiles de la
          escultura y, si se arrastra, baja el ratio de píxel. Se apaga sola. */
@@ -432,7 +513,7 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
         alRendirse() {
           scene.active = false;
           unregisterScene(scene);
-          mostrarFijo(stage, 'perdido');
+          montarFotogramas();
         },
       });
       alDesmontar.push(() => vigilante?.destruir());
@@ -440,7 +521,12 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       /* Resiliencia: si se pierde el contexto, la escultura se para y el
          hueco enseña su estado fijo. No se reconstruye. */
       alDesmontar.push(protegerContexto(renderer, stage, {
-        alPerder() { scene.active = false; unregisterScene(scene); vigilante?.destruir(); },
+        alPerder() {
+          scene.active = false;
+          unregisterScene(scene);
+          vigilante?.destruir();
+          montarFotogramas();
+        },
       }));
 
       /* Desmontaje limpio: escuchas, observers, escena y memoria de GPU. */
@@ -466,15 +552,19 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
        tardío durante un pin activo desplaza los rangos bajo el usuario */
   }
 
+  /* Si la escultura no llega a arrancar —sin lanzar nada, que es como pasa
+     de verdad en una máquina muy lenta— entran los fotogramas. */
+  vigilarMontaje(stage, { al: montarFotogramas });
+
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {
       if (entries.some(e => e.isIntersecting)) {
         io.disconnect();
-        boot().catch(e => console.warn('Método 3D no disponible:', e));
+        boot().catch((e) => { console.warn('Método 3D no disponible:', e); montarFotogramas(); });
       }
     }, { rootMargin: '900px 0px' });
     io.observe(section);
   } else {
-    boot().catch(e => console.warn('Método 3D no disponible:', e));
+    boot().catch((e) => { console.warn('Método 3D no disponible:', e); montarFotogramas(); });
   }
 }

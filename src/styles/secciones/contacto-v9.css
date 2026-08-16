@@ -39,13 +39,13 @@
 .campo-opcional { font-weight: 500; color: color-mix(in srgb, currentColor 55%, transparent); }
 .campo-ayuda { font-size: 13px; line-height: 1.45; color: color-mix(in srgb, currentColor 60%, transparent); }
 .campo input {
-  width: 100%; border: 0; border-bottom: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  width: 100%; border: 0; border-bottom: 1px solid currentColor; border-bottom: 1px solid color-mix(in srgb, currentColor 45%, transparent);
   border-radius: 0; background: transparent; color: inherit;
   padding: 10px 0; outline: none; font: inherit; transition: border-color .25s;
 }
 .campo input:focus { border-bottom: 2px solid var(--color--morado); }
 .campo textarea {
-  width: 100%; min-height: 112px; border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  width: 100%; min-height: 112px; border: 1px solid currentColor; border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
   border-radius: 0; background: transparent; color: inherit;
   padding: 12px; outline: none; resize: vertical; font: inherit; transition: border-color .25s;
 }
@@ -64,7 +64,7 @@
 .formulario-confirmacion p { margin: 10px 0 0; }
 .contacto-marquee {
   position: relative; z-index: 1; margin-top: clamp(48px, 6vh, 88px);
-  border-block: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+  border-block: 1px solid currentColor; border-block: 1px solid color-mix(in srgb, currentColor 25%, transparent);
   padding-block: 10px;
 }
 .legal {

@@ -1,4 +1,22 @@
 /* ============================================================
+   RESPALDO PARA color-mix()
+
+   Sin `color-mix()` el navegador tira la declaración ENTERA, no solo el
+   color. En un borde eso no deja un borde más pálido: deja el elemento SIN
+   BORDE — los campos del formulario pierden su raya y no se ve dónde
+   escribir, el marco de la isla desaparece, los filetes se van.
+
+   Por eso solo se respaldan los BORDES, que es donde la pérdida es grave.
+   Un fondo o un texto que se quedan sin su mezcla siguen siendo legibles y
+   no merecen duplicar código.
+
+   El respaldo va con el color plano, sin mezclar: sale algo más firme de lo
+   previsto, y es exactamente lo que se quiere en un navegador que ya viene
+   de vuelta. Esto NO es una campaña de compatibilidad con navegadores
+   antiguos; es evitar una rotura concreta.
+   ============================================================ */
+
+/* ============================================================
    LAS SEIS SECCIONES — índice de la cascada
 
    EL ORDEN DE ESTOS IMPORTS ES LA CASCADA. No reordenar sin comprobarlo con

@@ -15,21 +15,42 @@ en FULL** porque es el único que se sostiene ahí. El título pasa `qa titulo`
 idéntico en los dos niveles (0,000 % de fisuras, cobertura 1.0000) y el lienzo
 real encoge de 2880 a 1440 px al bajar.
 
-## Pendiente real y concreto
+## Fase 5 — la red visual (hecha)
 
-**Una escena que nunca llega a montarse deja su hueco vacío.** La red de la
-fase 3 cubre la pérdida de contexto y la ausencia de WebGL, pero no el caso
-"la escena no arrancó". Se destapó midiendo bajo SwiftShader: ahí Método y
-Contacto —las dos que cargan su código con `import()` dinámico— a veces no
-llegan a montarse, sin error, sin fallo de red y sin que su observador de
-viewport se dispare. Medido 3/3 limpias en GPU real y 5/5 fallidas bajo
-SwiftShader, con la misma tasa antes y después de la fase 4: **es anterior a
-ella y no lo introdujo**.
+Cinco fotogramas sacados de las escenas reales con `toDataURL()`: la isla y
+cuatro del Método, uno por etapa. No son ilustraciones parecidas, son el
+instrumento detenido, así que no hay una segunda dirección de arte que
+mantener. Van con **canal alfa**: el fondo lo sigue poniendo el CSS y la
+bisagra cromática sigue viva por debajo.
 
-Lo natural es cerrarlo en la fase 5, cuando existan los fotogramas: si una
-escena lleva unos segundos en pantalla y no ha montado, se enseña su fotograma.
-Mientras tanto `tools/qa/resiliencia.mjs` corre en GPU real por defecto y con
-`SW=1` bajo software, donde acusa el problema.
+Se ven en cuatro casos y en ninguno más: no hay WebGL, se pierde el contexto,
+**la escena no llega a arrancar** —el hueco que quedaba abierto— o se pidió
+menos movimiento. En FULL y en REDUCED no se descarga ni uno; son 392 KB que
+el visitante normal no ve pasar, y lo vigila `npm run fotogramas`.
+
+Hero y Contacto no llevan fotograma, y esa es la resolución: el título va en
+tipografía real y el formulario está completo. Por eso los dos ya iban
+`aria-hidden`.
+
+Una trampa que costaría cara y queda anotada: **la bisagra cromática la mueve
+la escultura**. Sin ella la sección se quedaría morada de principio a fin y
+los dos fotogramas con luz fucsia caerían sobre morado. Por eso el mismo
+disparador cambia el fotograma y el tema.
+
+`color-mix()` lleva respaldo solo en los ocho bordes, que es donde perder la
+declaración deja el elemento SIN borde. `@property` ya degradaba solo: la
+variable está definida localmente y sin soporte únicamente se pierde la
+animación.
+
+## Pendientes
+
+Ninguno abierto de las fases 3, 4 y 5. Lo que queda anotado:
+
+- El comparador `estilos` ya no puede medir contra el sitio pre-Astro: esa
+  referencia dejó de arrancar cuando las dependencias vendorizadas pasaron a
+  npm. Hoy verifica que bajar a REDUCED no mueve la composición.
+- `isla-satelite.jpg` sigue pesando 501 KB. El recorte real es de resolución
+  y necesita tu ojo, no una recompresión.
 
 ## Situación
 

@@ -166,6 +166,22 @@ function nivelPedido() {
   } catch { return null; }
 }
 
+/* `?fotograma=1` — la otra costura de URL, y solo para la herramienta que
+   captura los fotogramas fijos (tools/capturar-fotogramas.mjs).
+
+   Sin `preserveDrawingBuffer` el búfer se limpia después de pintar y
+   `toDataURL()` devuelve un PNG vacío: no hay forma de sacar los píxeles
+   EXACTOS que dibujó la escena. Y hacen falta exactos y CON TRANSPARENCIA,
+   porque así el fondo lo sigue poniendo el CSS y la bisagra cromática del
+   Método sigue funcionando sobre el fotograma.
+
+   Está apagado siempre salvo con el parámetro puesto: mantenerlo encendido
+   cuesta memoria y le quita optimizaciones al navegador. */
+export function paraCaptura() {
+  try { return new URLSearchParams(location.search).get('fotograma') === '1'; }
+  catch { return false; }
+}
+
 /* Nivel de arranque. Una sola señal manda: un rasterizador por software no
    mueve las tres escenas caras, y eso se sabe sin medir nada. */
 export function nivelInicial(instrumento) {

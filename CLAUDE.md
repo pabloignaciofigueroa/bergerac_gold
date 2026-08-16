@@ -84,6 +84,24 @@ El arnés de QA apunta por defecto a **4300**. Para medir contra el build:
   mismas — eso sigue valiendo.
 - **`?calidad=reduced` y `?calidad=full`** fuerzan el nivel para poder ver las
   dos versiones en la misma máquina.
+- **Los fotogramas son la red, no una tercera Bergerac.** Solo se ven si se
+  pierde el contexto, si no hay WebGL, si la escena no llega a arrancar o si
+  se pidió menos movimiento. En FULL y en REDUCED no se descarga ninguno, y
+  eso lo vigila `node tools/qa/fotogramas.mjs`.
+- **Van con canal alfa, y por eso la bisagra del Método sigue viva.** El
+  fondo lo pone el CSS. Si alguna vez se recapturan con fondo opaco, el
+  morado y el fucsia se congelan en la imagen.
+- **La bisagra cromática la mueve la escultura.** Sin ella no hay bisagra:
+  por eso `montarFotogramas()` cambia el fotograma Y el tema desde el MISMO
+  disparador. No separarlos en dos ScrollTriggers con umbrales parecidos.
+- **`vigilarMontaje()` cubre "la escena no arrancó".** Es distinto de perder
+  el contexto: no lanza, no da error de red y el observador de viewport ni se
+  entera. Se destapó bajo SwiftShader y era anterior a la fase 4.
+- **`color-mix()` sin soporte tira la declaración ENTERA.** En un borde eso
+  no deja un borde pálido: deja el elemento sin borde. Por eso los ocho
+  bordes llevan respaldo con color plano. Los fondos y los textos no lo
+  necesitan y no lo llevan.
+
 - **Pins de ScrollTrigger.** Partida, Método y el anclaje de lectura de cada etapa
   usan `pin`. Un `refresh()` mientras un pin está activo descoloca la sección: por
   eso existe `safeRefresh` con debounce en `main.js`. No llamar `ScrollTrigger.refresh()`

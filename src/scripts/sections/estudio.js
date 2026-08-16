@@ -15,8 +15,11 @@
    ============================================================ */
 
 import { buildIsland, fieldContour, findPeaks } from './isla-geo.js';
-import { protegerContexto, liberarEscena, soportaWebGL, estaCaida, mostrarFijo } from '../resiliencia.js';
-import { crearObservador, nivelDe, ratioDe, ratioReducido, REDUCED } from '../calidad.js';
+import {
+  protegerContexto, liberarEscena, soportaWebGL, estaCaida,
+  mostrarFijo, marcarMontada, vigilarMontaje,
+} from '../resiliencia.js';
+import { crearObservador, nivelDe, ratioDe, ratioReducido, paraCaptura, REDUCED } from '../calidad.js';
 
 export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake }) {
   const section = document.querySelector('#estudio');
@@ -30,7 +33,22 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     if (booted) return;
     /* Sin WebGL no se intenta: `marcarSinWebGL()` ya dejó el estado fijo en
        el hueco. Y si el contexto ya cayó en esta sesión, tampoco se rehace. */
-    if (!soportaWebGL() || estaCaida(holder)) return;
+    if (estaCaida(holder)) return;
+    if (!soportaWebGL()) {
+      booted = true;
+      mostrarFijo(holder, 'sin-webgl', { fotograma: 'isla' });
+      marcarMontada(holder);
+      return;
+    }
+    /* Con menos movimiento pedido, el fotograma. Antes se montaba la escena
+       entera —contexto, malla, textura de medio mega— para acabar pintando
+       un cuadro quieto: el fotograma da lo mismo y no cuesta nada. */
+    if (prefersReduced) {
+      booted = true;
+      mostrarFijo(holder, 'reduced-motion', { fotograma: 'isla' });
+      marcarMontada(holder);
+      return;
+    }
     booted = true;
 
     const THREE = await import('three');
@@ -220,7 +238,11 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
        vértices, y `isla-geo.js` genera un vértice por píxel de máscara sin
        ningún paso intermedio — meterlo obligaría a rehacerlo entero. */
     const nivel0 = nivelDe('estudio');
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: nivel0 !== REDUCED });
+    const renderer = new THREE.WebGLRenderer({
+      canvas, alpha: true,
+      antialias: nivel0 !== REDUCED,
+      preserveDrawingBuffer: paraCaptura(),
+    });
     /* Resiliencia: si este contexto se pierde, la isla se para y en su hueco
        aparece el estado fijo, en vez de quedarse un rectángulo en blanco. */
     let escenaViva = null;
@@ -533,6 +555,7 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     } else {
       const scene = registerScene({ active: true, render });
       escenaViva = scene;
+      marcarMontada(holder);
 
       /* Vigilancia de calidad: mira los primeros segundos útiles de la isla
          y, si se arrastra, baja el ratio de píxel. Después se apaga sola. */
@@ -542,12 +565,13 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
           scene.active = false;
           unregisterScene(scene);
           escenaViva = null;
-          mostrarFijo(holder, 'perdido');
+          mostrarFijo(holder, 'perdido', { fotograma: 'isla' });
         },
       });
       alDesmontar.push(() => vigilante?.destruir());
 
       alDesmontar.push(protegerContexto(renderer, holder, {
+        fotograma: 'isla',
         alPerder() {
           scene.active = false;
           unregisterScene(scene);
@@ -586,7 +610,12 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     /* jamás un hueco en blanco: sin 3D, la sección colapsa a su versión editorial */
     console.warn('Chiloé 3D no disponible:', e);
     section.classList.add('estudio--sin3d');
+    mostrarFijo(holder, 'sin-arrancar', { fotograma: 'isla' });
   });
+
+  /* Y si no arranca sin más —sin lanzar, que es lo que pasa de verdad en una
+     máquina muy lenta— el fotograma entra igual al cabo de unos segundos. */
+  vigilarMontaje(holder, { fotograma: 'isla' });
 
   if ('IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => {

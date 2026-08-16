@@ -461,6 +461,26 @@ html { overflow-x: clip; }
   text-align: center;
   pointer-events: none;
 }
+/* EL FOTOGRAMA. `contain` y no `cover`, y la razón importa:
+
+   el hueco cambia de proporción con la ventana —el escenario del Método es
+   la pantalla entera, de 16:10 en un portátil a 9:19 en un móvil— y el
+   fotograma se capturó con una sola. Con `cover` habría que recortar, y como
+   la escultura va desplazada a un lado para dejarle sitio al copy, en
+   vertical se saldría de cuadro. Con `contain` se ve entera, más pequeña.
+
+   Y no deja bandas: el fotograma lleva canal alfa y el fondo es color plano
+   del CSS, así que lo que sobra es la propia sección. */
+.escena-fija--foto {
+  padding: 0;
+}
+.escena-fija--foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
 .escena-fija p {
   margin: 0;
   max-width: 30ch;

@@ -28,7 +28,7 @@
 .instrumento { margin: 0; position: relative; z-index: 2; }
 .instrumento-lienzo {
   position: relative; overflow: hidden; cursor: pointer;
-  border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  border: 1px solid currentColor; border: 1px solid color-mix(in srgb, currentColor 45%, transparent);
   border-radius: 16px;
   min-height: clamp(288px, 44svh, 480px);
   transition: border-color var(--dur-ui) var(--ease-out), box-shadow var(--dur-ui) var(--ease-out);
@@ -44,7 +44,7 @@
 
 /* Plegables (acordeones del sistema v9) */
 .plegable {
-  border-block: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+  border-block: 1px solid currentColor; border-block: 1px solid color-mix(in srgb, currentColor 40%, transparent);
   margin-top: 28px; position: relative; z-index: 2; max-width: 640px;
 }
 .plegable + .plegable { border-top: 0; }

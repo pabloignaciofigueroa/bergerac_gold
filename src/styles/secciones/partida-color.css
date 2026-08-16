@@ -12,7 +12,7 @@
 .partida__visual {
   overflow: hidden;
   background: color-mix(in srgb, var(--st, var(--purple)) 10%, transparent);
-  border-color: color-mix(in srgb, var(--st, var(--purple)) 55%, transparent);
+  border-color: var(--st, var(--purple)); border-color: color-mix(in srgb, var(--st, var(--purple)) 55%, transparent);
 }
 .partida__foto {
   position: absolute;
@@ -70,7 +70,7 @@
 /* Partida: barrido final de morados fijos → color por estación (pedido QA) */
 .js .partida__station::before { background: var(--st, var(--purple)); }
 .partida__deep-panel {
-  border-color: color-mix(in srgb, var(--st-ink, var(--warm-white)) 28%, transparent);
+  border-color: var(--st-ink, var(--warm-white)); border-color: color-mix(in srgb, var(--st-ink, var(--warm-white)) 28%, transparent);
 }
 .partida__deep-panel::before,
 .partida__deep-panel::after {

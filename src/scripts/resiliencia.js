@@ -91,24 +91,53 @@ export function rendererDe() { sondear(); return _renderer; }
                     contarle a un lector de pantalla. */
 export const HUECOS_WEBGL = [
   { sel: '.hero-escena',            texto: false },
-  { sel: '.estudio__canvas-holder', texto: true  },
-  { sel: '.metodo__stage',          texto: true  },
+  { sel: '.estudio__canvas-holder', texto: true,  propio: true },
+  { sel: '.metodo__stage',          texto: true,  propio: true },
   { sel: '.contacto-escena',        texto: false },
 ];
 
-/* Deja los cuatro huecos en su estado sin-WebGL. */
+/* Deja los huecos en su estado sin-WebGL.
+
+   Los marcados `propio` se los pone su sección, porque tienen fotograma: la
+   isla el suyo, y el Método los cuatro suyos con su bisagra. Si se marcaran
+   aquí también, se vería un instante el texto provisional antes de que la
+   sección lo sustituyera por la imagen. */
 export function marcarSinWebGL() {
-  for (const { sel, texto } of HUECOS_WEBGL) {
+  for (const { sel, texto, propio } of HUECOS_WEBGL) {
+    if (propio) continue;
     document.querySelectorAll(sel).forEach((m) => {
       mostrarFijo(m, texto ? 'sin-webgl' : 'sin-webgl-fondo');
     });
   }
 }
 
+/* LOS FOTOGRAMAS.
+
+   Son los píxeles que pintó el propio WebGL, sacados del lienzo con
+   `toDataURL()` (ver tools/capturar-fotogramas.mjs). No son una ilustración
+   parecida: son el instrumento detenido, y por eso no hay una segunda
+   dirección de arte que mantener.
+
+   Van con canal alfa, así que el fondo lo sigue poniendo el CSS: la bisagra
+   cromática del Método sigue viva por debajo del fotograma.
+
+   Solo se descargan cuando hacen falta. En FULL y en REDUCED no se pide ni
+   uno: son 392 KB que el visitante normal nunca ve pasar. */
+const FOTOGRAMAS = {
+  isla: 'assets/img/fotogramas/isla.webp',
+  'metodo-estudiar': 'assets/img/fotogramas/metodo-estudiar.webp',
+  'metodo-definir': 'assets/img/fotogramas/metodo-definir.webp',
+  'metodo-construir': 'assets/img/fotogramas/metodo-construir.webp',
+  'metodo-afinar': 'assets/img/fotogramas/metodo-afinar.webp',
+};
+
 /* Pinta el estado fijo dentro del hueco del instrumento.
    Se crea al vuelo y no vive en el HTML: así el DOM normal queda intacto y
-   los comparadores de QA siguen midiendo lo mismo que antes. */
-export function mostrarFijo(mount, motivo = 'perdido') {
+   los comparadores de QA siguen midiendo lo mismo que antes.
+
+   Con `fotograma` enseña la imagen en vez del texto: cuando hay fotograma,
+   el fotograma ES la explicación. */
+export function mostrarFijo(mount, motivo = 'perdido', { fotograma } = {}) {
   if (!mount) return null;
   let fijo = mount.querySelector(':scope > .escena-fija');
   if (!fijo) {
@@ -117,11 +146,72 @@ export function mostrarFijo(mount, motivo = 'perdido') {
     mount.appendChild(fijo);
   }
   fijo.dataset.motivo = motivo;
+
+  if (fotograma && FOTOGRAMAS[fotograma]) {
+    fijo.classList.add('escena-fija--foto');
+    let img = fijo.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      /* `alt` vacío a propósito: el hueco de la isla ya lleva su `role="img"`
+         con su etiqueta en el HTML, y duplicarla haría que un lector de
+         pantalla lo anunciara dos veces. */
+      img.alt = '';
+      img.decoding = 'async';
+      fijo.innerHTML = '';
+      fijo.appendChild(img);
+    }
+    const ruta = FOTOGRAMAS[fotograma];
+    if (!img.src.endsWith(ruta)) img.src = ruta;
+    return fijo;
+  }
+
+  fijo.classList.remove('escena-fija--foto');
   const texto = TEXTOS[motivo];
   fijo.innerHTML = texto ? `<p>${texto}</p>` : '';
   /* Sin `aria-hidden`: si el instrumento no está, esto es lo que hay que
      contar. El texto de la sección sigue completo en el DOM igualmente. */
   return fijo;
+}
+
+/* ---- ¿llegó a montarse la escena? ----------------------------------
+   La red cubría la pérdida de contexto y la ausencia de WebGL, pero no el
+   caso "la escena no arrancó": ahí el hueco se quedaba vacío. Pasa de
+   verdad —se destapó midiendo bajo un rasterizador por software— y desde
+   fuera no hay forma de distinguirlo, porque no lanza ningún error.
+
+   Así que la escena avisa cuando está montada, y si no avisa en un rato
+   razonable ESTANDO A LA VISTA, se enseña su fotograma. */
+const montadas = new WeakSet();
+export function marcarMontada(mount) { if (mount) montadas.add(mount); }
+export function estaMontada(mount) { return !!mount && montadas.has(mount); }
+
+export function vigilarMontaje(mount, { fotograma, motivo = 'sin-arrancar', segundos = 8, al } = {}) {
+  if (!mount || typeof IntersectionObserver !== 'function') return () => {};
+  let reloj = 0;
+  let cerrado = false;
+
+  const rendirse = () => {
+    if (cerrado || estaMontada(mount) || estaCaida(mount)) return;
+    cerrado = true;
+    io.disconnect();
+    /* `al` deja que la sección ponga su propio estado: el Método necesita
+       enganchar los cuatro fotogramas y la bisagra, no una imagen suelta. */
+    if (al) al(); else mostrarFijo(mount, motivo, { fotograma });
+  };
+
+  const io = new IntersectionObserver((ents) => {
+    if (cerrado) return;
+    const dentro = ents.some((e) => e.isIntersecting);
+    if (estaMontada(mount)) { cerrado = true; io.disconnect(); clearTimeout(reloj); return; }
+    /* el reloj solo corre mientras el hueco está a la vista: si el visitante
+       no ha llegado a la sección, la escena no llega tarde, es que aún no le
+       tocaba */
+    if (dentro && !reloj) reloj = setTimeout(rendirse, segundos * 1000);
+    if (!dentro) { clearTimeout(reloj); reloj = 0; }
+  }, { threshold: 0.15 });
+
+  io.observe(mount);
+  return () => { cerrado = true; clearTimeout(reloj); io.disconnect(); };
 }
 
 export function quitarFijo(mount) {
@@ -140,7 +230,7 @@ export function esDecorativo(mount) {
 
 /* Engancha la protección a un renderer ya creado.
    Devuelve la función de despegue, para el desmontaje limpio. */
-export function protegerContexto(renderer, mount, { alPerder } = {}) {
+export function protegerContexto(renderer, mount, { alPerder, fotograma } = {}) {
   const canvas = renderer?.domElement;
   if (!canvas) return () => {};
 
@@ -150,7 +240,10 @@ export function protegerContexto(renderer, mount, { alPerder } = {}) {
     ev.preventDefault();
     if (mount) caidos.add(mount);
     try { alPerder?.(); } catch { /* que un fallo aquí no propague */ }
-    if (mount) mostrarFijo(mount, esDecorativo(mount) ? 'perdido-fondo' : 'perdido');
+    /* `fotograma` puede ser una función: el Método necesita el de la etapa
+       en la que esté el visitante, no siempre el mismo. */
+    const foto = typeof fotograma === 'function' ? fotograma() : fotograma;
+    if (mount) mostrarFijo(mount, esDecorativo(mount) ? 'perdido-fondo' : 'perdido', { fotograma: foto });
   };
 
   const onRestored = () => {

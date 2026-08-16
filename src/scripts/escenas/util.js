@@ -2,7 +2,7 @@
 
 import * as THREE from 'three';
 import { protegerContexto, liberarEscena, mostrarFijo, esDecorativo } from '../resiliencia.js';
-import { crearObservador, nivelDe, ratioDe, ratioReducido, REDUCED } from '../calidad.js';
+import { crearObservador, nivelDe, ratioDe, ratioReducido, paraCaptura, REDUCED } from '../calidad.js';
 
 export const PALETA = {
   azul: 0x00a1ff,
@@ -22,7 +22,11 @@ export const PALETA = {
    siempre — así las escenas que no están en la página no pagan nada. */
 export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize, instrumento = null }) {
   const nivel0 = instrumento ? nivelDe(instrumento) : null;
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: nivel0 !== REDUCED });
+  const renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: nivel0 !== REDUCED,
+    preserveDrawingBuffer: paraCaptura(),
+  });
   renderer.setPixelRatio(instrumento ? ratioDe(nivel0) : Math.min(devicePixelRatio, 2));
   renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
   mount.appendChild(renderer.domElement);
