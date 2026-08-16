@@ -73,7 +73,9 @@ input, textarea, button { font-family: var(--font-body); }
 }
 .display {
   font-family: var(--font-display);
-  font-weight: 800;
+  /* DemoDisplay solo existe en 400: cualquier otro peso lo falsifica el
+     navegador engordando el trazo y se come el blanco entre letras. */
+  font-weight: 400;
   line-height: var(--lh-display);
   letter-spacing: var(--ls-display);
 }

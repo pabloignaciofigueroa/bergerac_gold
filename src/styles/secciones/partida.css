@@ -38,7 +38,7 @@
   position: relative;
   font-family: var(--font-display);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 400;
   color: rgba(253, 252, 250, .55);
   line-height: 2;
   padding-top: 10px;
@@ -59,7 +59,7 @@
 .js .partida__station[data-active="true"] .partida__num::before { transform: scaleX(1); }
 .js .partida__station[data-active="true"] .partida__num { color: var(--warm-white); }
 .partida__problem {
-  font: 700 clamp(28px, 3.2vw, 54px)/1.1 var(--font-display);
+  font: 400 clamp(28px, 3.2vw, 54px)/1.1 var(--font-display);
   letter-spacing: -.015em;
   max-width: 20ch;
   padding-top: 4px;

@@ -59,14 +59,14 @@
   gap: clamp(18px, 2.5vw, 40px);
 }
 .metodo__num {
-  font: 700 clamp(40px, 5vw, 76px)/.9 var(--font-display);
+  font: 400 clamp(40px, 5vw, 76px)/.9 var(--font-display);
   letter-spacing: -.015em;
   opacity: .38;
 }
 .metodo__name {
   /* recalibrado a la slab v9 (más ancha que la fuente original):
      "CONSTRUIR" debe caber entero en la columna de su etapa */
-  font: 800 clamp(40px, 4.6vw, 76px)/.85 var(--font-display);
+  font: 400 clamp(40px, 4.6vw, 76px)/.85 var(--font-display);
   letter-spacing: -.015em;
   text-transform: uppercase;
   min-width: 0;
