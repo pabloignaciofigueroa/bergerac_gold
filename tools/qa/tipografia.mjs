@@ -10,12 +10,13 @@
    natural entre letras crece con ella. Los píxeles solo comparan bien a
    igualdad de talla, y aquí las tallas van de 27 a 216 px.
 
-   Lo que compara bien es el `em`, que es proporción pura. Se ve claro en el
-   hero: BERGERAC recorta -2,2 px —más que el titular de la partida— y se lee
-   perfecto, porque en proporción solo aprieta -.010em frente a -.035em.
+   Lo que compara bien es el `em`, que es proporción pura.
+
+   NO ENTRA el BERGERAC del hero: las partículas muestrean esa caja para
+   colocarse, así que su tracking no es una decisión revisable.
 
    La referencia la puso la propia página: los titulares que se leen bien
-   están en -.010 / -.015em.
+   están en -.015em.
 
    Uso:
      node tools/qa/tipografia.mjs            (1440 y 390)
@@ -87,6 +88,13 @@ for (const ancho of ANCHOS) {
       /* solo el nodo más externo con esa fuente: si no, cada .line y cada
          .roll-char de SplitText saldría repetido */
       if (el.parentElement && esSlab(getComputedStyle(el.parentElement).fontFamily)) continue;
+      /* FUERA el BERGERAC del hero. No es una decisión tipográfica que se
+         pueda revisar: las partículas muestrean ESA caja —fuente, talla,
+         tracking y posición que le da hero-fit.js— para colocarse. Cambiarle
+         el tracking movería el instrumento entero. No se toca, así que no
+         cuenta como referencia ni como problema. */
+      if (el.closest('.hero-word')) continue;
+
       const texto = (el.textContent || '').replace(/\s+/g, ' ').trim();
       if (!texto || texto.length < 2) continue;
       const px = parseFloat(cs.fontSize);
@@ -139,7 +147,10 @@ for (const ancho of ANCHOS) {
   await page.close();
 }
 
-console.log('\n\n  «APRETADO» = se come 2,5 px o más de cada hueco entre letras.');
-console.log('  La slab casi no tiene aire lateral propio, así que ese recorte');
-console.log('  sale directamente del blanco entre perfiles.\n');
+console.log('\n\n  El tracking va en PROPORCIÓN (em): es lo único que compara bien entre');
+console.log('  tallas distintas. La escala la puso la propia página, no un manual:');
+console.log('    -.015em          se lee bien');
+console.log('    -.020 / -.025em  al límite');
+console.log('    -.030em o más    apretado: los perfiles de la slab se sueldan');
+console.log('\n  El BERGERAC del hero queda fuera del estudio: no se toca.\n');
 await browser.close();
