@@ -23,11 +23,11 @@
   --line:   #d8d5ce;
 
   /* ---- Tipografías ---- */
-  /* Sistema v9 maestro (F2). Balimo únicamente para piezas de marca. */
-  --font-brand: 'Balimo', 'DemoDisplay', sans-serif;
+  /* Dos familias, y solo dos. Balimo se retiro: se declaraba y no la usaba
+     ni un texto. DemoDisplay EXISTE SOLO EN PESO 400 — cualquier otro peso
+     lo falsifica el navegador y suelda las letras. */
   --font-display: 'DemoDisplay', Arial, sans-serif;
   --font-body: 'Mona Sans', Arial, sans-serif;
-  --font-serif: 'DemoDisplay', Georgia, serif;
   --font-mono: ui-monospace, Menlo, Consolas, monospace;
 
   /* Escala tipográfica */

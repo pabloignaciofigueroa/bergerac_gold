@@ -29,11 +29,9 @@
    reglas transversales que se pisan entre secciones distintas.
    ============================================================ */
 
-@import './secciones/hero.css';   /* 01 · Hero */
 @import './secciones/estudio.css';   /* 02 · El estudio */
 @import './secciones/partida.css';   /* 03 · El punto de partida */
 @import './secciones/metodo.css';   /* 04 · Método */
-@import './secciones/casos.css';   /* 05 · Trabajo seleccionado */
 @import './secciones/contacto.css';   /* 06 · Contacto */
 @import './secciones/responsive-fino.css';   /* ajustes responsive del primer pase */
 @import './secciones/hero-v9.css';   /* 01 · Hero — pase v9 (roles t-*, estructura) */

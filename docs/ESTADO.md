@@ -42,36 +42,36 @@ declaración deja el elemento SIN borde. `@property` ya degradaba solo: la
 variable está definida localmente y sin soporte únicamente se pierde la
 animación.
 
-## Depuración (hecha, pendiente de borrar `depurar/`)
+## Depuración (terminada)
 
-79 archivos sin uso movidos a `depurar/`, con manifiesto y vuelta atrás:
-`node tools/depurar-mover.mjs --volver`. **No se ha borrado nada todavía.**
+La carpeta es la versión madre y ya no lleva nada que no dibuje algo.
 
-Se decidió con DOS pruebas independientes, y las dos hacían falta:
+**Fuera del proyecto (borrado):** la carpeta `porting/v9` entera, la página
+anterior a Astro y su lanzador, ocho logos en archivo —el header, el loader y
+el menú los dibujan inline; solo se usa el favicon—, la fuente Balimo, las
+capturas de QA regenerables y cuatro herramientas de un solo uso ya gastadas.
 
-- `tools/depurar-analisis.mjs` sigue el grafo real de imports desde las
-  páginas, la config y los scripts de npm. Buscar por nombre no vale: hay
-  `main.js`, `hero.js` y `contacto.js` repetidos en varias carpetas y se
-  "citan" entre ellos.
-- `tools/depurar-red.mjs` mira qué pide el navegador de verdad, recorriendo
-  las seis secciones en tres tamaños y abriendo los interactivos.
+**Fuera del publicado (esto sí pesaba en cada visita):**
 
-**La segunda salvó a tres grupos que la primera habría condenado**: los
-fotogramas fijos (por diseño no se piden en una visita sana), `og-bergerac.jpg`
-(lo piden los rastreadores de enlaces, no el navegador) y los vídeos grandes
-(son la variante de pantalla grande).
+- Las **cinco escenas que nunca se montaban** —hero, estudio, partida, metodo
+  y proyectos— y sus entradas en el mapa de `instrumentos.js`. Bastaba un
+  `import()` en ese mapa para que su código viajara aunque nadie las montara,
+  y encima arrastraban los complementos de líneas de three.
+- **CSS muerto:** `casos.css` y `hero.css` enteros (0 selectores vivos de 31 y
+  de 14), `contacto.css` reducido de 31 reglas a 1, y sueltas en `base.css`.
 
-QA doble: las siete puertas en verde, y el publicado comparado archivo a
-archivo antes y después — 45 idénticos byte a byte, cero diferencias, cero
-archivos nuevos. Lo único que desaparece son los 10 muertos que se estaban
-subiendo: **160 KB menos en cada despliegue**.
+Se decidió con `tools/depurar-css.mjs`, que prueba CADA selector contra el DOM
+vivo en tres tamaños y en todos los estados que sabe alcanzar: menú abierto,
+desplegables abiertos, isla en modo mapa, cursor sobre un caso.
 
-Queda por hacer, y son cambios de código, no de archivos:
+**Lo que ese detector marcó y NO se borró**, porque un recorrido sano no
+puede alcanzarlo y confundirlo con basura sería quitar justo las redes:
+`.escena-fija` (solo si falla WebGL), `.estudio--sin3d` (la pone
+`estudio.js:612` cuando la isla no arranca), las reglas `.no-js`, los estados
+`[hidden]` del formulario y los `:focus-visible` del teclado.
 
-- `@font-face` de Balimo apunta ahora a un archivo movido. No da 404 porque
-  nada la usa, pero es CSS muerto.
-- `.serif-word` y `.hero__brandword` son reglas muertas; la primera además
-  pide una cursiva que DemoDisplay no tiene.
+Resultado: **195 → 113 archivos** en la carpeta y **208 KB menos** en cada
+despliegue. Las ocho puertas de QA en verde después de borrar.
 
 ## Pendientes
 

@@ -1,6 +1,7 @@
 /* ============================================================
    01 · HERO v9 (F8 — literal). Roles t-* mínimos del sistema v9
-   + estructura del hero. Balimo SOLO en la palabra-marca (F2).
+   + estructura del hero. El titulo usa DemoDisplay; las particulas
+   muestrean su caja, asi que su talla y su tracking no se tocan.
    ============================================================ */
 .t-eyebrow {
   font-family: var(--font-body);

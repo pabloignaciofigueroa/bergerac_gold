@@ -1,23 +1,23 @@
 /* ============================================================
-   BERGERAC MERGE — CARGADOR DE ESCENAS (F9: loader v9 portado)
-   Monta las escenas Three.js declaradas con [data-escena] cuando
-   entran en viewport (lazy) y las pausa al salir. Los clicks se
-   traducen a coordenadas normalizadas → escena.accion(nx, ny).
-   [data-accion-escena="hero"] dispara la acción desde un botón.
-   Las escenas son CONTENIDO (se montan aunque haya reduced-motion);
-   sin WebGL, los marcos .instrumento-lienzo lo explican.
-   Escenas activas por fase: hero (F9). Las demás entran cuando su
-   sección se decida (F11, F13, F15, F17, F18).
+   BERGERAC — CARGADOR DE ESCENAS
+
+   Monta las escenas de three declaradas con [data-escena] cuando entran en
+   viewport, y las pausa al salir. Los clicks se traducen a coordenadas
+   normalizadas → escena.accion(nx, ny).
+
+   SOLO HAY DOS, y el mapa lista exactamente las dos que existen en el HTML.
+   Hubo cinco más —hero (la bandada), estudio, partida, metodo y proyectos—
+   de cuando cada sección iba a llevar su propia escena aquí. Ninguna llegó a
+   usarse: la isla y la escultura acabaron viviendo en sections/, con su
+   propio ciclo de vida. Se han quitado porque un `import()` en este mapa
+   basta para que su código VIAJE al publicado aunque nadie lo monte, y esas
+   cinco se traían además los complementos de líneas de three.
+
+   Si algún día vuelve una, se añade su archivo y su línea aquí.
    ============================================================ */
 
 const MODULOS = {
   'hero-particulas': () => import('./escenas/hero-particulas.js'),
-  /* la bandada queda disponible: volver atrás es cambiar data-escena */
-  hero: () => import('./escenas/hero.js'),
-  estudio: () => import('./escenas/estudio.js'),
-  partida: () => import('./escenas/partida.js'),
-  metodo: () => import('./escenas/metodo.js'),
-  proyectos: () => import('./escenas/proyectos.js'),
   contacto: () => import('./escenas/contacto.js'),
 };
 
