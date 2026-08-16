@@ -58,6 +58,32 @@ El arnés de QA apunta por defecto a **4300**. Para medir contra el build:
   la devuelve a la situación que tiró el contexto y suele volver a perderlo.
   Se queda en fijo hasta recargar, y es decisión de dirección, no una
   limitación. Lo vigila `node tools/qa/resiliencia.mjs`.
+- **La calidad tiene DOS niveles, no tres.** FULL es Bergerac; REDUCED es la
+  misma pieza más barata de pintar. No existe un tercer nivel: si ni REDUCED
+  sirve, o se pierde el contexto, o no hay WebGL, entra la red de
+  `resiliencia.js`, que es manejo de errores y no un nivel. Todo vive en
+  `src/scripts/calidad.js`.
+- **No hay promoción, y esa es la pieza que lo sostiene.** Lo que baja no
+  vuelve hasta recargar. Medir la calidad que tú mismo elegiste solo es
+  circular si existe camino de vuelta arriba: sin él, el buen tiempo de un
+  nivel barato no puede leerse como "sube". Por eso NO hace falta ningún
+  banco de pruebas para calibrar la máquina. No añadir promoción.
+- **Cada instrumento paga lo suyo.** El tiempo de fotograma de una escena no
+  decide por otra. Contacto NO baja por ser decorativo: en el perfil por
+  software fue la única que se sostuvo. Se puede atribuir el intervalo de la
+  página a una escena porque solo hay una en pantalla a la vez.
+- **La CPU estrangulada no simula una GPU débil.** Sirve para probar que el
+  mecanismo de bajada funciona. No reduce el relleno, que es donde sufren
+  estas escenas, y deja a varias rozando el techo: por eso la puerta exige el
+  contrato y no un resultado concreto. Lo determinista es el perfil `forzado`.
+- **Reducir partículas del título es seguro para la cobertura.** `muestrear()`
+  escala `gapBorde` y `gapInt` juntos, el radio sale de `gapInt·DOT_INT·NUCLEO`
+  y el desorden de `gapInt·JITTER`: todo proporcional al paso, así que la
+  desigualdad queda en constantes. Verificado: 0,000 % de fisuras y cobertura
+  1.0000 en los dos niveles. Lo que NO es invariante son las constantes
+  mismas — eso sigue valiendo.
+- **`?calidad=reduced` y `?calidad=full`** fuerzan el nivel para poder ver las
+  dos versiones en la misma máquina.
 - **Pins de ScrollTrigger.** Partida, Método y el anclaje de lectura de cada etapa
   usan `pin`. Un `refresh()` mientras un pin está activo descoloca la sección: por
   eso existe `safeRefresh` con debounce en `main.js`. No llamar `ScrollTrigger.refresh()`

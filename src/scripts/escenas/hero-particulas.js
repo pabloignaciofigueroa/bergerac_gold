@@ -54,6 +54,7 @@
 
 import * as THREE from 'three';
 import { crearBase, seguirPuntero, suavizar } from './util.js';
+import { nivelDe, REDUCED } from '../calidad.js';
 
 /* — física: adimensionales, valores del demo — */
 const SPRING = 0.024;
@@ -101,14 +102,30 @@ const DOT_INT = 2.30;
 const NUCLEO = 0.44;     /* fracción opaca del punto (el resto, borde suave) */
 const JITTER = 0.18;     /* desorden del relleno, en fracción del paso */
 
+/* Cuántas partículas se sortean.
+
+   Los cortes por ancho son de composición, no de máquina: un titular más
+   corto pide menos puntos. Esos se quedan.
+
+   Lo que decide REDUCED es el nivel de calidad, no la RAM ni los núcleos.
+   La cuenta por núcleos era justamente la que mentía —16 hilos sin GPU
+   pedían 48.000 partículas—, así que se va.
+
+   REDUCIR LA CUENTA ES SEGURO PARA LA COBERTURA, y conviene saber por qué:
+   al pasarse del cupo, muestrear() escala `gapBorde` y `gapInt` juntos por
+   el mismo factor, el radio del disco sale de `gapInt · DOT_INT · NUCLEO` y
+   el desorden de `gapInt · JITTER`. Todo proporcional al paso, así que la
+   desigualdad `paso·DOT·NUCLEO·2 ≥ (paso + 2·jitter)·√2` se queda en
+   constantes: 2.30·0.44·2 = 2.024 ≥ 1.36·√2 = 1.924. Es invariante de
+   escala. Menos partículas y más grandes, letras igual de sólidas.
+   Lo comprueba `node tools/qa/qa.mjs titulo`. */
 function presupuesto() {
-  const flojo = (navigator.deviceMemory && navigator.deviceMemory <= 4)
-    || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
   /* el loader del isotipo cubre la construcción: se puede ser generoso */
-  if (flojo) return { palabra: 14000, polvo: 250 };
-  if (innerWidth >= 1200) return { palabra: 48000, polvo: 600 };
-  if (innerWidth >= 900) return { palabra: 30000, polvo: 400 };
-  return { palabra: 16000, polvo: 250 };
+  const cupo = innerWidth >= 1200 ? { palabra: 48000, polvo: 600 }
+    : innerWidth >= 900 ? { palabra: 30000, polvo: 400 }
+    : { palabra: 16000, polvo: 250 };
+  if (nivelDe('hero') !== REDUCED) return cupo;
+  return { palabra: Math.round(cupo.palabra * 0.3), polvo: Math.round(cupo.polvo * 0.5) };
 }
 
 /* ---- medición del título real ---------------------------------- */
@@ -478,10 +495,12 @@ export async function init(mount) {
       programarBuild();
     },
     onFrame,
+    instrumento: 'hero',
   });
   camara = base.camera;
   camara.position.z = (mount.clientHeight || 1) * 1.20711;
-  base.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  /* el ratio ya lo puso crearBase según el nivel: no volver a fijarlo aquí,
+     que pisaría la reducción */
 
   /* ---- construcción ---------------------------------------------- */
   /* Firma de lo que determina el muestreo. Si no ha cambiado, reconstruir

@@ -31,7 +31,7 @@ const MIME = {
   '.webm': 'video/webm',   /* faltaba: los casos salían como octet-stream */
 };
 
-http.createServer((req, res) => {
+const servidor = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p.endsWith('/')) p += 'index.html';
   const file = path.join(root, p);
@@ -41,7 +41,23 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
     res.end(data);
   });
-}).listen(port, () => console.log(`bergerac merge → http://localhost:${port}  (sirviendo ${path.relative(raizRepo, root) || '.'})`))
+});
+
+/* KEEP-ALIVE LARGO — no es un detalle, costó media tarde de QA.
+
+   Node cierra las conexiones inactivas a los 5 s por defecto. Si el
+   navegador manda una petición por un socket que el servidor está cerrando
+   en ese mismo instante, la petición se pierde sin error ninguno: ni 404, ni
+   excepción, ni aviso en consola. Simplemente no vuelve.
+
+   Aquí se notaba en que las DOS últimas escenas —Método y Contacto, las que
+   piden su código con `import()` dinámico al llegar a su sección, después de
+   varios segundos sin pedir nada— no se montaban en un tercio de las
+   pasadas. Parecía un fallo de las escenas y no lo era. */
+servidor.keepAliveTimeout = 120000;
+servidor.headersTimeout = 125000;   /* debe superar al anterior */
+
+servidor.listen(port, () => console.log(`bergerac merge → http://localhost:${port}  (sirviendo ${path.relative(raizRepo, root) || '.'})`))
   .on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
       console.error(`\n[ERROR] El puerto ${port} ya está ocupado por otro servidor.`);

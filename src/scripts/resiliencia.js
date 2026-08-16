@@ -37,20 +37,43 @@ const TEXTOS = {
   'sin-webgl': 'Este instrumento necesita aceleración gráfica. El contenido de la sección está completo más abajo.',
   perdido: 'El instrumento se detuvo para no afectar al resto de la página. Recarga si quieres volver a verlo.',
   'sin-webgl-fondo': '',   /* capa decorativa: no falta nada que explicar */
-  safe: '',   /* la fase 4 lo usa cuando decide no montar por rendimiento */
+  'perdido-fondo': '',     /* ídem, cuando lo que se cae es decorativo */
 };
 
-/* ¿Hay WebGL en esta máquina? Se pregunta una vez y se recuerda: crear un
-   canvas y pedirle contexto no es gratis, y lo consultan cuatro sitios. */
+/* ¿Hay WebGL, y qué driver hay detrás? UNA sola sonda para las dos
+   preguntas, y se SUELTA en el acto.
+
+   Esto costó un rato de encontrar. Había dos sondas —una aquí y otra en
+   calidad.js— y ninguna soltaba su contexto. Un navegador solo mantiene
+   unos pocos vivos a la vez; con las cuatro escenas más dos sondas
+   permanentes, en el perfil por software una escena se quedaba sin montar.
+   Justo en las máquinas para las que existe todo este trabajo.
+
+   `loseContext()` es la única forma de devolverlo: dejar de referenciar el
+   canvas no basta, hasta que pase el recolector el contexto sigue contando. */
 let _soporta = null;
-export function soportaWebGL() {
-  if (_soporta !== null) return _soporta;
+let _renderer = '';
+function sondear() {
+  if (_soporta !== null) return;
+  _soporta = false;
   try {
     const c = document.createElement('canvas');
-    _soporta = !!(c.getContext('webgl2') || c.getContext('webgl'));
-  } catch { _soporta = false; }
-  return _soporta;
+    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    if (!gl) return;
+    _soporta = true;
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    _renderer = String(
+      (ext && gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) || gl.getParameter(gl.RENDERER) || '',
+    );
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+  } catch { /* _soporta se queda en false */ }
 }
+
+export function soportaWebGL() { sondear(); return _soporta; }
+
+/* Cadena del driver, para que calidad.js decida el nivel de arranque sin
+   abrir un contexto propio. */
+export function rendererDe() { sondear(); return _renderer; }
 
 /* Los CUATRO huecos que de verdad necesitan WebGL.
 
@@ -105,6 +128,16 @@ export function quitarFijo(mount) {
   mount?.querySelector(':scope > .escena-fija')?.remove();
 }
 
+/* ¿Este hueco es una capa decorativa sobre contenido que se lee completo?
+   La lista ya está declarada arriba; esto solo la consulta. Se usa para que
+   el motivo de la caída no cambie la respuesta: si el hero pierde su
+   contexto sigue teniendo su título en tipografía real, igual que si nunca
+   hubiera habido WebGL, así que tampoco hay nada que explicar ahí. */
+export function esDecorativo(mount) {
+  if (!mount) return false;
+  return HUECOS_WEBGL.some((h) => !h.texto && mount.matches?.(h.sel));
+}
+
 /* Engancha la protección a un renderer ya creado.
    Devuelve la función de despegue, para el desmontaje limpio. */
 export function protegerContexto(renderer, mount, { alPerder } = {}) {
@@ -117,7 +150,7 @@ export function protegerContexto(renderer, mount, { alPerder } = {}) {
     ev.preventDefault();
     if (mount) caidos.add(mount);
     try { alPerder?.(); } catch { /* que un fallo aquí no propague */ }
-    if (mount) mostrarFijo(mount, 'perdido');
+    if (mount) mostrarFijo(mount, esDecorativo(mount) ? 'perdido-fondo' : 'perdido');
   };
 
   const onRestored = () => {

@@ -15,7 +15,8 @@
    ============================================================ */
 
 import { buildIsland, fieldContour, findPeaks } from './isla-geo.js';
-import { protegerContexto, liberarEscena, soportaWebGL, estaCaida } from '../resiliencia.js';
+import { protegerContexto, liberarEscena, soportaWebGL, estaCaida, mostrarFijo } from '../resiliencia.js';
+import { crearObservador, nivelDe, ratioDe, ratioReducido, REDUCED } from '../calidad.js';
 
 export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake }) {
   const section = document.querySelector('#estudio');
@@ -213,16 +214,23 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     });
 
     /* --- Escena --- */
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    /* Calidad: la isla arranca en REDUCED si el rasterizador es por
+       software. Se reduce por ratio de píxel y antialias, no bajando la
+       subdivisión de la malla: la escena está limitada por relleno y no por
+       vértices, y `isla-geo.js` genera un vértice por píxel de máscara sin
+       ningún paso intermedio — meterlo obligaría a rehacerlo entero. */
+    const nivel0 = nivelDe('estudio');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: nivel0 !== REDUCED });
     /* Resiliencia: si este contexto se pierde, la isla se para y en su hueco
        aparece el estado fijo, en vez de quedarse un rectángulo en blanco. */
     let escenaViva = null;
+    let vigilante = null;
     /* Todo lo que hay que deshacer al desmontar. Las escuchas del DOM van
        con `signal`: abortar el controlador las quita todas de golpe. */
     const limpieza = new AbortController();
     const { signal } = limpieza;
     const alDesmontar = [];
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(ratioDe(nivel0));
     const scene3 = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(36, 1, .05, 10);
 
@@ -512,6 +520,7 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
       group.position.y = Math.sin(t * .35) * .0012;
       applyCamera(Math.sin(t * .12) * .012);
       renderer.render(scene3, camera);
+      vigilante?.frame();
     }
     function renderOnce() {
       applyCamera(0);
@@ -524,11 +533,26 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unre
     } else {
       const scene = registerScene({ active: true, render });
       escenaViva = scene;
+
+      /* Vigilancia de calidad: mira los primeros segundos útiles de la isla
+         y, si se arrastra, baja el ratio de píxel. Después se apaga sola. */
+      vigilante = crearObservador(holder, 'estudio', {
+        alReducir() { renderer.setPixelRatio(ratioReducido()); resize(); renderOnce(); },
+        alRendirse() {
+          scene.active = false;
+          unregisterScene(scene);
+          escenaViva = null;
+          mostrarFijo(holder, 'perdido');
+        },
+      });
+      alDesmontar.push(() => vigilante?.destruir());
+
       alDesmontar.push(protegerContexto(renderer, holder, {
         alPerder() {
           scene.active = false;
           unregisterScene(scene);
           escenaViva = null;
+          vigilante?.destruir();
         },
       }));
 

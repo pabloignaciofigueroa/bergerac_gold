@@ -13,7 +13,10 @@
     "resiliencia": "node tools/qa/resiliencia.mjs",
     "sin-webgl": "node tools/qa/sin-webgl.mjs",
     "estilos": "node tools/qa/estilos.mjs",
-    "qa:todo": "npm run qa && npm run resiliencia && npm run sin-webgl && npm run estilos"
+    "qa:todo": "npm run calidad:test && npm run qa && npm run resiliencia && npm run sin-webgl && npm run calidad && npm run estilos",
+    "calidad": "node tools/qa/calidad.mjs",
+    "calidad:test": "node tools/qa/calidad.test.mjs",
+    "calidad:visual": "node tools/qa/calidad-visual.mjs"
   },
   "dependencies": {
     "astro": "^7.2.2",

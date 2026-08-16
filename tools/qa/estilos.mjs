@@ -39,8 +39,31 @@ try {
 const chrome = CHROMES.find(existsSync);
 if (!chrome) { console.error('No encuentro Chrome.'); process.exit(1); }
 
-const A = process.argv[2] || 'http://127.0.0.1:4300';
-const B = process.argv[3] || 'http://127.0.0.1:4310';
+/* QUÉ COMPARA ESTO HOY, Y QUÉ YA NO.
+
+   Nació para comprobar la migración a Astro: el sitio de antes contra el
+   build. Esa comparación YA NO SE PUEDE HACER — la página legada de la raíz
+   del repo pide `assets/js/vendor/gsap.min.js` y compañía, y esas copias se
+   quitaron a propósito al pasar las dependencias a npm. Sin ellas no arranca,
+   así que no vale como referencia de nada. Queda anotado en docs/ESTADO.md.
+
+   Lo que sí verifica hoy, y falta hacía desde la fase 4: que BAJAR A REDUCED
+   NO MUEVE LA COMPOSICIÓN. Se compara el mismo build en sus dos niveles y se
+   exige que no cambie ni un estilo computado ni una caja. Lo único que puede
+   diferir es la resolución del lienzo, que es el dial de REDUCED y no un
+   estilo; se acepta abajo, y solo en CANVAS.
+
+   Para comparar contra otra cosa, las dos URLs a mano:
+     node tools/qa/estilos.mjs http://una http://otra */
+const A = process.argv[2] || 'http://127.0.0.1:4310/?calidad=full';
+/* `?calidad=full` en B, y hace falta: este comparador corre bajo SwiftShader
+   a posta —rasterizado determinista— y desde la fase 4 un rasterizador por
+   software arranca tres instrumentos en REDUCED, con lo que su lienzo pasa a
+   0,75×. A no adapta calidad, así que sin fijar el nivel se estaría
+   comparando un sitio que se defiende contra uno que no, y eso diverge
+   siempre. Lo que este comparador tiene que vigilar es LA CASCADA de CSS; de
+   los niveles ya responde `tools/qa/calidad.mjs`. */
+const B = process.argv[3] || 'http://127.0.0.1:4310/?calidad=reduced';
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 const ARGS = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--no-sandbox'];
 const ANCHOS = [[1440, 900], [390, 844]];
@@ -54,10 +77,25 @@ const ANCHOS = [[1440, 900], [390, 844]];
      declarada CAMBIA, eso sí es un fallo y tiene que saltar. */
 const EQUIV = [['0% 0%', '0px 0px'], ['0px 0px', '0% 0%']];
 const ratioAnadida = (x, y) => x === 'auto' && /^auto \d+(\.\d+)? \/ \d+(\.\d+)?$/.test(y);
-const equivale = (x, y, prop) =>
+/* El `aspect-ratio` de un CANVAS sale de su búfer, no de la hoja de estilos:
+   en REDUCED ese búfer encoge, y esa es justo la reducción. La PROPORCIÓN
+   tiene que seguir siendo la misma —si cambiara, el dibujo saldría deformado
+   y eso sí sería un fallo—, así que se comparan las dos proporciones y solo
+   se acepta si coinciden. En cualquier otra etiqueta no se acepta. */
+const proporcion = (v) => {
+  const m = /^auto (\d+(?:\.\d+)?) \/ (\d+(?:\.\d+)?)$/.exec(v);
+  return m ? Number(m[1]) / Number(m[2]) : null;
+};
+const soloResolucion = (x, y, tag) => {
+  if (tag !== 'CANVAS') return false;
+  const a = proporcion(x), b = proporcion(y);
+  return a !== null && b !== null && Math.abs(a - b) < 0.005;
+};
+const equivale = (x, y, prop, via = '') =>
   x === y
   || EQUIV.some(([u, v]) => x === u && y === v)
-  || (prop === 'aspect-ratio' && ratioAnadida(x, y));
+  || (prop === 'aspect-ratio' && ratioAnadida(x, y))
+  || (prop === 'aspect-ratio' && soloResolucion(x, y, via.split(/[ .#]/)[0]));
 
 let fallos = 0;
 const ok = (cond, etiqueta, detalle = '') => {
@@ -147,7 +185,7 @@ try {
         /* Equivalencias de ESCRITURA, no de efecto: el minificador de CSS
            normaliza algunas formas (0% 0% pasa a 0px 0px) y el navegador las
            devuelve tal cual se escribieron. Significan lo mismo. */
-        if (equivale(a[i].props[p], b[i].props[p], p)) continue;
+        if (equivale(a[i].props[p], b[i].props[p], p, a[i].via)) continue;
         if (a[i].props[p] !== b[i].props[p]) {
           difProps.push(`${a[i].via}  ·  ${p}:  ${a[i].props[p]}  →  ${b[i].props[p]}`);
         }

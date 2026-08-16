@@ -1,6 +1,35 @@
 # ESTADO — dónde quedamos
 
-Actualizado: **14 agosto 2026**
+Actualizado: **16 agosto 2026**
+
+## Fase 4 — calidad adaptativa (hecha)
+
+Dos niveles, FULL y REDUCED, en `src/scripts/calidad.js`. No hay tercer nivel:
+si ni REDUCED sirve, entra la red de `resiliencia.js`. No hay promoción, y esa
+ausencia es lo que hace imposible la oscilación —por eso tampoco hace falta
+ningún banco de pruebas para calibrar la máquina—.
+
+Verificado: los cuatro instrumentos siguen en FULL con GPU real; bajo
+SwiftShader arrancan en REDUCED Hero, Estudio y Método, y **Contacto se queda
+en FULL** porque es el único que se sostiene ahí. El título pasa `qa titulo`
+idéntico en los dos niveles (0,000 % de fisuras, cobertura 1.0000) y el lienzo
+real encoge de 2880 a 1440 px al bajar.
+
+## Pendiente real y concreto
+
+**Una escena que nunca llega a montarse deja su hueco vacío.** La red de la
+fase 3 cubre la pérdida de contexto y la ausencia de WebGL, pero no el caso
+"la escena no arrancó". Se destapó midiendo bajo SwiftShader: ahí Método y
+Contacto —las dos que cargan su código con `import()` dinámico— a veces no
+llegan a montarse, sin error, sin fallo de red y sin que su observador de
+viewport se dispare. Medido 3/3 limpias en GPU real y 5/5 fallidas bajo
+SwiftShader, con la misma tasa antes y después de la fase 4: **es anterior a
+ella y no lo introdujo**.
+
+Lo natural es cerrarlo en la fase 5, cuando existan los fotogramas: si una
+escena lleva unos segundos en pantalla y no ha montado, se enseña su fotograma.
+Mientras tanto `tools/qa/resiliencia.mjs` corre en GPU real por defecto y con
+`SW=1` bajo software, donde acusa el problema.
 
 ## Situación
 

@@ -72,6 +72,7 @@ export async function init(mount) {
 
   const base = crearBase(mount, {
     fov: 50, z: 750,
+    instrumento: 'contacto',
     onFrame(t, dt) {
       puntero.x = suavizar(puntero.x, puntero.tx, .07);
       puntero.y = suavizar(puntero.y, puntero.ty, .07);

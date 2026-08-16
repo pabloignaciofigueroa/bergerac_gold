@@ -1,7 +1,8 @@
 /* ============ UTIL — base común de escenas: renderer, cámara, resize, loop ============ */
 
 import * as THREE from 'three';
-import { protegerContexto, liberarEscena } from '../resiliencia.js';
+import { protegerContexto, liberarEscena, mostrarFijo, esDecorativo } from '../resiliencia.js';
+import { crearObservador, nivelDe, ratioDe, ratioReducido, REDUCED } from '../calidad.js';
 
 export const PALETA = {
   azul: 0x00a1ff,
@@ -15,10 +16,14 @@ export const PALETA = {
 /* Crea renderer + escena + cámara montados en `mount`.
    `onFrame(t, dt)` corre en cada frame mientras la escena está activa.
    `onResize(w, h)` (opcional) corre tras cada redimensionado, para escenas
-   que derivan su geometría o su cámara del tamaño real del mount. */
-export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize }) {
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+   que derivan su geometría o su cámara del tamaño real del mount.
+   `instrumento` (opcional) engancha la calidad adaptativa: con él la escena
+   arranca en el nivel que le toque y se vigila a sí misma. Sin él, FULL
+   siempre — así las escenas que no están en la página no pagan nada. */
+export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize, instrumento = null }) {
+  const nivel0 = instrumento ? nivelDe(instrumento) : null;
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: nivel0 !== REDUCED });
+  renderer.setPixelRatio(instrumento ? ratioDe(nivel0) : Math.min(devicePixelRatio, 2));
   renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%';
   mount.appendChild(renderer.domElement);
 
@@ -40,12 +45,35 @@ export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize }) {
   const clock = new THREE.Clock();
   let raf = 0, activo = false, caida = false;
 
+  /* Vigilancia de calidad. Solo mira los primeros segundos útiles y se
+     apaga sola: ver src/scripts/calidad.js. La bajada en caliente toca
+     únicamente el ratio de píxel —el dial que más rinde en estas escenas,
+     limitadas por relleno— para no rehacer nada delante del visitante. */
+  const vigilante = instrumento
+    ? crearObservador(mount, instrumento, {
+        alReducir() {
+          renderer.setPixelRatio(ratioReducido());
+          resize();
+        },
+        alRendirse() {
+          /* Ni siquiera REDUCED es usable. No se inventa un tercer nivel:
+             se entrega a la red que ya existe desde la fase 3. */
+          caida = true;
+          activo = false;
+          cancelAnimationFrame(raf);
+          ro.disconnect();
+          mostrarFijo(mount, esDecorativo(mount) ? 'perdido-fondo' : 'perdido');
+        },
+      })
+    : null;
+
   const loop = () => {
     if (caida) return;                 /* el contexto se fue: no se pinta más */
     raf = requestAnimationFrame(loop);
     const dt = clock.getDelta();
     onFrame?.(clock.elapsedTime, dt);
     renderer.render(scene, camera);
+    vigilante?.frame();
   };
 
   /* Si el contexto se pierde, la escena se para y en su hueco aparece el
@@ -56,6 +84,7 @@ export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize }) {
       activo = false;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      vigilante?.destruir();
     },
   });
 
@@ -76,6 +105,7 @@ export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize }) {
     dispose() {
       this.stop();
       ro.disconnect();
+      vigilante?.destruir();
       despegarContexto();
       /* el orden importa: primero los recursos del grafo, luego el
          renderer, y al final se saca el canvas del DOM */

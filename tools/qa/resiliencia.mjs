@@ -39,7 +39,22 @@ if (!chrome) { console.error('No encuentro Chrome.'); process.exit(1); }
 
 const URL = process.env.QA_URL || 'http://127.0.0.1:4310/';
 const espera = (ms) => new Promise((r) => setTimeout(r, ms));
-const ARGS = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--no-sandbox'];
+/* GPU real por defecto; `SW=1 node tools/qa/resiliencia.mjs` para software.
+
+   Esta prueba trata de la PÉRDIDA DE CONTEXTO, que ocurre en cualquier
+   máquina y no necesita un rasterizador por software. Corría bajo
+   SwiftShader por costumbre, y ahí choca con un problema distinto y
+   anterior a la fase 4: en ese perfil las dos escenas que cargan su código
+   con `import()` dinámico —Método y Contacto— a veces no llegan a montarse.
+   Medido: 3/3 pasadas limpias en GPU real, 5/5 fallidas bajo SwiftShader,
+   con la misma tasa antes y después de la fase 4. Sin error, sin fallo de
+   red y sin que su observador de viewport llegue a dispararse.
+
+   Queda anotado en docs/ESTADO.md como pendiente, y la degradación por
+   software la cubre `tools/qa/calidad.mjs software`, que sí va en verde. */
+const ARGS = process.env.SW
+  ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--no-sandbox']
+  : ['--no-sandbox'];
 
 let fallos = 0;
 const ok = (cond, etiqueta, detalle = '') => {
@@ -55,18 +70,52 @@ const page = await browser.newPage();
 const errores = [];
 page.on('pageerror', (e) => errores.push(e.message));
 page.on('console', (m) => { if (m.type() === 'error') errores.push('console: ' + m.text()); });
+/* Los avisos de escena caída van por console.warn, no por error: sin
+   recogerlos, una escena que no arranca falla en silencio y no hay forma de
+   saber por qué. Se guardan aparte, no cuentan como error. */
+const avisos = [];
+page.on('console', (m) => {
+  if (m.type() === 'warning' && !/deprecated/i.test(m.text())) avisos.push(m.text().slice(0, 160));
+});
 
 await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 });
 await page.goto(URL, { waitUntil: 'networkidle2', timeout: 90000 });
 await espera(7000);
 
-/* recorrido completo para que se monten todas las escenas */
-await page.evaluate(async () => {
-  const alto = document.body.scrollHeight;
-  for (let y = 0; y < alto; y += 400) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); }
-  window.scrollTo(0, 0);
-});
-await espera(4000);
+/* Recorrido PARANDO EN CADA INSTRUMENTO, no un barrido continuo.
+
+   El barrido de 400 px cada 60 ms fallaba de vez en cuando: las
+   notificaciones de IntersectionObserver se entregan por lotes al final del
+   fotograma, y pasando de largo tan rápido el observador podía no llegar a
+   ver nunca la última sección — su escena no se montaba y la prueba acusaba
+   un canvas en blanco que no era tal. Parando en cada uno, que es lo que ya
+   hace tools/qa/calidad.mjs, se montan las cuatro. */
+for (const sel of ['#inicio', '#estudio', '#metodo', '#contacto']) {
+  await page.evaluate((s) => document.querySelector(s)
+    ?.scrollIntoView({ block: 'center', behavior: 'instant' }), sel);
+  await espera(2500);
+}
+await page.evaluate(() => window.scrollTo(0, 0));
+
+/* Espera a la CONDICIÓN, no a un reloj. Con una espera fija esto fallaba de
+   vez en cuando: bajo SwiftShader la escultura del Método tarda bastante
+   más en compilar sus shaders, y el test empezaba a tirar contextos antes
+   de que existiera el cuarto. Un test que depende de lo rápido que vaya la
+   máquina del día no sirve para nada. */
+const montadas = await page.waitForFunction(() => {
+  const c = [...document.querySelectorAll('canvas')];
+  return c.length >= 4 && c.every((x) => x.width > 4) ? c.length : false;
+}, { timeout: 60000, polling: 500 }).then((h) => h.jsonValue()).catch(() => 0);
+const detalle = await page.evaluate(() => Object.fromEntries(
+  [['hero', '.hero-escena'], ['estudio', '.estudio__canvas-holder'],
+   ['metodo', '.metodo__stage'], ['contacto', '.contacto-escena']]
+    .map(([n, s]) => {
+      const c = document.querySelector(s)?.querySelector('canvas');
+      return [n, c ? `${c.width}x${c.height}` : 'sin lienzo'];
+    })));
+ok(montadas >= 4, 'las cuatro escenas llegaron a montarse',
+   montadas >= 4 ? '4 lienzos con contenido' : JSON.stringify(detalle) + (avisos.length ? ' · ' + avisos[0] : ' · sin avisos'));
+await espera(1500);
 
 const antes = await page.evaluate(() => ({
   canvases: document.querySelectorAll('canvas').length,

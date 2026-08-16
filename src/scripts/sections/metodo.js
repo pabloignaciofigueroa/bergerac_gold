@@ -47,7 +47,8 @@ const MATTER = {
   fuchsia: { rib: '#f6ece4', emissive: '#7a1638', key: '#fff2ea', rim: '#ffd9e9', hemiSky: '#ffe9f2', hemiGround: '#7c1240' },
 };
 
-import { protegerContexto, liberarEscena, soportaWebGL, estaCaida } from '../resiliencia.js';
+import { protegerContexto, liberarEscena, soportaWebGL, estaCaida, mostrarFijo } from '../resiliencia.js';
+import { crearObservador, nivelDe, ratioDe, ratioReducido, REDUCED } from '../calidad.js';
 
 export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake, refreshShell, setScrim }) {
   const section = document.querySelector('#metodo');
@@ -175,8 +176,14 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
     const limpieza = new AbortController();
     const { signal } = limpieza;
     const alDesmontar = [];
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    /* Calidad: la escultura arranca en REDUCED si el rasterizador es por
+       software. El antialias es bandera de constructor —no se puede quitar
+       después—, así que ese dial solo actúa al montar; en caliente se baja
+       el ratio de píxel, que es el que más rinde aquí. */
+    const nivel0 = nivelDe('metodo');
+    let vigilante = null;
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: nivel0 !== REDUCED });
+    renderer.setPixelRatio(ratioDe(nivel0));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     let stageW = 0, stageH = 0;
     const scene3 = new THREE.Scene();
@@ -409,6 +416,7 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       }
       escultura.update(prefersReduced ? 0 : dt);
       renderer.render(scene3, camera);
+      vigilante?.frame();
     }
 
     applyTimeline(0);
@@ -416,10 +424,23 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       gsap.ticker.add(() => render(0));
     } else {
       const scene = registerScene({ active: true, render });
+
+      /* Vigilancia de calidad: mira los primeros segundos útiles de la
+         escultura y, si se arrastra, baja el ratio de píxel. Se apaga sola. */
+      vigilante = crearObservador(stage, 'metodo', {
+        alReducir() { renderer.setPixelRatio(ratioReducido()); resize(); },
+        alRendirse() {
+          scene.active = false;
+          unregisterScene(scene);
+          mostrarFijo(stage, 'perdido');
+        },
+      });
+      alDesmontar.push(() => vigilante?.destruir());
+
       /* Resiliencia: si se pierde el contexto, la escultura se para y el
          hueco enseña su estado fijo. No se reconstruye. */
       alDesmontar.push(protegerContexto(renderer, stage, {
-        alPerder() { scene.active = false; unregisterScene(scene); },
+        alPerder() { scene.active = false; unregisterScene(scene); vigilante?.destruir(); },
       }));
 
       /* Desmontaje limpio: escuchas, observers, escena y memoria de GPU. */
