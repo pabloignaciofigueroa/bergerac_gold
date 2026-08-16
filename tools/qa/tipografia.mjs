@@ -5,15 +5,17 @@
    salen de `clamp()` y el tracking está declarado en `em` en sitios
    distintos, así que leerlo del CSS no dice lo que se ve.
 
-   Lo que importa para juzgar si un titular respira:
+   SE MIDE EN PROPORCIÓN, NO EN PÍXELES. Un mismo recorte en píxeles no
+   aprieta lo mismo a tallas distintas: al agrandar una palabra, el hueco
+   natural entre letras crece con ella. Los píxeles solo comparan bien a
+   igualdad de talla, y aquí las tallas van de 27 a 216 px.
 
-   · el tracking en `em` es lo que se declara, pero lo que el ojo ve son
-     PÍXELES. El mismo -0.035em son -1,4 px a 40 px y -5,3 px a 150 px.
-   · la slab de marca es MUY ancha y sus perfiles casi no tienen aire
-     lateral. En negativo y a talla grande, las letras se tocan.
-   · por eso se mide también el APRIETE REAL: se rasteriza el mismo texto
-     con `letter-spacing: normal` y se compara el ancho. La diferencia,
-     repartida entre los huecos, es cuánto se ha comido de cada uno.
+   Lo que compara bien es el `em`, que es proporción pura. Se ve claro en el
+   hero: BERGERAC recorta -2,2 px —más que el titular de la partida— y se lee
+   perfecto, porque en proporción solo aprieta -.010em frente a -.035em.
+
+   La referencia la puso la propia página: los titulares que se leen bien
+   están en -.010 / -.015em.
 
    Uso:
      node tools/qa/tipografia.mjs            (1440 y 390)
@@ -125,14 +127,14 @@ for (const ancho of ANCHOS) {
     if (f.sec !== secActual) {
       secActual = f.sec;
       console.log(`\n  ${SECCIONES[f.sec] || f.sec}`);
-      console.log('    talla   tracking            interlínea   texto');
+      console.log('    tracking    talla   interlínea   texto');
     }
-    const em = f.em === 0 ? '   0' : (f.em > 0 ? '+' : '') + f.em.toFixed(3).replace('0.', '.');
-    const pxls = f.ls === 0 ? '0 px' : `${f.ls > 0 ? '+' : ''}${f.ls.toFixed(1)} px`;
-    /* marca los que se comen más de ~2,5 px por hueco: ahí es donde la slab
-       empieza a pegar los perfiles */
-    const aviso = f.ls <= -2.5 ? '  ← APRETADO' : (f.ls <= -1.6 ? '  ← justo' : '');
-    console.log(`    ${String(f.px).padStart(5)}   ${em.padStart(6)}em = ${pxls.padStart(8)}   ${String(f.alto).padStart(5)}       ${f.texto}${aviso}`);
+    const em = f.em === 0 ? '0' : (f.em > 0 ? '+' : '') + f.em.toFixed(3).replace('0.', '.');
+    /* El umbral no sale de un manual: lo puso la propia página. Lo que se
+       lee bien está en -.010/-.015em; en -.020/-.025 empieza a cerrar, y
+       desde -.030 los perfiles de la slab se sueldan. */
+    const aviso = f.em <= -0.030 ? '  ← APRETADO' : (f.em <= -0.020 ? '  ← al límite' : '');
+    console.log(`    ${em.padStart(7)}em   ${String(f.px).padStart(5)}   ${String(f.alto).padStart(6)}       ${f.texto}${aviso}`);
   }
   await page.close();
 }
