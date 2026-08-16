@@ -18,7 +18,8 @@
     "calidad:test": "node tools/qa/calidad.test.mjs",
     "calidad:visual": "node tools/qa/calidad-visual.mjs",
     "fotogramas": "node tools/qa/fotogramas.mjs",
-    "fotogramas:capturar": "node tools/capturar-fotogramas.mjs"
+    "fotogramas:capturar": "node tools/capturar-fotogramas.mjs",
+    "tipografia": "node tools/qa/tipografia.mjs"
   },
   "dependencies": {
     "astro": "^7.2.2",
