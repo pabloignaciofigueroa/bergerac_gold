@@ -1,7 +1,10 @@
 ---
 /* Sección 01 — Hero.
    La foto se recorta con una pieza del isotipo (clip-path). Va con <Image>
-   para que el build genere webp y varios anchos; el clip-path no se entera. */
+   para que el build genere webp y varios anchos; el clip-path no se entera.
+   `loading="eager"` es OBLIGATORIO aquí: <Image> pone lazy por defecto, y
+   esta foto está a la vista al abrir. En diferido retrasa el mayor elemento
+   visible y además deja al preloader de la cortina sin nada que esperar. */
 import { Image } from 'astro:assets';
 import fotoHero from '../../assets/img/photos/hero.jpg';
 ---
@@ -30,7 +33,7 @@ import fotoHero from '../../assets/img/photos/hero.jpg';
     </defs>
   </svg>
   <figure class="hero-photo" data-anim-high-block data-anim-high="left, ink, 500">
-    <Image src={fotoHero} alt="Bergerac — estudio digital en Castro, Chiloé" decoding="async" widths={[500, 1000]} sizes="(max-width: 1023px) 92vw, 46vw" />
+    <Image src={fotoHero} alt="Bergerac — estudio digital en Castro, Chiloé" loading="eager" fetchpriority="high" decoding="async" widths={[500, 1000]} sizes="(max-width: 1023px) 92vw, 46vw" />
   </figure>
   <div class="hero-marquee marquee-display" data-marquee data-marquee-reactive data-marquee-mouse data-marquee-speed="120" aria-hidden="true">
     <div><span>trae tu marca</span><span class="dot"></span><span>trae tu proyecto</span><span class="dot"></span><span>trae tu idea</span><span class="dot"></span></div>
