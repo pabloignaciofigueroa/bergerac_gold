@@ -1,0 +1,400 @@
+{
+ "fecha": null,
+ "archivos": [
+  {
+   "ruta": "index.html",
+   "kb": 46,
+   "motivo": "Página anterior a Astro y su lanzador. El sitio se compone hoy desde src/pages/index.astro."
+  },
+  {
+   "ruta": "BERGERAC-particulas_v1.html",
+   "kb": 71,
+   "motivo": "Página anterior a Astro y su lanzador. El sitio se compone hoy desde src/pages/index.astro."
+  },
+  {
+   "ruta": "INICIAR_MERGE.cmd",
+   "kb": 0,
+   "motivo": "Página anterior a Astro y su lanzador. El sitio se compone hoy desde src/pages/index.astro."
+  },
+  {
+   "ruta": "porting/v9/components/count-up.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/countdown.js",
+   "kb": 4,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/cursor-reveal.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/cursor.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/ensamblaje.js",
+   "kb": 4,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/exit-drift.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/firma-trazo.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/form-estados.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/gl-objeto.js",
+   "kb": 17,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/horizontal-track.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/idle-drift.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/img-settle.js",
+   "kb": 1,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/io-reveal.js",
+   "kb": 1,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/magnetic.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/marquee.js",
+   "kb": 4,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/menu-overlay.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/monograma.js",
+   "kb": 1,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/motivo-trazo.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/mouse-parallax.js",
+   "kb": 1,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/nav-theme.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/oval-indicator.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/parallax.js",
+   "kb": 1,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/reveal-surface.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/rotate-notice.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/silueta-mask.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/skew-velocity.js",
+   "kb": 1,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/text-roll.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/tilt.js",
+   "kb": 2,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/transition.js",
+   "kb": 8,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/trazos.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/components/wipe-lines.js",
+   "kb": 5,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/core/engine.js",
+   "kb": 5,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/core/mouse.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/core/scroll.js",
+   "kb": 5,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/fonts/demo-display.woff2",
+   "kb": 19,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/fonts/mona-sans-var.woff2",
+   "kb": 39,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/escenas/contacto.js",
+   "kb": 4,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/escenas/estudio.js",
+   "kb": 5,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/escenas/hero.js",
+   "kb": 8,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/escenas/metodo.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/escenas/partida.js",
+   "kb": 4,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/escenas/proyectos.js",
+   "kb": 6,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/escenas/util.js",
+   "kb": 3,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/instrumentos.js",
+   "kb": 7,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/js/package.json",
+   "kb": 0,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/styles/base.css",
+   "kb": 9,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/styles/bergerac.css",
+   "kb": 19,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/styles/components.css",
+   "kb": 13,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/styles/composicion.css",
+   "kb": 15,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/tokens.js",
+   "kb": 14,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/vendor/CustomEase.min.js",
+   "kb": 7,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/vendor/lenis.min.js",
+   "kb": 18,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/vendor/LICENSES.md",
+   "kb": 1,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "porting/v9/vendor/SplitText.min.js",
+   "kb": 7,
+   "motivo": "Carpeta de portado de la versión v9. Su contenido ya está incorporado en src/; nada del proyecto la alcanza."
+  },
+  {
+   "ruta": "public/assets/img/brand/isotipo-black.svg",
+   "kb": 3,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/img/brand/isotipo-official-inline.svg",
+   "kb": 3,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/img/brand/logotipo-black.svg",
+   "kb": 6,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/img/brand/logotipo-color.svg",
+   "kb": 6,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/img/brand/logotipo-horizontal-black.svg",
+   "kb": 6,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/img/brand/logotipo-horizontal-color.svg",
+   "kb": 6,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/img/brand/logotipo-horizontal-white.svg",
+   "kb": 6,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/img/brand/logotipo-white.svg",
+   "kb": 6,
+   "motivo": "Logos de marca en archivo. El header, el loader y el menú dibujan el isotipo INLINE en el Astro; el único archivo que se usa es el favicon isotipo-color.svg, que se queda."
+  },
+  {
+   "ruta": "public/assets/fonts/Balimo-Regular.ttf",
+   "kb": 44,
+   "motivo": "Balimo. Declarada en @font-face pero sin un solo texto que la use: la única regla que la pedía (.hero__brandword) ya no existe en el HTML. Verificado en red: el navegador no la descarga nunca."
+  },
+  {
+   "ruta": "public/assets/fonts/Balimo-Bold.ttf",
+   "kb": 44,
+   "motivo": "Balimo. Declarada en @font-face pero sin un solo texto que la use: la única regla que la pedía (.hero__brandword) ya no existe en el HTML. Verificado en red: el navegador no la descarga nunca."
+  },
+  {
+   "ruta": "src/scripts/sections/hero.js",
+   "kb": 17,
+   "motivo": "Secciones desconectadas a mano. main.js lo dice en sus comentarios: el hero es el de v9 y Casos usa el split de mundos, así que estos dos init nunca se importan."
+  },
+  {
+   "ruta": "src/scripts/sections/works.js",
+   "kb": 5,
+   "motivo": "Secciones desconectadas a mano. main.js lo dice en sus comentarios: el hero es el de v9 y Casos usa el split de mundos, así que estos dos init nunca se importan."
+  },
+  {
+   "ruta": "tools/qa/salida/titulo-desarme-1.png",
+   "kb": 59,
+   "motivo": "Capturas de QA. Son salida regenerable, no fuente: las vuelve a crear tools/qa/titulo-visual.mjs."
+  },
+  {
+   "ruta": "tools/qa/salida/titulo-desarme-2.png",
+   "kb": 60,
+   "motivo": "Capturas de QA. Son salida regenerable, no fuente: las vuelve a crear tools/qa/titulo-visual.mjs."
+  },
+  {
+   "ruta": "tools/qa/salida/titulo-desarme-3.png",
+   "kb": 73,
+   "motivo": "Capturas de QA. Son salida regenerable, no fuente: las vuelve a crear tools/qa/titulo-visual.mjs."
+  },
+  {
+   "ruta": "tools/qa/salida/titulo-desarme-4.png",
+   "kb": 74,
+   "motivo": "Capturas de QA. Son salida regenerable, no fuente: las vuelve a crear tools/qa/titulo-visual.mjs."
+  },
+  {
+   "ruta": "tools/qa/salida/titulo-reposo.png",
+   "kb": 55,
+   "motivo": "Capturas de QA. Son salida regenerable, no fuente: las vuelve a crear tools/qa/titulo-visual.mjs."
+  },
+  {
+   "ruta": "tools/qa/salida/titulo-zoom.png",
+   "kb": 310,
+   "motivo": "Capturas de QA. Son salida regenerable, no fuente: las vuelve a crear tools/qa/titulo-visual.mjs."
+  },
+  {
+   "ruta": "tools/migrar-a-astro.mjs",
+   "kb": 4,
+   "motivo": "Herramientas de un solo uso, ya gastadas: hicieron la migración a Astro, trocearon el CSS, generaron los datos y unificaron el camino sin WebGL. Se guardan por si hay que auditar cómo se hizo, pero no las llama nadie."
+  },
+  {
+   "ruta": "tools/trocear-css.mjs",
+   "kb": 4,
+   "motivo": "Herramientas de un solo uso, ya gastadas: hicieron la migración a Astro, trocearon el CSS, generaron los datos y unificaron el camino sin WebGL. Se guardan por si hay que auditar cómo se hizo, pero no las llama nadie."
+  },
+  {
+   "ruta": "tools/gen-datos.mjs",
+   "kb": 9,
+   "motivo": "Herramientas de un solo uso, ya gastadas: hicieron la migración a Astro, trocearon el CSS, generaron los datos y unificaron el camino sin WebGL. Se guardan por si hay que auditar cómo se hizo, pero no las llama nadie."
+  },
+  {
+   "ruta": "tools/unificar-sin-webgl.mjs",
+   "kb": 6,
+   "motivo": "Herramientas de un solo uso, ya gastadas: hicieron la migración a Astro, trocearon el CSS, generaron los datos y unificaron el camino sin WebGL. Se guardan por si hay que auditar cómo se hizo, pero no las llama nadie."
+  }
+ ]
+}

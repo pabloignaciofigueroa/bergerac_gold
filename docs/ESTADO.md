@@ -42,6 +42,37 @@ declaración deja el elemento SIN borde. `@property` ya degradaba solo: la
 variable está definida localmente y sin soporte únicamente se pierde la
 animación.
 
+## Depuración (hecha, pendiente de borrar `depurar/`)
+
+79 archivos sin uso movidos a `depurar/`, con manifiesto y vuelta atrás:
+`node tools/depurar-mover.mjs --volver`. **No se ha borrado nada todavía.**
+
+Se decidió con DOS pruebas independientes, y las dos hacían falta:
+
+- `tools/depurar-analisis.mjs` sigue el grafo real de imports desde las
+  páginas, la config y los scripts de npm. Buscar por nombre no vale: hay
+  `main.js`, `hero.js` y `contacto.js` repetidos en varias carpetas y se
+  "citan" entre ellos.
+- `tools/depurar-red.mjs` mira qué pide el navegador de verdad, recorriendo
+  las seis secciones en tres tamaños y abriendo los interactivos.
+
+**La segunda salvó a tres grupos que la primera habría condenado**: los
+fotogramas fijos (por diseño no se piden en una visita sana), `og-bergerac.jpg`
+(lo piden los rastreadores de enlaces, no el navegador) y los vídeos grandes
+(son la variante de pantalla grande).
+
+QA doble: las siete puertas en verde, y el publicado comparado archivo a
+archivo antes y después — 45 idénticos byte a byte, cero diferencias, cero
+archivos nuevos. Lo único que desaparece son los 10 muertos que se estaban
+subiendo: **160 KB menos en cada despliegue**.
+
+Queda por hacer, y son cambios de código, no de archivos:
+
+- `@font-face` de Balimo apunta ahora a un archivo movido. No da 404 porque
+  nada la usa, pero es CSS muerto.
+- `.serif-word` y `.hero__brandword` son reglas muertas; la primera además
+  pide una cursiva que DemoDisplay no tiene.
+
 ## Pendientes
 
 Ninguno abierto de las fases 3, 4 y 5. Lo que queda anotado:
