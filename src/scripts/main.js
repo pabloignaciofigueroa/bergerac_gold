@@ -57,6 +57,13 @@ export function registerScene(scene) {
   wake();
   return scene;
 }
+/* Sacar una escena del bucle. Hace falta para el desmontaje limpio: si una
+   escena pierde su contexto y se queda en el Set, el bucle sigue llamando a
+   su render sobre un contexto muerto. */
+export function unregisterScene(scene) {
+  scenes.delete(scene);
+}
+
 export function wake() {
   if (rafId === null) {
     lastT = performance.now();
@@ -170,7 +177,7 @@ if (document.fonts && ScrollTrigger) {
 
 /* ---- Arranque de secciones ---- */
 const setScrim = (color) => shellScrim.style.setProperty('--shell-scrim-color', color);
-const ctx = { gsap, ScrollTrigger, prefersReduced, registerScene, wake, refreshShell, setScrim, safeRefresh };
+const ctx = { gsap, ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake, refreshShell, setScrim, safeRefresh };
 
 /* Ajuste del título BERGERAC al ancho del contenedor — ANTES de que
    los wipes partan el texto (mismo fonts.ready, registrado primero) */

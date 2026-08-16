@@ -1,6 +1,7 @@
 /* ============ UTIL — base común de escenas: renderer, cámara, resize, loop ============ */
 
 import * as THREE from 'three';
+import { protegerContexto, liberarEscena } from '../resiliencia.js';
 
 export const PALETA = {
   azul: 0x00a1ff,
@@ -37,19 +38,32 @@ export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize }) {
   ro.observe(mount);
 
   const clock = new THREE.Clock();
-  let raf = 0, activo = false;
+  let raf = 0, activo = false, caida = false;
 
   const loop = () => {
+    if (caida) return;                 /* el contexto se fue: no se pinta más */
     raf = requestAnimationFrame(loop);
     const dt = clock.getDelta();
     onFrame?.(clock.elapsedTime, dt);
     renderer.render(scene, camera);
   };
 
+  /* Si el contexto se pierde, la escena se para y en su hueco aparece el
+     estado fijo. No se reconstruye: ver src/scripts/resiliencia.js. */
+  const despegarContexto = protegerContexto(renderer, mount, {
+    alPerder() {
+      caida = true;
+      activo = false;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    },
+  });
+
   return {
     renderer, scene, camera, resize,
+    get caida() { return caida; },
     start() {
-      if (activo) return;
+      if (activo || caida) return;
       activo = true;
       clock.getDelta();
       loop();
@@ -62,7 +76,12 @@ export function crearBase(mount, { fov = 45, z = 600, onFrame, onResize }) {
     dispose() {
       this.stop();
       ro.disconnect();
+      despegarContexto();
+      /* el orden importa: primero los recursos del grafo, luego el
+         renderer, y al final se saca el canvas del DOM */
+      liberarEscena(scene);
       renderer.dispose();
+      renderer.forceContextLoss?.();
       renderer.domElement.remove();
     },
   };

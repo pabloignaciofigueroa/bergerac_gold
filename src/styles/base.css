@@ -444,3 +444,30 @@ html { overflow-x: clip; }
   .menu-overlay__nav { gap: 10px; }
   .menu-overlay__nav a { gap: 12px; }
 }
+
+/* ---- Estado fijo de un instrumento ----
+   Se enseña cuando la escena WebGL no puede existir: sin aceleración
+   gráfica, o porque el navegador tiró su contexto a mitad de la visita.
+   Se crea desde JS y no vive en el HTML, así que estas reglas solo entran
+   en juego cuando hace falta.
+   PROVISIONAL: en la fase 5 este hueco lo ocupa un fotograma capturado de
+   la escena real, y el texto desaparece. */
+.escena-fija {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  text-align: center;
+  pointer-events: none;
+}
+.escena-fija p {
+  margin: 0;
+  max-width: 30ch;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: .01em;
+  color: currentColor;
+  opacity: .45;
+}

@@ -52,6 +52,12 @@ El arnés de QA apunta por defecto a **4300**. Para medir contra el build:
 
 ## Trampas que ya nos costaron tiempo
 
+- **Una escena WebGL nunca puede romper la página.** Todo contexto pasa por
+  `protegerContexto` de `src/scripts/resiliencia.js`: si se pierde, la escena se
+  para y su hueco enseña el estado fijo. **No se reconstruye sola** — rehacerla
+  la devuelve a la situación que tiró el contexto y suele volver a perderlo.
+  Se queda en fijo hasta recargar, y es decisión de dirección, no una
+  limitación. Lo vigila `node tools/qa/resiliencia.mjs`.
 - **Pins de ScrollTrigger.** Partida, Método y el anclaje de lectura de cada etapa
   usan `pin`. Un `refresh()` mientras un pin está activo descoloca la sección: por
   eso existe `safeRefresh` con debounce en `main.js`. No llamar `ScrollTrigger.refresh()`

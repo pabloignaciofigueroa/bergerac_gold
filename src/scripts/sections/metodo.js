@@ -47,7 +47,9 @@ const MATTER = {
   fuchsia: { rib: '#f6ece4', emissive: '#7a1638', key: '#fff2ea', rim: '#ffd9e9', hemiSky: '#ffe9f2', hemiGround: '#7c1240' },
 };
 
-export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene, wake, refreshShell, setScrim }) {
+import { protegerContexto } from '../resiliencia.js';
+
+export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake, refreshShell, setScrim }) {
   const section = document.querySelector('#metodo');
   if (!section || !gsap || !ScrollTrigger) return;
   const canvas = section.querySelector('.metodo__canvas');
@@ -406,6 +408,11 @@ export function initMetodo({ gsap, ScrollTrigger, prefersReduced, registerScene,
       gsap.ticker.add(() => render(0));
     } else {
       const scene = registerScene({ active: true, render });
+      /* Resiliencia: si se pierde el contexto, la escultura se para y el
+         hueco enseña su estado fijo. No se reconstruye. */
+      protegerContexto(renderer, stage, {
+        alPerder() { scene.active = false; unregisterScene(scene); },
+      });
       ScrollTrigger.create({
         trigger: section,
         start: 'top bottom',

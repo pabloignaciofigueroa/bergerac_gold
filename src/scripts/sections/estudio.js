@@ -15,8 +15,9 @@
    ============================================================ */
 
 import { buildIsland, fieldContour, findPeaks } from './isla-geo.js';
+import { protegerContexto } from '../resiliencia.js';
 
-export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, wake }) {
+export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, unregisterScene, wake }) {
   const section = document.querySelector('#estudio');
   const holder = section.querySelector('.estudio__canvas-holder');
   const canvas = section.querySelector('.estudio__canvas');
@@ -210,6 +211,9 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, wake
 
     /* --- Escena --- */
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    /* Resiliencia: si este contexto se pierde, la isla se para y en su hueco
+       aparece el estado fijo, en vez de quedarse un rectángulo en blanco. */
+    let escenaViva = null;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     const scene3 = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(36, 1, .05, 10);
@@ -508,6 +512,14 @@ export function initEstudio({ ScrollTrigger, prefersReduced, registerScene, wake
       gsap.ticker.add(renderOnce); /* estados cambian instantáneo; repintado barato */
     } else {
       const scene = registerScene({ active: true, render });
+      escenaViva = scene;
+      protegerContexto(renderer, holder, {
+        alPerder() {
+          scene.active = false;
+          unregisterScene(scene);
+          escenaViva = null;
+        },
+      });
       if (ScrollTrigger) {
         ScrollTrigger.create({
           trigger: section,

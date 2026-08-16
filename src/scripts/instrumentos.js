@@ -21,6 +21,8 @@ const MODULOS = {
   contacto: () => import('./escenas/contacto.js'),
 };
 
+import { mostrarFijo, estaCaida } from './resiliencia.js';
+
 function soportaWebGL() {
   try {
     const c = document.createElement('canvas');
@@ -29,12 +31,10 @@ function soportaWebGL() {
 }
 
 if (!soportaWebGL()) {
-  document.querySelectorAll('.instrumento-lienzo').forEach((m) => {
-    m.innerHTML = '<p style="position:absolute;inset:0;display:grid;place-items:center;' +
-      'padding:2rem;text-align:center;font:600 14px/1.5 sans-serif;opacity:.6">' +
-      'Tu navegador tiene WebGL desactivado — actívalo en la configuración ' +
-      'de aceleración de hardware para ver este instrumento.</p>';
-  });
+  /* Mismo camino que la pérdida de contexto: un solo estado fijo para las
+     dos situaciones, con estilos en la hoja y no incrustados aquí. En la
+     fase 5 este hueco lo ocupa el fotograma de la escena real. */
+  document.querySelectorAll('.instrumento-lienzo').forEach((m) => mostrarFijo(m, 'sin-webgl'));
 } else {
   const montajes = Array.from(document.querySelectorAll('[data-escena]'));
 
@@ -42,6 +42,7 @@ if (!soportaWebGL()) {
     entradas.forEach(async (en) => {
       const mount = en.target;
       if (!en.isIntersecting) { mount._escena?.stop?.(); return; }
+      if (estaCaida(mount)) return;   /* su contexto ya se perdió en esta sesión */
       if (!mount._escena) {
         if (mount._cargando) return;
         mount._cargando = true;
