@@ -97,6 +97,14 @@ El arnés de QA apunta por defecto a **4300**. Para medir contra el build:
 - **`vigilarMontaje()` cubre "la escena no arrancó".** Es distinto de perder
   el contexto: no lanza, no da error de red y el observador de viewport ni se
   entera. Se destapó bajo SwiftShader y era anterior a la fase 4.
+- **Nunca `color: color-mix(..., currentColor, ...)`.** Dentro de la propia
+  propiedad `color`, `currentColor` se queda clavado en el valor heredado del
+  momento y NO sigue un cambio de tema. Se veía en los casos: al pasar el
+  cursor el mundo pasa a grafito y el texto a blanco, pero la bajada y las
+  áreas se quedaban en grafito —ilegibles sobre el negro—. Se arregla con
+  `opacity`, que además hereda el color que está transicionando. En
+  `border-color` y `background` sí funciona: ahí `currentColor` mira el color
+  del propio elemento.
 - **`color-mix()` sin soporte tira la declaración ENTERA.** En un borde eso
   no deja un borde pálido: deja el elemento sin borde. Por eso los ocho
   bordes llevan respaldo con color plano. Los fondos y los textos no lo

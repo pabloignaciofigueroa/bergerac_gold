@@ -18,10 +18,24 @@
 .mundo-word .l2 { margin-left: .45em; }
 .casos-split { min-height: min(92svh, 960px); }
 .caso-claim { max-width: 420px; margin-top: 14px; }
+/* NO USAR `color: color-mix(..., currentColor, ...)`.
+
+   Dentro de la propia propiedad `color`, `currentColor` se queda clavado en
+   el valor heredado del momento y NO sigue un cambio de tema. Aquí se veía:
+   al pasar el cursor el mundo entero pasa a grafito y el texto a blanco,
+   pero estos dos se quedaban en grafito al 82 % y al 55 % — ilegibles sobre
+   el negro. Medido: `color(srgb 0.145 0.145 0.133 / 0.82)` con y sin hover.
+
+   Con `opacity` el texto HEREDA el color que está transicionando, así que
+   además acompaña la transición de .28s en vez de saltar. El resultado
+   pintado es el mismo que el color-mix cuando el elemento es solo texto.
+
+   (En `border-color` y `background` sí funciona: ahí `currentColor` mira el
+   color del propio elemento, que sí se actualiza.) */
 .caso-intro {
   max-width: 480px; margin-top: 14px;
   font-size: 15px; line-height: 1.55;
-  color: color-mix(in srgb, currentColor 82%, transparent);
+  opacity: .82;
 }
 .casos-split .instrumento { margin-top: 24px; }
 .casos-split .instrumento-lienzo { min-height: clamp(256px, 38svh, 384px); }
@@ -32,7 +46,7 @@
 .caso-areas span {
   text-transform: uppercase; font-size: var(--fs-eyebrow);
   letter-spacing: .08em;
-  color: color-mix(in srgb, currentColor 55%, transparent);
+  opacity: .55;
 }
 .caso-ficha { max-width: 544px; }
 .caso-visitar { display: inline-block; margin-top: 14px; color: inherit; text-decoration: none; }
