@@ -33,7 +33,6 @@
 .metodo__milestone--hinge,
 .metodo__milestone--close { min-height: 70svh; }
 .metodo__copy { max-width: 760px; pointer-events: auto; }
-.metodo__eyebrow { opacity: .72; }
 .metodo__title {
   font-size: clamp(46px, 6vw, 92px);
   margin-top: 30px;

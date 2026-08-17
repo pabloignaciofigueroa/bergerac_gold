@@ -205,27 +205,10 @@ input, textarea, button { font-family: var(--font-body); }
 .site-header__nav a { opacity: .82; transition: opacity var(--dur-ui) var(--ease-out); }
 .site-header__nav a:hover,
 .site-header__nav a[aria-current="true"] { opacity: 1; }
-.site-header__nav .site-header__cta { opacity: 1; }
 
 /* Text-roll v9 */
 .lab-roll .roll-window { display: inline-block; overflow: clip; vertical-align: middle; white-space: nowrap; }
 .lab-roll .roll-char { display: inline-block; }
-.site-header__cta {
-  pointer-events: auto;
-  text-transform: none;
-  letter-spacing: 0;
-  display: inline-flex;
-  align-items: center;
-  padding: 11px 22px;
-  background: var(--graphite);
-  color: var(--warm-white);
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background var(--dur-ui) var(--ease-out), color var(--dur-state) var(--ease-inout);
-}
-.site-header__cta:hover { background: #000; }
 
 /* El header sobre fondos oscuros usa el foreground del tema. */
 .site-header[data-shell="dark"] { --shell-fg: var(--warm-white); }

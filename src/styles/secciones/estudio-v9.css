@@ -39,15 +39,12 @@
 }
 .instrumento-lienzo canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .instrumento figcaption { display: flex; justify-content: space-between; gap: 24px; margin-top: 10px; opacity: .75; }
-.instrumento--ancho { margin-top: clamp(32px, 4vh, 56px); }
-.instrumento--ancho .instrumento-lienzo { min-height: clamp(256px, 40svh, 416px); }
 
 /* Plegables (acordeones del sistema v9) */
 .plegable {
   border-block: 1px solid currentColor; border-block: 1px solid color-mix(in srgb, currentColor 40%, transparent);
   margin-top: 28px; position: relative; z-index: 2; max-width: 640px;
 }
-.plegable + .plegable { border-top: 0; }
 .plegable-cabeza {
   display: flex; align-items: center; width: 100%;
   justify-content: space-between; gap: 24px;
@@ -83,7 +80,6 @@
 .firma-block { margin-top: clamp(32px, 4vh, 56px); display: flex; align-items: flex-end; gap: clamp(32px, 4vw, 56px); flex-wrap: wrap; }
 .firma-real { width: min(352px, 70vw); }
 .firma-img { width: min(288px, 60vw); height: auto; display: block; }
-.meta-row { display: flex; gap: clamp(20px, 3vw, 44px); flex-wrap: wrap; margin-top: 14px; }
 
 @media (max-width: 900px) {
   .estudio-grid { grid-template-columns: 1fr; }
@@ -91,10 +87,3 @@
 @media (max-width: 599px) {
   .t-impact { font-size: 15vw; }
 }
-
-/* (el campo de diagnóstico fue eliminado a pedido — QA F20) */
-
-/* Works: los marcos ahora montan el antes/después v9 (F17) */
-.works__media { overflow: hidden; cursor: pointer; }
-.works__media canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.works__media-note { position: absolute; left: 12px; bottom: 12px; z-index: 2; opacity: .8; }

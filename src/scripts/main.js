@@ -15,7 +15,6 @@ import { initMotion } from './motion.js';
 import { initMenu } from './menu.js';
 import { initPointer } from './pointer.js';
 import { initMarquees } from './marquee.js';
-import { initTrazos } from './trazos.js';
 import { initPlegables } from './plegables.js';
 import { initTextRoll } from './textroll.js';
 import { initLoader } from './loader.js';
@@ -243,7 +242,6 @@ if (gsap && !prefersReduced) {
 }
 initVideos();
 initMarquees(ctx);
-initTrazos(ctx);
 initPlegables(ctx);
 initTextRoll(ctx);
 

@@ -57,7 +57,6 @@
   margin-block: .1em .08em;
 }
 .hero-word span { display: inline-block; white-space: nowrap; }
-.hero-meta { display: flex; gap: clamp(20px, 3vw, 44px); flex-wrap: wrap; margin-top: 16px; }
 .hero-mid {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr);
@@ -152,17 +151,6 @@
 .hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 @media (max-width: 900px) {
   .hero-photo { position: relative; right: auto; bottom: auto; width: min(80vw, 420px); margin: 20px var(--gutter) 40px; }
-}
-
-/* Trazos (anotación manuscrita sobre "valor") */
-.anota { position: relative; white-space: nowrap; }
-.trazo-svg {
-  position: absolute; inset: -12% -6%; width: auto; height: auto;
-  pointer-events: none; color: var(--theme-detail, var(--color--accent));
-}
-.trazo-svg path {
-  fill: none; stroke: currentColor; stroke-width: 5;
-  stroke-linecap: round; stroke-linejoin: round;
 }
 
 @media (max-width: 900px) {

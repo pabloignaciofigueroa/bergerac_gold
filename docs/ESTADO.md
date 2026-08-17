@@ -42,38 +42,58 @@ declaración deja el elemento SIN borde. `@property` ya degradaba solo: la
 variable está definida localmente y sin soporte únicamente se pierde la
 animación.
 
-## Depuración (terminada)
+## Depuración (terminada, con una corrección propia)
 
-La carpeta es la versión madre y ya no lleva nada que no dibuje algo.
+Una auditoría posterior, que volvió a ejecutar todo desde cero en vez de
+confiar en los commits anteriores, encontró que la limpieza se había quedado
+a mitad: 28 selectores CSS muertos seguían sin tocar en seis archivos, y dos
+de ellos habían sido protegidos por error en la sesión anterior tras una
+verificación manual floja. Corregido:
 
-**Fuera del proyecto (borrado):** la carpeta `porting/v9` entera, la página
-anterior a Astro y su lanzador, ocho logos en archivo —el header, el loader y
-el menú los dibujan inline; solo se usa el favicon—, la fuente Balimo, las
-capturas de QA regenerables y cuatro herramientas de un solo uso ya gastadas.
+- **Carpetas vacías fuera.** `porting/` y sus subcarpetas no las rastreaba
+  git —no viajaban a ningún despliegue— pero quedaban en el disco local tras
+  borrar sus 54 archivos. `rmdir` recursivo.
+- **`.site-header__cta` (base.css), fuera.** Se había dado por viva por un
+  grep que encontró la clase en `main.js:114` — pero esa línea solo la
+  CONSULTA (`classList.contains`) para preguntar si un enlace la lleva;
+  ningún enlace la lleva nunca. 21 líneas de un botón de header que el diseño
+  actual no tiene.
+- **`estudio.css`, del 71 % muerto al 0 %.** Ocho clases —`.estudio__layout`,
+  `.estudio__piece`, `.estudio__content`, `.estudio__title`, `.estudio__body`,
+  `.estudio__disclosure`, `.estudio__mirada`— eran de una estructura de
+  markup anterior a `Estudio.astro`. El archivo se quedó fuera del alcance
+  de la limpieza anterior sin que quedara dicho en ningún sitio.
+- **Un fallback que no protegía nada, corregido.** `responsive-fino.css`
+  tenía `.estudio--sin3d .estudio__piece/.estudio__layout`: la clase
+  `estudio--sin3d` sí se sigue añadiendo (`estudio.js:612`), pero sus
+  reglas apuntaban a las mismas clases muertas del punto anterior, así que
+  no hacían nada. El fallback real hoy es el fotograma de `mostrarFijo()`
+  (fase 5); la regla vieja no protegía nada y se quitó.
+- **Diez reglas sueltas más** en `estudio-v9.css` (`.instrumento--ancho`,
+  `.plegable + .plegable` —nunca hay dos `.plegable` contiguos—,
+  `.meta-row`, `.works__media` ×3), `hero-v9.css` (`.hero-meta`) y
+  `metodo.css` (`.metodo__eyebrow`).
+- **`trazos.js` entero, quitado.** `docs/MAP.md` ya decía "hoy sin uso en
+  el HTML": ningún elemento lleva `data-trazo`, así que `initTrazos()`
+  corría en cada visita —dentro del bundle principal de 207 KB— sin
+  encontrar nunca nada que animar. Sus tres reglas CSS (`.anota`,
+  `.trazo-svg`, `.trazo-svg path`) habían sido dadas por vivas en la
+  auditoría por un `grep` que hacía coincidir "anota" dentro de la palabra
+  "anota**ciones**" de un comentario — el detector automático las tenía
+  bien marcadas como muertas desde el principio.
+- **`sharp` declarada donde debía.** `tools/capturar-fotogramas.mjs` la
+  importa directamente, pero solo resolvía por ser dependencia transitiva
+  de Astro. Añadida a `devDependencies` con la versión instalada, para que
+  no dependa de una relación interna de Astro que puede cambiar.
 
-**Fuera del publicado (esto sí pesaba en cada visita):**
+Verificado con el detector re-ejecutado tras cada corrección: de 496 reglas
+originales, **302 encajan con algo — el mismo número antes y después de
+todas las correcciones**, prueba de que no se rompió nada. Solo queda 1
+selector sin encajar: un `:has()` en Partida que se activa al pulsar
+"ver más", interacción que el guion de recorrido automático no dispara —
+confirmado vivo por `grep` directo, no se toca.
 
-- Las **cinco escenas que nunca se montaban** —hero, estudio, partida, metodo
-  y proyectos— y sus entradas en el mapa de `instrumentos.js`. Bastaba un
-  `import()` en ese mapa para que su código viajara aunque nadie las montara,
-  y encima arrastraban los complementos de líneas de three.
-- **CSS muerto:** `casos.css` y `hero.css` enteros (0 selectores vivos de 31 y
-  de 14), `contacto.css` reducido de 31 reglas a 1, y sueltas en `base.css`.
-
-Se decidió con `tools/depurar-css.mjs`, que prueba CADA selector contra el DOM
-vivo en tres tamaños y en todos los estados que sabe alcanzar: menú abierto,
-desplegables abiertos, isla en modo mapa, cursor sobre un caso.
-
-**Lo que ese detector marcó y NO se borró**, porque un recorrido sano no
-puede alcanzarlo y confundirlo con basura sería quitar justo las redes:
-`.escena-fija` (solo si falla WebGL), `.estudio--sin3d` (la pone
-`estudio.js:612` cuando la isla no arranca), las reglas `.no-js`, los estados
-`[hidden]` del formulario y los `:focus-visible` del teclado.
-
-Resultado: **195 → 113 archivos** en la carpeta y **208 KB menos** en cada
-despliegue. Las ocho puertas de QA en verde después de borrar.
-
-## Pendientes
+## Pendientes## Pendientes
 
 Ninguno abierto de las fases 3, 4 y 5. Lo que queda anotado:
 

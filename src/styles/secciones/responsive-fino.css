@@ -3,6 +3,9 @@
   :root { --section-pad-y: clamp(72px, 16vw, 110px); }
 }
 
-/* Fallback sin 3D: la seccion conserva su lectura editorial, sin huecos */
-.estudio--sin3d .estudio__piece { display: none; }
-.estudio--sin3d .estudio__layout { grid-template-columns: 1fr; }
+/* La vieja regla `.estudio--sin3d .estudio__piece/.estudio__layout` se quitó
+   de aquí: apuntaba a clases de una estructura de markup anterior y no
+   encajaba con nada. `estudio.js` sigue añadiendo `estudio--sin3d` a la
+   sección cuando la isla no arranca, pero el fallback real hoy es el
+   fotograma que pone `mostrarFijo()` — un elemento aparte, no depende de
+   esta clase. Ver docs/ESTADO.md. */

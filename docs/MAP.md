@@ -39,7 +39,6 @@ función y las clases CSS, no: busca por ellos.
 | `src/scripts/textroll.js` | Roll de caracteres al hover (`data-anim="text-hover"`). |
 | `src/scripts/marquee.js` (74) | Cinta infinita reactiva al scroll. Contrato: `data-marquee` con un único hijo. |
 | `src/scripts/plegables.js` (76) | Acordeones animados (`data-plegable`, `data-grupo` para exclusividad). |
-| `src/scripts/trazos.js` (70) | Anotaciones manuscritas que se dibujan (`data-trazo`). Hoy sin uso en el HTML. |
 | `src/scripts/videos.js` (52) | Los dos vídeos de Casos, cargados y reproducidos **por viewport**. Con `autoplay` en el markup el navegador se bajaba 6,3 MB antes de ver el hero. Contrato: `<video data-src>` sin `src` ni `autoplay`. |
 | `src/scripts/instrumentos.js` (110) | **Cargador de escenas**: IntersectionObserver sobre `[data-escena]`, import dinámico, `stop()` al salir del viewport, clicks → `escena.accion(nx, ny)`. También el envío del formulario. |
 
