@@ -51,13 +51,11 @@
   left: 0;
   width: 34px;
   height: 3px;
-  background: var(--purple);
   transform-origin: left center;
   transform: scaleX(.45);
   transition: transform .6s var(--ease-out);
 }
 .js .partida__station[data-active="true"] .partida__num::before { transform: scaleX(1); }
-.js .partida__station[data-active="true"] .partida__num { color: var(--warm-white); }
 .partida__problem {
   font: 400 clamp(28px, 3.2vw, 54px)/1.1 var(--font-display);
   letter-spacing: -.015em;
@@ -101,7 +99,6 @@
   z-index: 2;
   overflow: hidden;
   height: 0;
-  background: var(--purple);
   border: 1px solid rgba(253, 252, 250, .28);
   transition: height var(--dur-ui) var(--ease-inout);
 }
@@ -193,7 +190,6 @@
     left: 2px;
     width: 2px;
     height: 13px;
-    background: var(--purple);
   }
   /* RITMO: cada estación tiene proporción, altura y distancia propias */
   .js .partida__station[data-station="1"] { width: min(56vw, 840px); }
