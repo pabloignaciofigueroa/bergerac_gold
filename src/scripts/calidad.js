@@ -130,7 +130,6 @@ const CARAS = ['hero', 'estudio', 'metodo'];
    aquí otro contexto: dos sondas permanentes dejaban sin montar a una
    escena en el perfil por software. Ver el comentario de `sondear()`. */
 import { rendererDe } from './resiliencia.js';
-export { rendererDe };
 
 /* Rasterizador por software: no hay GPU detrás, por mucho que WebGL exista. */
 export function esPorSoftware() {

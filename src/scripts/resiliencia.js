@@ -214,10 +214,6 @@ export function vigilarMontaje(mount, { fotograma, motivo = 'sin-arrancar', segu
   return () => { cerrado = true; clearTimeout(reloj); io.disconnect(); };
 }
 
-export function quitarFijo(mount) {
-  mount?.querySelector(':scope > .escena-fija')?.remove();
-}
-
 /* ¿Este hueco es una capa decorativa sobre contenido que se lee completo?
    La lista ya está declarada arriba; esto solo la consulta. Se usa para que
    el motivo de la caída no cambie la respuesta: si el hero pierde su

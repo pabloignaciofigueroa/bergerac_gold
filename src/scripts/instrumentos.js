@@ -84,14 +84,6 @@ if (!soportaWebGL()) {
       mount._escena?.accion?.(nx, ny);
     });
   }
-
-  /* botón "soltar la bandada" del hero */
-  document.querySelectorAll('[data-accion-escena]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const mount = document.querySelector(`[data-escena="${btn.dataset.accionEscena}"]`);
-      mount?._escena?.accion?.(0, 0);
-    });
-  });
 }
 
 /* ── formulario → confirmación (texto aprobado v9 — F18) ─────────────── */

@@ -4,13 +4,9 @@
    ciclo de vida de escenas y arranque de secciones.
    ============================================================ */
 
-/* initHero (vgold) desconectado en F8: el hero es v9; su escena (la
-   bandada) se instala en F9 como módulo propio. */
 import { initEstudio } from './sections/estudio.js';
 import { initPartida } from './sections/partida.js';
 import { initMetodo } from './sections/metodo.js';
-/* initWorks (viaje Z vgold) desconectado: Casos usa el split de mundos v9 */
-import { initContacto } from './sections/contacto.js';
 import { initMotion } from './motion.js';
 import { initMenu } from './menu.js';
 import { initPointer } from './pointer.js';
@@ -248,7 +244,6 @@ initTextRoll(ctx);
 initEstudio(ctx);
 initPartida(ctx);
 initMetodo(ctx);
-initContacto(ctx);
 
 refreshShell();
 window.addEventListener('load', () => ScrollTrigger && ScrollTrigger.refresh());
