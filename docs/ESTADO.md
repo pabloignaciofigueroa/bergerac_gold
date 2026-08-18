@@ -1,6 +1,47 @@
 # ESTADO — dónde quedamos
 
-Actualizado: **16 agosto 2026**
+Actualizado: **17 agosto 2026**
+
+## Para retomar mañana (sesión cortada por límite de tokens)
+
+**Rama:** `main`. **HEAD:** `0b0bd17` — "fix: elimina codigo muerto verificado
+(auditoria interna de archivos vivos)". Build y suite QA completa (`qa:todo` +
+`tipografia`) verdes contra ese commit; prueba manual de envío de formulario
+también verde. Nada pendiente de commitear de ese lote.
+
+**Lo que se acaba de cerrar (lote de 5, verificado y commiteado):**
+`sections/contacto.js` (256 líneas, muerto — el form real lo maneja
+`instrumentos.js`), `quitarFijo()` en `resiliencia.js`, `export { rendererDe }`
+en `calidad.js`, el listener `[data-accion-escena]` en `instrumentos.js`, y dos
+comentarios obsoletos en `main.js`.
+
+**Lo que quedó abierto de la auditoría interna de CSS** (herramienta
+`tools/depurar-css-profundo.mjs`, aún sin commitear — ver abajo): de 136
+declaraciones "nunca ganan la cascada", solo 2 tienen prueba manual completa
+(`partida.css:16`, `.estudio__canvas-holder` en `estudio.css:12`). Quedan sin
+verificar fila a fila: 21 que dependen del carrusel interno de Partida (el
+recorrido actual no las cubre, hace falta una pasada de scroll dedicada) y 113
+más que comparten el método ya validado pero no el contraste manual caso a
+caso. Informe completo publicado como artifact:
+`https://claude.ai/code/artifact/cd9646f6-cd0e-4efc-9644-74bd04005a77`.
+
+**Dos archivos sin trackear, decisión pendiente de Pablo** (se le preguntó y
+la sesión se cortó antes de responder):
+- `bergerac-plan-mejoras-10-fases.md` (raíz del repo) — el nuevo plan de 10
+  fases (SEO, a11y, formulario, WhatsApp, casos como páginas propias, etc.).
+- `tools/depurar-css-profundo.mjs` — la herramienta del punto anterior.
+
+Preguntar: ¿se commitean ambos antes de seguir, o se dejan fuera del historial?
+
+**Siguiente tarea acordada, NO iniciada:** Fase 1 del plan de 10 fases
+(`bergerac-plan-mejoras-10-fases.md`) — respaldo completo a disco duro externo
+(rsync + `git bundle --all`), tag `pre-auditoria-YYYYMMDD`, rama
+`mejoras-auditoria`, y línea base de Lighthouse en `docs/baseline/`. Bloqueada
+en el primer paso: **hace falta que Pablo indique la ruta del disco duro
+externo** — el plan prohíbe explícitamente asumirla. Orden acordado con Pablo:
+primero terminar/decidir lo de arriba, después arrancar esta Fase 1, y las
+fases 2–10 se ejecutan de a una, con checkpoint y aprobación al cierre de cada
+una (regla explícita del documento del plan).
 
 ## Fase 4 — calidad adaptativa (hecha)
 
