@@ -121,9 +121,12 @@ const JITTER = 0.18;     /* desorden del relleno, en fracción del paso */
    Lo comprueba `node tools/qa/qa.mjs titulo`. */
 function presupuesto() {
   /* el loader del isotipo cubre la construcción: se puede ser generoso */
-  const cupo = innerWidth >= 1200 ? { palabra: 48000, polvo: 600 }
-    : innerWidth >= 900 ? { palabra: 30000, polvo: 400 }
-    : { palabra: 16000, polvo: 250 };
+  /* polvo: 0 — el fondo azul queda plano y gráfico (pedido QA); la palabra
+     no cambia en nada, el bucle que generaba el polvo (más abajo) deja de
+     ejecutarse solo porque TOTAL = letras + polvo queda igual a letras. */
+  const cupo = innerWidth >= 1200 ? { palabra: 48000, polvo: 0 }
+    : innerWidth >= 900 ? { palabra: 30000, polvo: 0 }
+    : { palabra: 16000, polvo: 0 };
   if (nivelDe('hero') !== REDUCED) return cupo;
   return { palabra: Math.round(cupo.palabra * 0.3), polvo: Math.round(cupo.polvo * 0.5) };
 }
