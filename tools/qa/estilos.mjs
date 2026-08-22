@@ -175,10 +175,16 @@ try {
     ok(a.length === b.length, `${w}px · mismo número de elementos`, `A ${a.length} · B ${b.length}`);
     if (a.length !== b.length) continue;
 
+    /* Los paraguas del hero giran solos, sin parar, por diseño (rotate()
+       de continuo vía @keyframes) — su caja de ejes-alineados a la pantalla
+       NUNCA se asienta, así que compararla pixel a pixel es medir el ángulo
+       del momento, no la hoja de estilos. Mismo criterio que GENERADO: se
+       deja fuera lo que varía por motivos ajenos al CSS. */
     const difProps = [];
     const difCaja = [];
     for (let i = 0; i < a.length; i++) {
-      if (a[i].caja[0] !== b[i].caja[0] || a[i].caja[1] !== b[i].caja[1]) {
+      if (!a[i].via.includes('.umbrella')
+        && (a[i].caja[0] !== b[i].caja[0] || a[i].caja[1] !== b[i].caja[1])) {
         difCaja.push(`${a[i].via}  ${a[i].caja.join('x')} → ${b[i].caja.join('x')}`);
       }
       for (const p in a[i].props) {

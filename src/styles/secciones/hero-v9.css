@@ -82,8 +82,11 @@
   font-size: 16px;
 }
 .s-hero .btn.is-solid {
-  background: var(--theme-ink, var(--graphite));
-  color: var(--theme-bg, var(--warm-white));
+  /* CTA amarillo (pedido de dirección): las acciones importantes son
+     amarillas, en todo el sitio — acá se acota al Hero; el resto de los
+     CTA se homologa aparte. */
+  background: var(--yellow);
+  color: var(--graphite);
   border-color: transparent;
 }
 .s-hero .btn:active { transform: scale(.96); }
@@ -130,27 +133,52 @@
 /* Puntos separadores sin peso (pedido: nada de círculos gordos) */
 .hero-marquee .dot { width: .14em; height: .14em; opacity: .55; }
 
-/* Foto del hero al doble (pedido): capa propia — sobre el fondo y la
-   bandada, bajo todos los textos. */
+/* Paraguas del hero (pedido de dirección, ref. NEW_HERO.pdf): capa propia
+   — sobre el fondo y la bandada, bajo todos los textos. Misma posición que
+   ocupaba la foto antes. */
 .s-hero > .c { z-index: 2; }
-.hero-photo {
+.hero-umbrellas {
   position: absolute;
   right: var(--gutter);
   bottom: clamp(24px, 5vh, 64px);
   z-index: 1;
-  margin: 0;
-  width: min(46vw, 940px);
-  /* la pieza "D" del isotipo como marco: proporción de la pieza (4:3),
-     nada de rectángulos — la foto vive dentro de la forma de la marca */
-  aspect-ratio: 4 / 3;
-  max-height: 72svh;
-  overflow: hidden;
-  clip-path: url(#pieza-foto);
+  width: min(48vw, 960px);
+  aspect-ratio: 1 / .92;
   pointer-events: none;
 }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.umbrella {
+  position: absolute;
+  top: var(--top);
+  left: var(--left);
+  width: 30%;
+  height: auto;
+  z-index: var(--z);
+  /* posición/rotación/escala de diseño — fijas, no aleatorias */
+  translate: -50% -50%;
+  rotate: var(--rot);
+  scale: var(--esc);
+  display: block;
+}
+/* Movimiento sutil, independiente del posicionamiento de arriba: un solo
+   `transform` en la animación, que compone con translate/rotate/scale
+   (propiedades individuales) sin pisarlas. Traslación 3–8px, rotación ~1°,
+   duración y desfase por paraguas vía variables puestas desde Hero.astro. */
+@media not (prefers-reduced-motion: reduce) {
+  .umbrella {
+    animation: paraguas-flotar var(--dur, 7s) ease-in-out var(--delay, 0s) infinite;
+  }
+}
+@keyframes paraguas-flotar {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(3px, -6px, 0) rotate(.8deg); }
+}
 @media (max-width: 900px) {
-  .hero-photo { position: relative; right: auto; bottom: auto; width: min(80vw, 420px); margin: 20px var(--gutter) 40px; }
+  .hero-umbrellas {
+    position: relative; right: auto; bottom: auto;
+    width: min(88vw, 480px);
+    aspect-ratio: 1 / .92;
+    margin: 20px var(--gutter) 40px;
+  }
 }
 
 @media (max-width: 900px) {

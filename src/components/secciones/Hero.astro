@@ -1,12 +1,37 @@
 ---
 /* Sección 01 — Hero.
-   La foto se recorta con una pieza del isotipo (clip-path). Va con <Image>
-   para que el build genere webp y varios anchos; el clip-path no se entera.
-   `loading="eager"` es OBLIGATORIO aquí: <Image> pone lazy por defecto, y
-   esta foto está a la vista al abrir. En diferido retrasa el mayor elemento
-   visible y además deja al preloader de la cortina sin nada que esperar. */
+   Composición de paraguas (pedido de dirección, ref. NEW_HERO.pdf): tres
+   fotos individuales (negro/gris/amarillo) reutilizadas en 13 posiciones
+   fijas — diseñadas a mano, no generadas al azar en cada carga. `loading`
+   eager solo en los primeros (los que se ven al abrir sin scroll); el resto
+   lazy, igual que cualquier imagen bajo el fold. */
 import { Image } from 'astro:assets';
-import fotoHero from '../../assets/img/photos/hero.jpg';
+import paraguasNegro from '../../assets/img/hero-umbrellas/paraguas-negro.png';
+import paraguasGris from '../../assets/img/hero-umbrellas/paraguas-gris.png';
+import paraguasAmarillo from '../../assets/img/hero-umbrellas/paraguas-amarillo.png';
+
+const FOTOS: Record<'negro' | 'gris' | 'amarillo', ImageMetadata> = {
+  negro: paraguasNegro, gris: paraguasGris, amarillo: paraguasAmarillo,
+};
+
+/* top/left en % del contenedor .hero-umbrellas · rot en grados · escala
+   relativa · tono = qué foto usa. El amarillo va casi al centro, por
+   encima del resto (mayor z). Nada de esto se recalcula en runtime. */
+const PARAGUAS: { top: number; left: number; rot: number; esc: number; z: number; tono: 'negro' | 'gris' | 'amarillo' }[] = [
+  { top: 16, left: 28, rot: -8,  esc: 1.00, z: 2, tono: 'negro' },
+  { top: 10, left: 54, rot: 5,   esc: 0.95, z: 3, tono: 'gris' },
+  { top: 19, left: 79, rot: -4,  esc: 1.05, z: 2, tono: 'negro' },
+  { top: 37, left: 14, rot: 10,  esc: 0.90, z: 3, tono: 'gris' },
+  { top: 40, left: 43, rot: -12, esc: 1.05, z: 6, tono: 'amarillo' },
+  { top: 35, left: 68, rot: 6,   esc: 1.00, z: 2, tono: 'negro' },
+  { top: 42, left: 91, rot: -6,  esc: 0.90, z: 3, tono: 'gris' },
+  { top: 60, left: 24, rot: 4,   esc: 1.00, z: 2, tono: 'negro' },
+  { top: 63, left: 50, rot: -9,  esc: 0.95, z: 4, tono: 'negro' },
+  { top: 58, left: 76, rot: 8,   esc: 1.05, z: 3, tono: 'gris' },
+  { top: 81, left: 16, rot: -5,  esc: 0.90, z: 2, tono: 'negro' },
+  { top: 83, left: 43, rot: 7,   esc: 1.00, z: 3, tono: 'gris' },
+  { top: 79, left: 69, rot: -3,  esc: 0.95, z: 2, tono: 'negro' },
+];
 ---
 <section class="s-hero" id="inicio" data-theme="accent" aria-labelledby="h1">
   <span class="ghost" aria-hidden="true">01</span>
@@ -25,16 +50,20 @@ import fotoHero from '../../assets/img/photos/hero.jpg';
       </div>
     </div>
   </div>
-  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
-    <defs>
-      <clipPath id="pieza-foto" clipPathUnits="objectBoundingBox">
-        <path transform="scale(0.0025, 0.0033333)" d="M78.3 150.6C78.3 115.6 78.3 80.7 78.3 45.8C78.3 32.8 86.5 22.3 99.0 19.0C101.5 18.4 104.0 18.1 106.5 18.1C136.7 18.0 166.9 18.0 197.0 18.1C213.5 18.1 229.3 21.5 244.3 28.2C262.0 36.0 277.2 47.2 289.5 62.4C302.6 78.4 311.1 96.7 315.6 116.7C321.7 143.7 319.2 170.2 309.6 196.0C300.0 221.6 284.4 242.7 262.3 258.9C248.8 268.9 233.7 275.8 217.3 279.5C211.1 280.9 204.6 281.7 198.3 281.8C167.4 282.0 136.6 281.9 105.7 281.9C100.1 281.9 94.8 280.7 90.1 277.5C82.3 272.2 78.3 264.8 78.3 255.4C78.3 220.4 78.3 185.5 78.3 150.6Z"/>
-      </clipPath>
-    </defs>
-  </svg>
-  <figure class="hero-photo" data-anim-high-block data-anim-high="left, ink, 500">
-    <Image src={fotoHero} alt="Bergerac — estudio digital en Castro, Chiloé" loading="eager" fetchpriority="high" decoding="async" widths={[500, 1000]} sizes="(max-width: 1023px) 92vw, 46vw" />
-  </figure>
+  <div class="hero-umbrellas" aria-hidden="true">
+    {PARAGUAS.map((p, i) => (
+      <Image
+        src={FOTOS[p.tono]}
+        alt=""
+        loading={i < 4 ? 'eager' : 'lazy'}
+        decoding="async"
+        widths={[160, 260]}
+        sizes="14vw"
+        class={`umbrella umbrella--${p.tono}`}
+        style={`--top:${p.top}%; --left:${p.left}%; --rot:${p.rot}deg; --esc:${p.esc}; --z:${p.z}; --dur:${6 + (i % 5)}s; --delay:${(i * 0.37).toFixed(2)}s;`}
+      />
+    ))}
+  </div>
   <div class="hero-marquee marquee-display" data-marquee data-marquee-reactive data-marquee-mouse data-marquee-speed="120" aria-hidden="true">
     <div><span>trae tu marca</span><span class="dot"></span><span>trae tu proyecto</span><span class="dot"></span><span>trae tu idea</span><span class="dot"></span></div>
   </div>
