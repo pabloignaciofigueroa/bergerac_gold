@@ -34,6 +34,11 @@
 
 .s-hero {
   position: relative;
+  /* contexto de apilamiento propio: sin esto, un z-index negativo en un
+     hijo (los paraguas, para que queden detrás del título) se escapa de
+     la sección entera en vez de quedar contenido dentro de ella —
+     overflow:clip NO alcanza para esto, hace falta z-index explícito. */
+  z-index: 0;
   min-height: min(100svh, 1088px);
   display: flex; flex-direction: column; justify-content: space-between;
   padding-block: clamp(120px, 14vh, 176px) 0;
@@ -133,27 +138,39 @@
 /* Puntos separadores sin peso (pedido: nada de círculos gordos) */
 .hero-marquee .dot { width: .14em; height: .14em; opacity: .55; }
 
-/* Paraguas del hero (pedido de dirección, ref. NEW_HERO.pdf): capa propia
-   — sobre el fondo y la bandada, bajo todos los textos. Misma posición que
-   ocupaba la foto antes. */
+/* Paraguas del hero (pedido de dirección, ref. NEW_HERO.pdf): misma
+   posición que ocupaba la foto antes, pero DETRÁS del título — la letra
+   la sigue dibujando el canvas de partículas (z-index 0), así que el
+   racimo va en -1. El fondo azul de la sección pinta primero que cualquier
+   z-index de sus hijos, así que el negativo no se escapa hacia atrás. */
 .s-hero > .c { z-index: 2; }
 .hero-umbrellas {
   position: absolute;
   right: var(--gutter);
   bottom: clamp(24px, 5vh, 64px);
-  z-index: 1;
+  z-index: -1;
   width: min(48vw, 960px);
   aspect-ratio: 1 / .92;
   pointer-events: none;
+}
+/* Dos capas independientes, para el parallax de mouse (main.js): el
+   racimo (negro/gris) se mueve poco, la estrella (amarillo) se mueve más
+   — la diferencia de amplitud es lo que las lee como dos planos distintos,
+   no un solo grupo plano. Cada una ocupa el mismo rectángulo completo. */
+.hero-umbrellas__racimo, .hero-umbrellas__estrella {
+  position: absolute;
+  inset: 0;
 }
 .umbrella {
   position: absolute;
   top: var(--top);
   left: var(--left);
-  width: 30%;
+  width: 38%;
   height: auto;
   z-index: var(--z);
-  /* posición/rotación/escala de diseño — fijas, no aleatorias */
+  /* posición/rotación/escala de diseño — fijas, no aleatorias. Empaquetado
+     apretado: el radio de la "flor hexagonal" en Hero.astro es menor que
+     este ancho, así que se tocan y se superponen como en la referencia. */
   translate: -50% -50%;
   rotate: var(--rot);
   scale: var(--esc);

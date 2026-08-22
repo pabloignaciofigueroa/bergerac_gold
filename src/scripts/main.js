@@ -193,10 +193,16 @@ initPointer(ctx);
    · BERGERAC deriva CONTRA el cursor (amp -9, separa planos)
    · el 01 fantasma SIGUE al cursor (amp 30) y además deriva ±10% de su
      alto con el scroll (scrub directo, regla de la casa v9)
+   · los paraguas van en DOS capas (pedido de dirección): el racimo
+     negro/gris deriva leve (amp 5) y la estrella amarilla deriva más
+     (amp 18) — la diferencia de amplitud es lo que las lee como dos
+     planos, no el mismo grupo moviéndose junto.
    Mouse: x/y en px con lerp 0.05 · Scroll: yPercent — componen sin pisarse. */
 if (gsap && !prefersReduced) {
   const word = document.querySelector('.hero-word');
   const ghost = document.querySelector('.s-hero .ghost');
+  const racimo = document.querySelector('.hero-umbrellas__racimo');
+  const estrella = document.querySelector('.hero-umbrellas__estrella');
 
   /* deriva de scroll del fantasma (v9 parallax.js, data-parallax="0.1") */
   if (ghost && ScrollTrigger) {
@@ -210,7 +216,7 @@ if (gsap && !prefersReduced) {
 
   /* deriva de cursor (v9 mouse-parallax.js) — solo puntero fino */
   const fino = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (fino && (word || ghost)) {
+  if (fino && (word || ghost || racimo || estrella)) {
     const t = { nx: 0, ny: 0 };
     let rx = 0, ry = 0;
     addEventListener('pointermove', (e) => {
@@ -225,6 +231,8 @@ if (gsap && !prefersReduced) {
     const capas = [];
     if (word) capas.push({ amp: -9, salta: conParticulas, sx: gsap.quickSetter(word, 'x', 'px'), sy: gsap.quickSetter(word, 'y', 'px') });
     if (ghost) capas.push({ amp: 30, sx: gsap.quickSetter(ghost, 'x', 'px'), sy: gsap.quickSetter(ghost, 'y', 'px') });
+    if (racimo) capas.push({ amp: 5, sx: gsap.quickSetter(racimo, 'x', 'px'), sy: gsap.quickSetter(racimo, 'y', 'px') });
+    if (estrella) capas.push({ amp: 18, sx: gsap.quickSetter(estrella, 'x', 'px'), sy: gsap.quickSetter(estrella, 'y', 'px') });
     gsap.ticker.add(() => {
       t.nx += (rx - t.nx) * 0.05;
       t.ny += (ry - t.ny) * 0.05;
