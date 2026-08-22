@@ -177,12 +177,18 @@
   position: absolute;
   top: var(--top);
   left: var(--left);
-  width: 38%;
+  width: 50%;
   height: auto;
   z-index: var(--z);
-  /* posición/rotación/escala de diseño — fijas, no aleatorias. Empaquetado
-     apretado: el radio de la "flor hexagonal" en Hero.astro es menor que
-     este ancho, así que se tocan y se superponen como en la referencia. */
+  /* posición/rotación/escala de diseño — fijas, no aleatorias. Las
+     posiciones en Hero.astro (flor hexagonal) están calculadas para que
+     los CENTROS queden a tangencia exacta de un ancho del 38% — pero el
+     paraguas no es un círculo relleno: es una silueta de 8 puntas con
+     valles cóncavos entre ellas. A tangencia exacta esos valles dejan ver
+     el azul de fondo (confirmado con captura real). El 50% de acá le da
+     ~12 puntos de superposición real sobre ese cálculo, suficiente para
+     que los valles cóncavos de un paraguas queden tapados por la punta
+     del vecino en vez de dejar hueco. */
   translate: -50% -50%;
   rotate: var(--rot);
   scale: var(--esc);
@@ -203,8 +209,9 @@
 }
 @media (max-width: 900px) {
   .hero-umbrellas {
-    position: relative; right: auto; bottom: auto;
+    position: relative; left: auto; right: auto; bottom: auto;
     width: min(88vw, 480px);
+    max-width: none;
     aspect-ratio: 1 / .92;
     margin: 20px var(--gutter) 40px;
   }
