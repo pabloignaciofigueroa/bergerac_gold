@@ -2,5 +2,11 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "installCommand": "npm ci"
+  "installCommand": "npm ci",
+  "redirects": [
+    {"source":"/bergerac.html","destination":"/","permanent":true},
+    {"source":"/index.html","destination":"/","permanent":true},
+    {"source":"/:path*","has":[{"type":"host","value":"bergerac-gold.vercel.app"}],"destination":"https://bergerac.cl/:path*","permanent":true}
+  ],
+  "headers": [{"source":"/api/:path*","headers":[{"key":"X-Robots-Tag","value":"noindex"}]}]
 }
