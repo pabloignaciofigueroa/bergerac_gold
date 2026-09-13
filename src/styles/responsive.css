@@ -77,4 +77,4 @@
 
 @media(max-width:600px){.button.hero-cta{display:none}.hero-grid{padding-bottom:32px}}
 
-@media(max-width:600px){.hero-object canvas{filter:drop-shadow(8px 10px 7px rgb(40 40 40 / .338))}}
+@media(max-width:600px){.hero-object canvas{filter:drop-shadow(8px 10px 7px rgb(40 40 40 / .26))}}

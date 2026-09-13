@@ -145,4 +145,4 @@
 .hero-cta .icon{width:1.2em;height:1.2em;stroke-width:2.5;stroke-linecap:square;stroke-linejoin:miter}
 
 /* Sombra proyectada detras de la silueta transparente del cubo. */
-.hero-object canvas{filter:drop-shadow(14px 16px 10px rgb(40 40 40 / .364))}
+.hero-object canvas{filter:drop-shadow(14px 16px 10px rgb(40 40 40 / .28))}
