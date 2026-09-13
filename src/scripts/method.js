@@ -23,10 +23,10 @@ export function initMethod() {
   }
   function update(self=trigger) {
     if(!sticky||!self)return;
-    // Seven equal scroll spans: read, move, read, move, read, move, read.
-    const span=gsap.utils.clamp(0,7,(scrollY-self.start)/Math.max(1,self.end-self.start)*7);
-    const step=Math.min(3,Math.floor(span/2));
-    const position=Math.min(3,step+gsap.utils.clamp(0,1,span-step*2-1));
+    // Four one-screen reading stops and three half-screen transitions.
+    const span=gsap.utils.clamp(0,5.5,(scrollY-self.start)/Math.max(1,self.end-self.start)*5.5);
+    const step=Math.min(3,Math.floor(span/1.5));
+    const position=Math.min(3,step+gsap.utils.clamp(0,1,(span-step*1.5-1)/.5));
     // Include the space between stages so each reading stop stays aligned.
     const gap=parseFloat(getComputedStyle(track).columnGap)||0;
     const stride=track.getBoundingClientRect().width+gap;
@@ -55,7 +55,7 @@ export function initMethod() {
   return {
     sync(){update();},
     getPinkBoundary(offset){return sticky&&trigger?trigger.start+(trigger.end-trigger.start)*.5:panels[2].getBoundingClientRect().top+scrollY-offset;},
-    getStepPosition(index){return sticky&&trigger?trigger.start+(trigger.end-trigger.start)*(index*2+.5)/7:panels[index].getBoundingClientRect().top+scrollY-110;},
+    getStepPosition(index){return sticky&&trigger?trigger.start+(trigger.end-trigger.start)*(index*1.5+.5)/5.5:panels[index].getBoundingClientRect().top+scrollY-110;},
     destroy(){mm.revert();},
   };
 }

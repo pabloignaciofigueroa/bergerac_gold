@@ -32,11 +32,11 @@ test('all four stages have a full reading stop in both scroll directions',async(
  const ids=['estudiar','definir','desarrollar','afinar'];
  async function at(units){await page.evaluate(units=>{
   const el=document.querySelector('.method');
-  scrollTo(0,el.getBoundingClientRect().top+scrollY+(el.offsetHeight-innerHeight)*units/7);
+  scrollTo(0,el.getBoundingClientRect().top+scrollY+(el.offsetHeight-innerHeight)*units/5.5);
  },units);await page.waitForTimeout(100);}
  for(const i of [0,1,2,3,2,1,0]){
-  await at(i*2+.12);const first=await page.locator('#'+ids[i]).boundingBox();
-  await at(i*2+.85);const last=await page.locator('#'+ids[i]).boundingBox();
+  await at(i*1.5+.12);const first=await page.locator('#'+ids[i]).boundingBox();
+  await at(i*1.5+.85);const last=await page.locator('#'+ids[i]).boundingBox();
   expect(Math.abs(first.x-last.x)).toBeLessThan(2);
   if(i<3){
    const separation=await page.evaluate(index=>{
