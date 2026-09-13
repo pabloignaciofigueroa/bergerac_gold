@@ -4,7 +4,6 @@ export function initProjects() {
   const videos = projects.map(project=>project.querySelector('video'));
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const small = matchMedia('(max-width: 600px)');
-  const userPaused = new Set();
   const visible = new Set();
   let loaded = false;
 
@@ -14,18 +13,12 @@ export function initProjects() {
     video.src = video.canPlayType('video/webm') ? source : source.replace(/\.webm$/,'.mp4');
     video.preload='metadata'; video.load();
   }
-  function setControl(video, button) {
-    const playing = !video.paused;
-    button.setAttribute('aria-label',playing?'Pausar video':'Reproducir video');
-    button.querySelector('use').setAttribute('href',playing?'#pause':'#play');
-    button.setAttribute('aria-pressed',String(playing));
-  }
   async function play(video) {
-    try {await video.play();} catch { /* Autoplay may require a user gesture; the play button stays available. */ }
+    try {await video.play();} catch { /* Keep the preview static when autoplay is unavailable. */ }
   }
   function syncPlayback() {
     videos.forEach((video,index)=>{
-      if (visible.has(index) && !document.hidden && !reduced.matches && !userPaused.has(index)) {
+      if (visible.has(index) && !document.hidden && !reduced.matches) {
         loadVideo(video);play(video);
       } else video.pause();
     });
@@ -35,8 +28,7 @@ export function initProjects() {
   videos.forEach(video=>video.addEventListener('error',()=>{
     if(/\.webm(?:\?.*)?$/.test(video.src)){
       video.src=video.src.replace(/\.webm(?=\?|$)/,'.mp4');video.load();
-      if(video===dialogVideo){if(dialog.open&&!reduced.matches)play(video);}
-      else syncPlayback();
+      syncPlayback();
     }
   }));
 
@@ -48,20 +40,6 @@ export function initProjects() {
     entries.forEach(entry=>{const index=videos.indexOf(entry.target);if(entry.isIntersecting)visible.add(index);else visible.delete(index);});syncPlayback();
   },{threshold:.2});
   videos.forEach(video=>visibilityObserver.observe(video));
-
-  projects.forEach((project,index)=>{
-    const video=videos[index];
-    const button=project.querySelector('.video-toggle');
-    video.addEventListener('play',()=>setControl(video,button));
-    video.addEventListener('pause',()=>setControl(video,button));
-    button.addEventListener('click',()=>{
-      loadVideo(video);
-      if(video.error)video.load();
-      if(video.paused){userPaused.delete(index);play(video);}
-      else {userPaused.add(index);video.pause();}
-    });
-
-  });
 
   document.addEventListener('visibilitychange',syncPlayback);
   reduced.addEventListener('change',syncPlayback);
