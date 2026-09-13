@@ -15,6 +15,6 @@ export function initContact() {
     const reference = document.getElementById('contact-reference').value.trim();
     const body = `Tu nombre: ${name}\nTu correo o WhatsApp: ${value}\n\nCuéntanos qué necesitas:\n${message}${reference?`\n\nComparte un enlace: ${reference}`:''}`;
     form.querySelector('.form-status').textContent='Se abrirá tu aplicación de correo para enviar la consulta.';
-    location.href=`mailto:pablo@bergerac.cl?subject=${encodeURIComponent('Comencemos — '+name)}&body=${encodeURIComponent(body)}`;
+    location.href=`mailto:pablo@bergerac.cl?subject=${encodeURIComponent('Conversemos — '+name)}&body=${encodeURIComponent(body)}`;
   });
 }
