@@ -1,4 +1,4 @@
-﻿export function initContact() {
+export function initContact() {
   const form = document.getElementById('contact-form');
   const status = form.querySelector('.form-status');
   const button = form.querySelector('[type="submit"]');
@@ -8,7 +8,7 @@
   const originalLabel = label.dataset.label;
   let busy=false, sent=false, lastPayload='', requestId='';
   function setButton(text, success=false) {
-    label.dataset.label=text;
+    label.dataset.label=text;button.setAttribute('aria-label',text);
     const textNode=label.querySelector('.button-text') || label;
     textNode.textContent=text;
     icon.innerHTML=success?'<path d="m5 12 4 4L19 6"/>':originalIcon;
