@@ -1,6 +1,6 @@
 .hero{padding-top:var(--header-height);overflow:clip}
 .hero-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);padding-top:25px;padding-bottom:48px}
-.hero-wordmark{font-size:clamp(50px,15.2vw,268px);line-height:.95;letter-spacing:-.025em;white-space:nowrap;text-wrap:nowrap}
+.hero-wordmark{font-size:clamp(50px,15.2vw,268px);line-height:.95;letter-spacing:normal;white-space:nowrap;text-wrap:nowrap}
 .hero-wordmark{grid-column:1/-1;margin-bottom:20px}
 .hero-copy{grid-column:1/7;grid-row:2;align-self:center;z-index:2;padding-block:32px}
 .hero-title,.hero-statement{font-size:clamp(24px,2.65vw,45px);line-height:1.15;letter-spacing:-.005em}
