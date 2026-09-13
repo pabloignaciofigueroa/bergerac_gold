@@ -109,6 +109,11 @@
 .contact-copy{font-size:clamp(22px,2.1vw,30px);font-weight:500;line-height:1.35;letter-spacing:-.04em;max-width:27ch}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 .form-field{display:flex;flex-direction:column;margin-bottom:31px}
+.form-field{position:relative}
+.form-validation{position:relative;align-self:flex-start;display:flex;align-items:flex-start;gap:9px;max-width:100%;margin-top:10px;padding:11px 14px;background:var(--paper);color:var(--graphite);border:1px solid rgb(40 40 40 / .2);border-radius:10px;box-shadow:0 4px 14px rgb(40 40 40 / .1);font-family:var(--font-body);font-size:14px;font-weight:500;line-height:1.45;overflow-wrap:anywhere}
+.form-validation[hidden]{display:none}
+.form-validation::before{content:"";position:absolute;top:-5px;left:22px;width:8px;height:8px;background:var(--paper);border-top:1px solid rgb(40 40 40 / .2);border-left:1px solid rgb(40 40 40 / .2);transform:rotate(45deg)}
+.form-validation-icon{display:grid;place-items:center;flex:none;width:21px;height:21px;border-radius:50%;background:var(--graphite);color:var(--paper);font-weight:750;line-height:1}
 .form-field label{font-size:13px;font-weight:650;margin-bottom:13px}
 .form-field label span{font-weight:450}
 .form-field input,.form-field textarea{width:100%;min-width:0;border:0;border-bottom:1px solid color-mix(in srgb,currentColor 55%,transparent);background:transparent;border-radius:0;padding:9px 0 12px;min-height:44px;box-shadow:none;font-size:17px;line-height:1.5;transition:border-color 160ms,box-shadow 160ms}
