@@ -36,3 +36,5 @@
 }
 
 .site-header .menu-toggle,.site-header .menu-toggle:hover{background:transparent;color:inherit;transition:transform var(--duration-fast) var(--ease-out)}
+
+.mobile-menu nav .menu-cta{background:var(--yellow);color:var(--graphite);border:0;border-radius:12px;margin-top:24px;padding:18px 20px;min-height:60px;font-weight:750;font-size:clamp(20px,5vw,26px);letter-spacing:-.035em;gap:16px}
