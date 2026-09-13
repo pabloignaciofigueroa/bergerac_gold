@@ -7,6 +7,8 @@ export const themes = Object.fromEntries(Object.keys(palette).map(name => {
   const lightInk = name === 'graphite' || name === 'purple';
   return [name, {
     '--page-bg': palette[name],
+    '--works-heading-fg': (lightInk || name === 'pink') ? palette.paper : palette.graphite,
+    '--works-heading-accent': (lightInk || name === 'pink') ? palette.paper : palette.pink,
     '--method-fg': (lightInk || name === 'pink') ? palette.paper : palette.graphite,
     '--page-fg': lightInk ? palette.paper : palette.graphite,
     '--nav-bg': (lightInk || name === 'pink') ? palette.graphite : palette.paper,

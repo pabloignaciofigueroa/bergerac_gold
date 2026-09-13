@@ -146,3 +146,6 @@
 
 /* Sombra proyectada detras de la silueta transparente del cubo. */
 .hero-object canvas{filter:drop-shadow(14px 16px 10px rgb(40 40 40 / .28))}
+
+.works .section-label,.works-title{color:var(--works-heading-fg,var(--graphite))}
+.works-accent{color:var(--works-heading-accent,var(--pink))}
