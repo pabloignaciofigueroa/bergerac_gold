@@ -1,4 +1,4 @@
-.method{color:var(--paper)}
+.method{color:var(--method-fg,var(--paper))}
 .method .method-heading h2{font-size:clamp(80px,9vw,140px)}
 .method .method-heading>p{font-weight:400;background:transparent;padding:12px 16px;border-radius:12px}
 .method .method-step,.method.is-sticky .method-step{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(24px,4vw,64px);align-items:center;align-content:center;padding:24px 0;min-width:0}
