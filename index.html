@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es-CL" data-theme="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#00A1FF">
+  <style>
+    /* Self-contained opening: no stylesheet, font, module or storage dependency. */
+    :root{--intro-duration:1500ms}
+    .site-intro{display:none;position:fixed;inset:0;width:100vw;z-index:40;place-items:center;background:#282828;pointer-events:none}
+    html[data-intro="prepared"],html[data-intro="playing"],html[data-intro="opening"]{background:#282828!important;scrollbar-color:#282828 #282828}
+    html[data-intro="prepared"]::before{content:"";position:fixed;inset:0;width:100vw;background:#282828;z-index:40;pointer-events:none}
+    html[data-intro="prepared"] body,html[data-intro="playing"] body,html[data-intro="opening"] body{background:var(--page-bg,#00A1FF)}
+    html[data-intro="prepared"] .site-intro,html[data-intro="playing"] .site-intro,html[data-intro="opening"] .site-intro{display:grid}
+    .site-intro svg{width:clamp(112px,14vw,192px);max-width:45vw;max-height:40svh;height:auto;overflow:visible}
+    .site-intro path{fill-opacity:0;stroke:var(--piece-color);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+    .site-intro .iso-piece--purple{--piece-color:#6F02BA;--piece-delay:0ms}
+    .site-intro .iso-piece--magenta{--piece-color:#FB0278;--piece-delay:65ms}
+    .site-intro .iso-piece--amber{--piece-color:#FFB701;--piece-delay:130ms}
+    .site-intro .iso-piece--blue{--piece-color:#00A1FF;--piece-delay:195ms}
+    html[data-intro="playing"] .site-intro path,html[data-intro="opening"] .site-intro path{animation:intro-outline 360ms ease-out var(--piece-delay) both,intro-fill 260ms ease-in-out calc(440ms + var(--piece-delay)) both}
+    html[data-intro="playing"] .site-intro{animation:intro-hold calc(var(--intro-duration)*.7) linear both,intro-safety 6500ms step-end forwards}
+    html[data-intro="opening"] .site-intro{animation:intro-exit calc(var(--intro-duration)*.3) cubic-bezier(.76,0,.24,1) both}
+    html[data-intro="prepared"] .hero-brand-emphasis,html[data-intro="playing"] .hero-brand-emphasis{animation-play-state:paused}
+    html[data-intro-paused] .site-intro,html[data-intro-paused] .site-intro path{animation-play-state:paused!important}
+    @keyframes intro-outline{to{stroke-dashoffset:0}}
+    @keyframes intro-fill{to{fill-opacity:1}}
+    @keyframes intro-hold{from,to{transform:translateY(0)}}
+    @keyframes intro-exit{from{transform:translateY(0);visibility:visible}to{transform:translateY(-101%);visibility:hidden}}
+    @keyframes intro-safety{to{visibility:hidden}}
+    @media(max-width:600px){:root{--intro-duration:1300ms}.site-intro svg{width:132px}}
+    @media(prefers-reduced-motion:reduce){html .site-intro,html[data-intro="prepared"]::before{display:none!important}}
+    @media print{html .site-intro,html[data-intro="prepared"]::before{display:none!important}}
+  </style>
+  <script>
+    // Decide before external resources. Reloading the home always presents the brand.
+    (() => {
+      const deepLink = location.hash && location.hash !== '#inicio';
+      if (!deepLink && !matchMedia('(prefers-reduced-motion: reduce)').matches &&
+          performance.getEntriesByType('navigation')[0]?.type !== 'back_forward') {
+        document.documentElement.dataset.intro = 'prepared';
+        document.querySelector('meta[name="theme-color"]').content = '#282828';
+      }
+    })();
+  </script>
+  <meta name="description" content="Primero entendemos tu marca, después, construimos su presencia web. Bergerac, estudio digital en Castro, Chiloé.">
+  <meta property="og:title" content="Bergerac — Estudio digital">
+  <meta property="og:description" content="Primero entendemos tu marca, después, construimos su presencia web.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/images/chiloe.webp">
+  <title>Bergerac — Estudio digital · Castro, Chiloé</title>
+  <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg">
+  <link rel="preload" href="/fonts/alfa.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/mona.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/src/styles/main.css" as="style">
+  <script type="module" src="/src/main.js"></script>
+</head>
+<body>
+  <div class="site-intro" id="site-intro" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 378.7207 415.3292" aria-hidden="true" focusable="false">
+<g transform="translate(-93.4753 491.542) scale(1 -1)">
+  <path pathLength="1" class="iso-piece iso-piece--blue" d="M0 0 C0 27.513 -0.01 55.027 0.005 82.54 C0.011 92.733 6.447 101.073 16.322 103.602 C18.237 104.092 20.267 104.344 22.245 104.349 C46 104.4 69.754 104.427 93.508 104.369 C106.467 104.338 118.937 101.663 130.762 96.422 C144.705 90.241 156.685 81.393 166.391 69.488 C176.705 56.836 183.397 42.462 186.95 26.652 C191.729 5.393 189.719 -15.453 182.153 -35.799 C174.654 -55.963 162.339 -72.555 144.967 -85.313 C134.263 -93.175 122.413 -98.663 109.464 -101.54 C104.583 -102.624 99.507 -103.294 94.513 -103.332 C70.201 -103.516 45.886 -103.414 21.572 -103.436 C17.144 -103.44 13.023 -102.481 9.319 -99.963 C3.166 -95.779 0.033 -89.953 0.023 -82.54 C-0.011 -55.027 0.01 -27.513 0.01 0 Z" fill="#00a1ff" transform="matrix(1 0 0 1 282.6662 179.6577)"/>
+  <path pathLength="1" class="iso-piece iso-piece--purple" d="M0 0 C0 -22.638 0.001 -45.277 0 -67.915 C-0.001 -82.924 -11.493 -95.541 -26.379 -96.731 C-29.956 -97.017 -33.566 -96.944 -37.162 -96.946 C-72.279 -96.965 -107.397 -97.104 -142.514 -96.902 C-155.945 -96.824 -166.379 -90.922 -172.73 -78.748 C-175.019 -74.36 -175.947 -69.588 -175.944 -64.617 C-175.921 -29.819 -175.927 4.979 -175.927 39.776 C-175.927 47.696 -175.961 55.615 -175.946 63.535 C-175.915 78.884 -165.113 92.425 -150.119 95.812 C-147.797 96.337 -145.38 96.695 -143.006 96.698 C-105.089 96.75 -67.171 96.791 -29.254 96.693 C-17.594 96.663 -8.979 91.111 -3.282 81.041 C-0.87 76.779 0.024 72.074 0.024 67.195 C0.024 44.797 0.024 22.398 0.024 0 Z" fill="#6f02ba" transform="matrix(1 0 0 1 269.5215 394.7896)"/>
+  <path pathLength="1" class="iso-piece iso-piece--magenta" d="M0 0 C0 23.273 -0.023 46.545 0.009 69.818 C0.028 83.125 8.779 93.822 21.79 96.49 C23.342 96.808 24.961 96.922 26.55 96.924 C52.621 96.957 78.693 96.962 104.765 96.961 C113.243 96.96 119.826 93.38 124.634 86.416 C140.984 62.73 157.341 39.048 173.722 15.383 C179.983 6.337 179.88 -5.072 173.62 -14.031 C161.762 -31.006 150.008 -48.052 138.238 -65.087 C133.239 -72.322 128.426 -79.688 123.309 -86.837 C119.193 -92.587 113.447 -95.899 106.355 -96.509 C102.858 -96.81 99.325 -96.764 95.808 -96.766 C77.254 -96.776 58.7 -96.76 40.146 -96.734 C34.792 -96.727 29.401 -97.05 24.093 -96.542 C10.116 -95.204 -0.008 -83.843 -0.03 -69.818 C-0.067 -46.545 -0.04 -23.273 -0.04 0 Z" fill="#fb0278" transform="matrix(1 0 0 1 282.7249 394.5692)"/>
+  <path pathLength="1" class="iso-piece iso-piece--amber" d="M0 0 C21.117 0 42.234 0.036 63.351 -0.015 C73.707 -0.04 82.331 -6.999 84.332 -16.914 C85.664 -23.515 83.594 -29.276 79.284 -34.231 C70.136 -44.75 60.881 -55.175 51.676 -65.644 C42.043 -76.6 32.398 -87.546 22.794 -98.527 C11.268 -111.705 -0.227 -124.911 -11.725 -138.115 C-19.443 -146.98 -27.16 -155.846 -34.845 -164.739 C-41.945 -172.956 -48.989 -181.222 -56.08 -189.447 C-64.272 -198.949 -79.177 -198.463 -86.879 -188.434 C-89.777 -184.66 -91.33 -180.413 -91.328 -175.597 C-91.315 -131.758 -91.327 -87.92 -91.333 -44.082 C-91.333 -38.815 -91.347 -33.548 -91.336 -28.281 C-91.307 -14.28 -80.625 -2.14 -66.731 -0.358 C-64.887 -0.122 -63.016 -0.005 -61.158 -0.003 C-40.772 0.022 -20.386 0.013 0 0.013 Z" fill="#ffb701" transform="matrix(1 0 0 1 184.8158 283.8627)"/>
+</g>
+</svg>
+  </div>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const cover = document.getElementById('site-intro');
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      if (root.dataset.intro !== 'prepared') { cover.remove(); return; }
+      let done = false, started = false, logoReady = false, fallback, frame;
+      const events = ['keydown','pointerdown','hashchange','popstate'];
+      function finish(cancelled = true) {
+        if (done) return;
+        done = true;
+        clearTimeout(fallback); cancelAnimationFrame(frame);
+        root.dataset.intro = cancelled ? 'cancelled' : 'finished';
+        delete root.dataset.introPaused;
+        cover.remove();
+        events.forEach(name => window.removeEventListener(name,interrupt));
+        reduced.removeEventListener('change',interrupt);
+        document.removeEventListener('visibilitychange',visibility);
+        window.removeEventListener('bergerac:styles-ready',open);
+        window.removeEventListener('pageshow',restore);
+        document.querySelector('meta[name="theme-color"]').content = getComputedStyle(root).getPropertyValue('--page-bg').trim() || '#00A1FF';
+        window.dispatchEvent(new Event('bergerac:hero-enter'));
+      }
+      function interrupt() { finish(true); }
+      function restore(event) { if (event.persisted) finish(true); }
+      function open(force = false) {
+        if (done || !logoReady || document.hidden || root.dataset.intro === 'opening') return;
+        // Vite hoists the production stylesheet and drops the source link's id.
+        const stylesReady = document.getElementById('site-styles')?.dataset.loaded ||
+          getComputedStyle(root).getPropertyValue('--page-bg').trim();
+        if (force !== true && !stylesReady) return;
+        clearTimeout(fallback);
+        root.dataset.intro = 'opening';
+        window.dispatchEvent(new Event('bergerac:hero-enter'));
+      }
+      function start() {
+        if (done || started || document.hidden) return;
+        started = true;
+        // Start on a visible rendering frame, not an elapsed network timer.
+        frame = requestAnimationFrame(() => {
+          if (document.hidden) { started = false; return; }
+          frame = requestAnimationFrame(() => {
+            if (document.hidden) { started = false; return; }
+            root.dataset.intro = 'playing';
+          });
+        });
+      }
+      function visibility() {
+        root.toggleAttribute('data-intro-paused',document.hidden);
+        if (!document.hidden) { start(); open(); }
+      }
+      try {
+        cover.addEventListener('animationend',event => {
+          if (event.target !== cover) return;
+          if (event.animationName === 'intro-hold') {
+            logoReady = true;
+            // Only a completed logo can reach this fallback; never skip its drawing.
+            fallback = setTimeout(() => open(true),3500);
+            open();
+          } else if (event.animationName === 'intro-exit' || event.animationName === 'intro-safety') finish(false);
+        });
+        events.forEach(name => window.addEventListener(name,interrupt,{passive:true}));
+        reduced.addEventListener('change',interrupt);
+        document.addEventListener('visibilitychange',visibility);
+        window.addEventListener('bergerac:styles-ready',open);
+        window.addEventListener('pageshow',restore);
+        visibility();
+      } catch { finish(true); }
+    })();
+  </script>
+  <link id="site-styles" rel="stylesheet" href="/src/styles/main.css" onload="this.dataset.loaded='true';window.dispatchEvent(new Event('bergerac:styles-ready'))" onerror="this.dataset.loaded='error';window.dispatchEvent(new Event('bergerac:styles-ready'))">
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="arrow-up-right" viewBox="0 0 24 24"><path d="M5 19 19 5M5 5h14v14"/></symbol>
+    <symbol id="arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7"/></symbol>
+    <symbol id="arrow-left" viewBox="0 0 24 24"><path d="M20 12H4m7-7-7 7 7 7"/></symbol>
+    <symbol id="arrow-down" viewBox="0 0 24 24"><path d="M12 4v16m-7-7 7 7 7-7"/></symbol>
+    <symbol id="arrow-up" viewBox="0 0 24 24"><path d="M12 20V4m-7 7 7-7 7 7"/></symbol>
+    <symbol id="close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7Z"/></symbol>
+    <symbol id="pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="#inicio" aria-label="Bergerac, volver al inicio"><span class="brand-symbol" aria-hidden="true"></span><span>BERGERAC</span></a>
+    <nav class="nav-pill" aria-label="Navegación principal">
+      <a href="#nosotros">Nosotros</a><a href="#punto-de-partida">Punto de partida</a><a href="#metodo">Método</a><a href="#trabajos">Trabajos</a>
+    </nav>
+    <a class="button header-cta" href="#comencemos"><span class="button-label" data-label="Comencemos">Comencemos</span><svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+    <button class="menu-toggle icon-button" type="button" aria-label="Abrir menú" aria-haspopup="dialog" aria-controls="mobile-menu"><span></span><span></span></button>
+  </header>
+
+  <dialog class="mobile-menu" id="mobile-menu" aria-label="Menú de navegación">
+    <div class="menu-top"><button class="icon-button menu-close" type="button" aria-label="Cerrar menú"><svg class="icon" aria-hidden="true"><use href="#close"/></svg></button></div>
+    <nav aria-label="Navegación móvil"><a href="#nosotros">Nosotros <span>01</span></a><a href="#punto-de-partida">Punto de partida <span>02</span></a><a href="#metodo">Método <span>03</span></a><a href="#trabajos">Trabajos <span>04</span></a><a href="#comencemos">Comencemos <svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></a></nav>
+    <a class="menu-mail" href="mailto:hola@bergerac.cl">hola@bergerac.cl</a>
+  </dialog>
+
+  <main id="contenido" tabindex="-1">
+    <section class="hero section" id="inicio" data-section-theme="blue" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <h1 class="display hero-wordmark" id="hero-title">BERGERAC</h1>
+        <div class="hero-copy">
+          <h2 class="display hero-title"><span class="line-mask"><span>Primero entendemos</span></span><span class="line-mask"><span class="hero-brand-emphasis">tu marca.</span></span></h2>
+          <p class="display hero-statement">Después, construimos<br>su presencia web.</p>
+          <p class="hero-description">Estudiamos tu negocio, lo que hoy muestras y hacia dónde quieres llevarlo, para crear la página que imaginas.</p>
+          <a class="button hero-cta" href="#comencemos"><span class="button-label" data-label="Comencemos">Comencemos</span><svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></a>
+        </div>
+        <div class="hero-object" id="cube-stage" role="button" tabindex="0" aria-label="Ordenar el cubo de Bergerac" aria-pressed="false">
+          <div class="cube-fallback" aria-hidden="true"><div class="fallback-world"><div class="fallback-face fallback-front"></div><div class="fallback-face fallback-right"></div><div class="fallback-face fallback-top"></div></div></div>
+        </div>
+        <div class="hero-foot"><a class="scroll-cue icon-button" href="#nosotros" aria-label="Ir a Nosotros"><svg class="icon" aria-hidden="true"><use href="#arrow-down"/></svg></a></div>
+      </div>
+    </section>
+
+    <section class="about section" id="nosotros" data-section-theme="paper" aria-labelledby="about-title">
+      <div class="container">
+        <div class="section-label"><span>01 / Nosotros</span><span class="section-dot" aria-hidden="true"></span></div>
+        <h2 class="display about-title" id="about-title" data-reveal>Estudio digital.<br><span>Castro, Chiloé.</span></h2>
+        <div class="about-grid">
+          <figure class="about-picture"><div class="image-clip"><img src="/images/chiloe.webp" alt="Ilustración de un paisaje costero del sur de Chile al atardecer" width="1600" height="901" loading="lazy" decoding="async"><div class="about-copy"><h3>Tu proyecto<br>no cambia de manos.</h3><p>Quien escucha tus ideas al comienzo,<br>es también quien dirige su diseño<br>y lo desarrolla hasta la entrega.</p></div></div></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="starting section" id="punto-de-partida" data-section-theme="graphite" aria-labelledby="starting-title">
+      <div class="container">
+        <div class="section-label"><span>02 / Punto de partida</span><span class="section-dot" aria-hidden="true"></span></div>
+        <div class="starting-grid"><img class="social-symbols" src="/images/social-symbols.svg" alt="Facebook, TikTok, Instagram, Snapchat, ubicación y Tripadvisor" width="1173" height="812"><div class="starting-copy"><h2 class="display" id="starting-title" data-reveal>Reunámonos.<br>Queremos saber<br>dónde está<br><span class="brand-accent">tu marca hoy.</span></h2><p data-reveal>Revisemos juntos qué estás comunicando, lo que crees que ya funciona, y dónde sientes que falta un cambio.</p></div></div>
+        <div class="starting-bottom" data-reveal><p>Desde ahí,<br>decidimos por dónde empezar.</p><a class="button" href="#comencemos"><span class="button-label" data-label="Comencemos">Comencemos</span><svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></a></div>
+      </div>
+    </section>
+
+    <section class="method section" id="metodo" data-section-theme="purple" aria-labelledby="method-title">
+      <div class="method-stage container">
+        <div class="section-label"><span>03 / Método</span><span class="method-count" aria-hidden="true"><span id="method-current">01</span> / 04</span></div>
+        <div class="method-heading"><h2 class="display" id="method-title">Método.</h2><p>Así trabajamos después<br>de nuestra primera reunión.</p></div>
+        <div class="method-content">
+          <div class="method-panels">
+            <article class="method-step" id="estudiar" data-step="0" aria-labelledby="study-title"><div class="step-visual"><img src="/images/metodo/estudiar-960.webp" srcset="/images/metodo/estudiar-640.webp 640w, /images/metodo/estudiar-960.webp 960w, /images/metodo/estudiar-1672.webp 1672w" sizes="(max-width: 900px) calc(100vw - 48px), 44vw" width="1672" height="941" alt="" loading="lazy" decoding="async"><p class="step-deliverable"><span class="deliverable-dot" aria-hidden="true"></span>Estudio de mercado</p></div><div class="step-copy"><span class="step-number" aria-hidden="true">01</span><h3 class="display step-title" id="study-title">Estudiar</h3><p class="step-description">Investigamos el negocio, su contexto, el mercado y competidores próximos para reconocer las fortalezas y oportunidades que vale la pena considerar.</p></div></article>
+            <article class="method-step" id="definir" data-step="1" aria-labelledby="define-title"><div class="step-visual"><img src="/images/metodo/definir-960.webp" srcset="/images/metodo/definir-640.webp 640w, /images/metodo/definir-960.webp 960w, /images/metodo/definir-1672.webp 1672w" sizes="(max-width: 900px) calc(100vw - 48px), 44vw" width="1672" height="941" alt="" loading="lazy" decoding="async"><p class="step-deliverable"><span class="deliverable-dot" aria-hidden="true"></span>Guía de diseño</p></div><div class="step-copy"><span class="step-number" aria-hidden="true">02</span><h3 class="display step-title" id="define-title">Definir</h3><p class="step-description">Te presentamos lo que encontramos y elegimos juntos qué queremos poner al frente: qué contar, qué priorizar y qué debiera conseguir el nuevo sitio.</p></div></article>
+            <article class="method-step" id="desarrollar" data-step="2" aria-labelledby="develop-title"><div class="step-visual"><img src="/images/metodo/desarrollar-960.webp" srcset="/images/metodo/desarrollar-640.webp 640w, /images/metodo/desarrollar-960.webp 960w, /images/metodo/desarrollar-1672.webp 1672w" sizes="(max-width: 900px) calc(100vw - 48px), 44vw" width="1672" height="941" alt="" loading="lazy" decoding="async"><p class="step-deliverable"><span class="deliverable-dot" aria-hidden="true"></span>Maqueta de trabajo</p></div><div class="step-copy"><span class="step-number" aria-hidden="true">03</span><h3 class="display step-title" id="develop-title">Desarrollar</h3><p class="step-description">Ordenamos el contenido, creamos el guion de marca, la grilla jerárquica, piezas gráficas y las animaciones para énfasis de secciones.</p></div></article>
+            <article class="method-step" id="afinar" data-step="3" aria-labelledby="refine-title"><div class="step-visual"><img src="/images/metodo/afinar-960.webp" srcset="/images/metodo/afinar-640.webp 640w, /images/metodo/afinar-960.webp 960w, /images/metodo/afinar-1672.webp 1672w" sizes="(max-width: 900px) calc(100vw - 48px), 44vw" width="1672" height="941" alt="" loading="lazy" decoding="async"><p class="step-deliverable"><span class="deliverable-dot" aria-hidden="true"></span>Sitio oficial online</p></div><div class="step-copy"><span class="step-number" aria-hidden="true">04</span><h3 class="display step-title" id="refine-title">Afinar</h3><p class="step-description">Revisamos la versión contigo, recogemos tus observaciones y ajustamos lo necesario, para cerrar la distancia entre la idea inicial y el resultado final.</p></div></article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="works section" id="trabajos" data-section-theme="paper" aria-labelledby="works-title">
+      <div class="container"><div class="section-label"><span>04 / Trabajos</span><span class="section-dot" aria-hidden="true"></span></div><h2 class="display works-title" id="works-title" data-reveal>Dos proyectos reales.<br><span class="works-accent">Dos necesidades distintas.</span></h2></div>
+      <div class="project-slider container" aria-label="Proyectos de Bergerac">
+        <div class="projects-grid">
+          <article class="project" data-project="survec"><div class="project-screen"><video class="project-video" data-desktop="/videos/SURVEC_WEBPAGE.webm" data-mobile="/videos/SURVEC_WEBPAGE-sm.webm" muted loop playsinline preload="none" aria-label="Recorrido por la página web de SURVEC"></video><div class="video-controls"><button class="video-toggle icon-button" type="button" aria-label="Reproducir video de SURVEC"><svg class="icon" aria-hidden="true"><use href="#play"/></svg></button><a class="project-open" href="https://www.survec.cl/" target="_blank" rel="noopener noreferrer" aria-label="Visitar sitio de SURVEC (abre en otra pesta?a)">Visitar sitio <svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></a></div></div><div class="project-meta"><h3>Página construida<br>para SURVEC</h3><p>SURVEC tenía experiencia, capacidad técnica y conocimiento territorial, pero sus redes sociales no lograban demostrarlo. Construimos una web capaz de comunicar esa precisión con claridad.</p><span class="project-number">01</span></div></article>
+          <article class="project" data-project="arquitectura"><div class="project-screen"><video class="project-video" data-desktop="/videos/AS_ARQ_WEBPAGE.webm" data-mobile="/videos/AS_ARQ_WEBPAGE-sm.webm" muted loop playsinline preload="none" aria-label="Recorrido por el portafolio de AS_ESTUDIO"></video><div class="video-controls"><button class="video-toggle icon-button" type="button" aria-label="Reproducir video de AS_ESTUDIO"><svg class="icon" aria-hidden="true"><use href="#play"/></svg></button><a class="project-open" href="https://as-estudio.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Visitar sitio de AS:Estudio (abre en otra pesta?a)">Visitar sitio <svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></a></div></div><div class="project-meta"><h3>Portafolio construido<br>para AS_ESTUDIO</h3><p>AS_ESTUDIO ya tenía obras y fotografías capaces de hablar por sí solas. El desafío fue ordenarlas en un portafolio donde la arquitectura fuera protagonista.</p><span class="project-number">02</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact section" id="comencemos" data-section-theme="yellow" aria-labelledby="contact-title"><div class="container">
+      <div class="section-label"><span>05 / Comencemos</span><span class="section-dot" aria-hidden="true"></span></div>
+      <h2 class="display contact-title" id="contact-title" data-reveal>No necesitas<br>tener todo<br><span class="outline-title contact-resolved">resuelto.</span></h2>
+      <div class="contact-grid"><p class="contact-copy" data-reveal>Escríbenos en qué estás, o qué idea tienes en mente. A partir de ahí, agendaremos una reunión para que podamos definir el siguiente paso.</p><div class="contact-action"><form id="contact-form" action="mailto:pablo@bergerac.cl" method="get"><div class="form-row"><div class="form-field"><label for="contact-name">Tu nombre</label><input id="contact-name" name="nombre" autocomplete="name" required maxlength="150"></div><div class="form-field"><label for="contact-channel">Tu correo o WhatsApp</label><input id="contact-channel" name="contacto" required maxlength="200"></div></div><div class="form-field"><label for="contact-message">Cuéntanos qué necesitas</label><textarea id="contact-message" name="consulta" rows="3" required maxlength="4000" placeholder="En pocas palabras, qué quieres hacer o mejorar."></textarea></div><div class="form-field"><label for="contact-reference">Comparte un enlace <span>— opcional</span></label><input id="contact-reference" name="enlace" inputmode="url" maxlength="2048" placeholder="Web, Instagram o alguna referencia."></div><button class="button form-submit" type="submit"><span class="button-label" data-label="Compartir el punto de partida">Compartir el punto de partida</span><svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></button><p class="form-privacy">Usaremos esta información únicamente para revisar tu consulta y responderte.</p><p class="form-status" role="status" aria-live="polite"></p></form></div></div>
+      <div class="direct-contact"><span>¿Prefieres escribir directamente?</span><a href="mailto:hola@bergerac.cl">hola@bergerac.cl <svg class="icon" aria-hidden="true"><use href="#arrow-up-right"/></svg></a></div>
+      <footer class="footer"><p>&copy; Bergerac &ndash; Estudio digital &middot; Castro, Chilo&eacute;</p><a class="footer-top" href="#inicio">Volver arriba <svg class="icon" aria-hidden="true"><use href="#arrow-up"/></svg></a></footer>
+    </div></section>
+  </main>
+
+</body>
+</html>

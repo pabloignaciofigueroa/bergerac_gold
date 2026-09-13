@@ -1,0 +1,42 @@
+.method{color:var(--paper)}
+.method .method-heading h2{font-size:clamp(80px,9vw,140px)}
+.method .method-heading>p{font-weight:400;background:transparent;padding:12px 16px;border-radius:12px}
+.method .method-step,.method.is-sticky .method-step{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(24px,4vw,64px);align-items:center;align-content:center;padding:24px 0;min-width:0}
+.method .step-visual{position:relative;min-width:0;width:100%;aspect-ratio:auto;max-height:100%;overflow:hidden;border:clamp(5px,.5vw,8px) solid var(--graphite);border-radius:clamp(20px,2vw,32px);background:var(--graphite);display:grid;place-items:center}
+.step-visual>img{display:block;width:100%;height:auto;aspect-ratio:1672/941;object-fit:contain}
+.method .step-copy{min-width:0;background:transparent;padding:clamp(20px,2.3vw,36px)}
+.method .step-number{font-size:18px;margin-bottom:14px;font-weight:500}
+.method .step-title,.method.is-sticky .step-title{font-size:clamp(32px,3.65vw,64px);line-height:1.12;margin-bottom:20px;overflow-wrap:normal}
+.method .step-description{font-size:clamp(20px,1.6vw,24px);font-weight:400;line-height:1.5;letter-spacing:0;max-width:46ch}
+.method .step-deliverable,.method.is-sticky .step-deliverable{position:absolute;left:12px;right:auto;bottom:12px;max-width:calc(100% - 24px);display:flex;justify-content:flex-start;align-items:center;margin:0;padding:10px 14px;background:var(--graphite);color:var(--paper);border-radius:12px;font-size:clamp(16px,1.3vw,20px);font-weight:500;text-align:left;line-height:1.35}
+.method #desarrollar .step-deliverable,.method #afinar .step-deliverable{left:auto;right:12px}
+.method.is-sticky .method-panels{height:100%;column-gap:clamp(48px,6vw,96px)}
+.method .step-deliverable,.method.is-sticky .step-deliverable{grid-area:auto;justify-self:stretch;align-self:auto}
+.method.is-sticky .method-step{height:100%;padding-block:12px;box-sizing:border-box}
+.method.is-sticky .method-heading{margin-bottom:20px}
+@media(min-width:901px){
+ .method .method-step,.method.is-sticky .method-step{grid-template-columns:1.1fr 1fr}
+ .method .step-copy{grid-column:1;grid-row:1}
+ .method .step-visual{grid-column:2;grid-row:1}
+}
+@media(min-width:901px) and (max-height:760px){
+ .method .method-heading h2{font-size:80px}
+ .method .section-label{margin-bottom:16px}
+ .method .step-copy{padding:18px 22px}
+ .method .step-number{margin-bottom:8px;font-size:16px}
+ .method .step-title{font-size:clamp(30px,3.3vw,46px);margin-bottom:12px}
+ .method .step-description{font-size:20px;line-height:1.4}
+}
+@media(max-width:900px){
+ .method .method-heading h2{font-size:clamp(48px,12vw,92px)}
+ .method .method-step{display:flex;flex-direction:column;gap:24px;align-items:stretch;min-height:0;padding:36px 0 64px}
+ .method .step-visual{order:2;aspect-ratio:auto;max-height:none}
+ .method .step-copy{order:1;padding:24px}
+ .method .step-title{font-size:clamp(30px,6vw,52px)}
+ .method .step-description{font-size:20px;font-weight:400}
+ .method .step-deliverable{align-self:auto;margin-top:0;font-size:17px}
+ .method .method-heading{margin-bottom:12px}
+}
+@media print{.method{color:var(--graphite)}.method .step-copy{background:none}.method .step-visual{break-inside:avoid}}
+
+@media(max-width:600px){.method .step-deliverable{left:8px;bottom:8px;max-width:calc(100% - 16px);padding:8px 10px;font-size:clamp(12px,3.2vw,17px);gap:8px;border-radius:8px}.method #desarrollar .step-deliverable,.method #afinar .step-deliverable{right:8px}}

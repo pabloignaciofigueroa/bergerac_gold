@@ -1,0 +1,36 @@
+.site-header{color:var(--nav-fg);position:fixed;inset:0 0 auto;height:var(--header-height);padding-inline:clamp(24px,3.33vw,64px);display:flex;align-items:center;justify-content:flex-start;gap:24px;z-index:var(--layer-header);pointer-events:none;background:var(--page-bg)}
+.site-header>*{pointer-events:auto}
+.brand{display:inline-flex;gap:10px;align-items:center;flex-shrink:0;font-size:20px;font-weight:750;letter-spacing:-.035em;line-height:1}
+.brand-symbol{display:block;flex:none;width:29px;height:32px;background:currentColor;mask:url('/images/brand-symbol.svg') center/contain no-repeat}
+.nav-pill{margin-left:auto;display:flex;align-items:center;gap:3px;background:transparent;color:inherit;border:0;padding:5px 10px;min-height:48px;font-size:12px;font-weight:550;text-transform:uppercase;letter-spacing:.035em}
+.nav-pill a{position:relative;padding:9px 13px;border-radius:24px;white-space:nowrap}
+.nav-pill a::before{content:'';position:absolute;width:4px;height:4px;left:4px;top:50%;border-radius:50%;background:currentColor;transform:translateY(-50%) scale(.5);opacity:0;transition:opacity var(--duration-fast),transform var(--duration-fast) var(--ease-out)}
+.nav-pill a[aria-current=location]::before{opacity:1;transform:translateY(-50%) scale(1)}
+.button{display:inline-flex;align-items:center;justify-content:space-between;gap:25px;min-height:50px;width:fit-content;padding:13px 21px;border-radius:12px;font-size:14px;font-weight:600;background:var(--button-bg);color:var(--button-fg);transition:transform var(--duration-fast) var(--ease-out);flex:none}
+.button,.project-open{letter-spacing:.035em}
+.button.hero-cta{letter-spacing:.035em}
+.button:active,.icon-button:active{transform:scale(.97)}
+.button-label{position:relative;overflow:clip;display:block;line-height:1.45}
+.button-label::after{content:attr(data-label);position:absolute;inset:0;transform:translateY(130%);color:inherit;transition:transform var(--duration-ui) var(--ease-out)}
+.button-text{display:block;transition:transform var(--duration-ui) var(--ease-out)}
+.button .icon{width:19px;height:19px;transition:transform var(--duration-ui) var(--ease-out)}
+.header-cta{margin-left:0;text-transform:uppercase;min-height:48px;font-size:12px;gap:18px;padding-inline:18px;background:var(--yellow);color:var(--graphite);border:1px solid color-mix(in srgb,var(--graphite) 12%,transparent)}
+.icon-button{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;flex:none;border-radius:12px;border:1px solid color-mix(in srgb,currentColor 30%,transparent);transition:transform var(--duration-fast) var(--ease-out),background-color var(--duration-fast),color var(--duration-fast)}
+.menu-toggle{display:none;position:relative;background:var(--nav-bg);color:var(--nav-fg);border:0}
+.menu-toggle span{position:absolute;left:14px;width:20px;height:1.5px;background:currentColor}
+.menu-toggle span:first-child{top:19px}.menu-toggle span:last-child{top:27px}
+.mobile-menu{background:var(--page-bg);color:var(--page-fg);width:100%;max-width:none;height:100dvh;max-height:none;inset:0;margin:0;border:0;padding:0 24px 36px}
+.mobile-menu::backdrop{background:rgb(40 40 40 / .24)}
+.menu-top{height:var(--header-height);display:flex;align-items:center;justify-content:flex-end;margin-bottom:55px}
+.mobile-menu nav{display:flex;flex-direction:column}
+.mobile-menu nav a{text-transform:uppercase;font-size:clamp(25px,6vw,40px);font-weight:650;letter-spacing:-.05em;display:flex;align-items:center;justify-content:space-between;padding:19px 0;border-bottom:1px solid color-mix(in srgb,currentColor 25%,transparent)}
+.mobile-menu nav a span{font-size:14px;letter-spacing:0}
+.menu-mail{display:inline-block;margin-top:45px;font-size:19px;font-weight:700}
+@media(hover:hover) and (pointer:fine){
+  .nav-pill a:hover::before{opacity:1;transform:translateY(-50%) scale(1)}
+  .button:hover .icon{transform:translate(2px,-2px)}
+  .button:hover .button-text{transform:translateY(-130%)}
+  .button:hover .button-label::after{transform:translateY(0)}
+  .icon-button:hover{background:var(--page-fg);color:var(--page-bg)}
+  .video-toggle:hover{background:var(--graphite);color:var(--paper)}
+}

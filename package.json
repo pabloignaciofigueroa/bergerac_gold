@@ -1,34 +1,20 @@
 {
-  "name": "bergerac",
-  "version": "1.0.0",
+  "name": "bergerac-studio",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "Bergerac — estudio digital en Castro, Chiloé. Sitio estático.",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "node tools/server.mjs 4310 dist",
-    "qa": "node tools/qa/qa.mjs",
-    "paridad": "node tools/qa/paridad.mjs",
-    "resiliencia": "node tools/qa/resiliencia.mjs",
-    "sin-webgl": "node tools/qa/sin-webgl.mjs",
-    "estilos": "node tools/qa/estilos.mjs",
-    "qa:todo": "npm run calidad:test && npm run qa && npm run resiliencia && npm run sin-webgl && npm run fotogramas && npm run calidad && npm run estilos",
-    "calidad": "node tools/qa/calidad.mjs",
-    "calidad:test": "node tools/qa/calidad.test.mjs",
-    "calidad:visual": "node tools/qa/calidad-visual.mjs",
-    "fotogramas": "node tools/qa/fotogramas.mjs",
-    "fotogramas:capturar": "node tools/capturar-fotogramas.mjs",
-    "tipografia": "node tools/qa/tipografia.mjs"
+    "dev": "vite --host 127.0.0.1",
+    "build": "node scripts/sync-entry.mjs && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "playwright test"
   },
   "dependencies": {
-    "astro": "^7.2.2",
-    "gsap": "^3.15.0",
-    "lenis": "^1.3.26",
-    "three": "0.184.0"
+    "gsap": "3.15.0",
+    "three": "0.186.0"
   },
   "devDependencies": {
-    "puppeteer-core": "^24.0.0",
-    "sharp": "^0.35.3"
+    "@playwright/test": "1.63.0",
+    "vite": "8.3.0"
   }
 }

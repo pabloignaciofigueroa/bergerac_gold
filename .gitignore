@@ -1,17 +1,12 @@
-# sistema
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# dependencias / temporales
 node_modules/
-*.log
-
-# QA: dependencia local y capturas de salida
-node_modules/
-tools/qa/salida/
-
-# build de Astro y caché
 dist/
-.astro/
-qa-out/
+test-results/
+playwright-report/
+.runtime/
+
+.env
+.env.*
+!.env.example
+.vercel/
+backups/
+*.log
