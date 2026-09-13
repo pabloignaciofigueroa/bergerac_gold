@@ -139,7 +139,7 @@
 @media(prefers-reduced-motion:no-preference){.contact-resolved{color:var(--graphite)}.contact-resolved.is-visible{animation:hero-brand-color 1.4s ease-in-out .8s both}}
 
 /* CTA de dos piezas con la tipografia del navbar. */
-.button.hero-cta{--cta-height:64px;font-family:var(--font-body);font-weight:750;font-size:clamp(20px,1.8vw,26px);letter-spacing:-.035em;min-height:var(--cta-height);padding:0;gap:0;border-radius:8px;max-width:100%;overflow:hidden;align-items:stretch}
+.button.hero-cta{--cta-height:64px;font-family:var(--font-body);font-weight:750;font-size:var(--brand-action-size,20px);letter-spacing:-.035em;min-height:var(--cta-height);padding:0;gap:0;border-radius:8px;max-width:100%;overflow:hidden;align-items:stretch}
 .hero-cta .button-label{line-height:1.2;padding:20px 24px;align-self:center}
 .hero-cta-arrow{display:grid;place-items:center;flex:0 0 var(--cta-height);min-height:var(--cta-height);background:var(--graphite);color:var(--yellow)}
 .hero-cta .icon{width:30px;height:30px;stroke-width:3;stroke-linecap:square;stroke-linejoin:miter}

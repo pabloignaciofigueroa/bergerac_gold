@@ -66,4 +66,11 @@
 
 @media(max-width:600px){.hero-object{margin-top:calc(10px - 6vw)}}
 
-@media(max-width:600px){.button.hero-cta{--cta-height:60px;align-self:center;font-size:clamp(19px,5.6vw,24px)}.hero-cta .button-label{padding:18px 20px}}
+@media(max-width:600px){.button.hero-cta{--cta-height:60px;align-self:center;font-size:var(--brand-action-size,20px)}.hero-cta .button-label{padding:18px 20px}}
+
+:root{--brand-action-size:20px}
+.site-header .brand{font-size:var(--brand-action-size)}
+@media(max-width:1150px){:root{--brand-action-size:17px}}
+@media(max-width:900px){:root{--brand-action-size:20px}}
+@media(max-width:600px){:root{--brand-action-size:17px}}
+@media(max-width:370px){:root{--brand-action-size:16px}}
