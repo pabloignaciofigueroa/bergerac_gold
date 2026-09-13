@@ -16,7 +16,7 @@
 .button .icon{width:19px;height:19px;transition:transform var(--duration-ui) var(--ease-out)}
 .header-cta{margin-left:0;text-transform:uppercase;min-height:48px;font-size:12px;gap:18px;padding-inline:18px;background:var(--yellow);color:var(--graphite);border:1px solid color-mix(in srgb,var(--graphite) 12%,transparent)}
 .icon-button{display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;flex:none;border-radius:12px;border:1px solid color-mix(in srgb,currentColor 30%,transparent);transition:transform var(--duration-fast) var(--ease-out),background-color var(--duration-fast),color var(--duration-fast)}
-.menu-toggle{display:none;position:relative;background:var(--nav-bg);color:var(--nav-fg);border:0}
+.menu-toggle{display:none;position:relative;background:transparent;color:inherit;border:0}
 .menu-toggle span{position:absolute;left:14px;width:20px;height:1.5px;background:currentColor}
 .menu-toggle span:first-child{top:19px}.menu-toggle span:last-child{top:27px}
 .mobile-menu{background:var(--page-bg);color:var(--page-fg);width:100%;max-width:none;height:100dvh;max-height:none;inset:0;margin:0;border:0;padding:0 24px 36px}
@@ -34,3 +34,5 @@
   .icon-button:hover{background:var(--page-fg);color:var(--page-bg)}
   .video-toggle:hover{background:var(--graphite);color:var(--paper)}
 }
+
+.site-header .menu-toggle,.site-header .menu-toggle:hover{background:transparent;color:inherit;transition:transform var(--duration-fast) var(--ease-out)}
