@@ -13,39 +13,39 @@ export function initHeroCube() {
   renderer.setClearColor(palette.blue,0);
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type=THREE.PCFShadowMap;
   renderer.domElement.setAttribute('aria-hidden','true');
   stage.appendChild(renderer.domElement);
   const scene=new THREE.Scene();
   const camera=new THREE.PerspectiveCamera(34,1,.1,100);
   camera.position.set(5.4,4.4,6.8);camera.lookAt(0,0,0);
-  scene.add(new THREE.AmbientLight(palette.paper,1.7));
-  const light=new THREE.DirectionalLight(palette.paper,2.7);
-  light.position.set(5,9,7);light.castShadow=true;light.shadow.mapSize.set(1024,1024);
+  scene.add(new THREE.AmbientLight(palette.paper,1.5));
+  const light=new THREE.DirectionalLight(palette.paper,2.5);
+  light.position.set(3,9,7);light.castShadow=true;light.shadow.mapSize.set(1024,1024);
   light.shadow.camera.left=-6;light.shadow.camera.right=6;light.shadow.camera.top=6;light.shadow.camera.bottom=-6;
   light.shadow.normalBias=.035;
   scene.add(light);
-  const fill=new THREE.DirectionalLight(palette.paper,.7);fill.position.set(-5,2,-4);scene.add(fill);
+  const fill=new THREE.DirectionalLight(palette.paper,.45);fill.position.set(-5,2,-4);scene.add(fill);
   // Compact ambient contact shadow, directly beneath the cube. Its outer
   // rim is fully transparent so filtering cannot leave a rectangular veil.
   const shadowCanvas=document.createElement('canvas');
   shadowCanvas.width=shadowCanvas.height=256;
   const shadowContext=shadowCanvas.getContext('2d');
   const shadowGradient=shadowContext.createRadialGradient(128,128,0,128,128,128);
-  shadowGradient.addColorStop(0,palette.graphite+'52');
-  shadowGradient.addColorStop(.3,palette.graphite+'38');
-  shadowGradient.addColorStop(.5,palette.graphite+'20');
+  shadowGradient.addColorStop(0,palette.graphite+'80');
+  shadowGradient.addColorStop(.22,palette.graphite+'58');
+  shadowGradient.addColorStop(.46,palette.graphite+'26');
   shadowGradient.addColorStop(.7,palette.graphite+'09');
   shadowGradient.addColorStop(.85,palette.graphite+'00');
   shadowGradient.addColorStop(1,palette.graphite+'00');
   shadowContext.fillStyle=shadowGradient;shadowContext.fillRect(0,0,256,256);
   const shadowTexture=new THREE.CanvasTexture(shadowCanvas);
   shadowTexture.colorSpace=THREE.SRGBColorSpace;
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(6.6,5),new THREE.MeshBasicMaterial({map:shadowTexture,transparent:true,depthWrite:false}));
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(5.4,3.8),new THREE.MeshBasicMaterial({map:shadowTexture,transparent:true,depthWrite:false}));
   // Keep the soft spread lateral; extending toward the camera would push the
   // penumbra beyond the canvas even though the cube itself fits comfortably.
   floor.rotation.set(-Math.PI/2,0,Math.atan2(camera.position.x,camera.position.z));
-  floor.position.set(0,-1.65,0);scene.add(floor);
+  floor.position.set(.18,-1.53,-.12);scene.add(floor);
 
   const world=new THREE.Group();
   const tilt=new THREE.Group();
@@ -57,7 +57,7 @@ export function initHeroCube() {
     new THREE.Vector3(0,0,1),new THREE.Vector3(-1,0,0),new THREE.Vector3(0,-1,0),
   ));
   const coreGeo=new RoundedBoxGeometry(.972,.972,.972,2,.045);
-  const coreMat=new THREE.MeshStandardMaterial({color:palette.graphite,roughness:.9,metalness:0});
+  const coreMat=new THREE.MeshStandardMaterial({color:palette.graphite,roughness:1,metalness:0});
   function roundedRect(size,radius){
     const s=size/2,r=radius,shape=new THREE.Shape();
     shape.moveTo(-s+r,-s);shape.lineTo(s-r,-s);shape.quadraticCurveTo(s,-s,s,-s+r);
@@ -67,7 +67,7 @@ export function initHeroCube() {
   }
   const stickerGeo=new THREE.ShapeGeometry(roundedRect(.85,.115));
   const colors=[palette.pink,palette.graphite,palette.paper,palette.yellow,palette.blue,palette.purple];
-  const mats=colors.map(color=>new THREE.MeshStandardMaterial({color,roughness:.85,metalness:0}));
+  const mats=colors.map(color=>new THREE.MeshStandardMaterial({color,roughness:1,metalness:0}));
   const faces=[['x',1,0],['x',-1,1],['y',1,2],['y',-1,3],['z',1,4],['z',-1,5]];
   const cubies=[];
   for(let x=-1;x<=1;x++)for(let y=-1;y<=1;y++)for(let z=-1;z<=1;z++){
