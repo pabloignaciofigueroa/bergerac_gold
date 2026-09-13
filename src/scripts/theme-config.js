@@ -1,3 +1,6 @@
+// Change theme after the incoming section has crossed the upper quarter of the viewport.
+export const themeActivationRatio = .25;
+
 export const palette = Object.freeze({
   blue: '#00A1FF', paper: '#FDFCFA', graphite: '#282828',
   purple: '#6F02BA', pink: '#FB0278', yellow: '#FFB701',

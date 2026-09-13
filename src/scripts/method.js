@@ -1,5 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { themeActivationRatio } from './theme-config.js';
 
 export function initMethod() {
   const section = document.querySelector('.method');
@@ -49,11 +50,12 @@ export function initMethod() {
     };
   });
   mm.add('(max-width: 900px), (max-height: 649px), (prefers-reduced-motion: reduce)',()=>{
-    panels.forEach((panel,index)=>ScrollTrigger.create({trigger:panel,start:'top 62%',onEnter:()=>setStep(index),onLeaveBack:()=>setStep(Math.max(0,index-1))}));
+    panels.forEach((panel,index)=>ScrollTrigger.create({trigger:panel,start:`top ${themeActivationRatio*100}%`,onEnter:()=>setStep(index),onLeaveBack:()=>setStep(Math.max(0,index-1))}));
   });
   return {
     sync(){update();},
-    getPinkBoundary(offset){return sticky&&trigger?trigger.start+(trigger.end-trigger.start)*.5:panels[2].getBoundingClientRect().top+scrollY-offset;},
+    // Horizontal Desarrollar enters during spans 2.5–3 of the 5.5-screen sequence.
+    getPinkBoundary(offset){return sticky&&trigger?trigger.start+(trigger.end-trigger.start)*(3-.5*themeActivationRatio)/5.5:panels[2].getBoundingClientRect().top+scrollY-offset;},
     getStepPosition(index){return sticky&&trigger?trigger.start+(trigger.end-trigger.start)*(index*1.5+.5)/5.5:panels[index].getBoundingClientRect().top+scrollY-110;},
     destroy(){mm.revert();},
   };

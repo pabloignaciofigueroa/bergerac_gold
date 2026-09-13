@@ -1,6 +1,6 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { palette, themes, stateAtPosition } from './theme-config.js';
+import { palette, themes, stateAtPosition, themeActivationRatio } from './theme-config.js';
 
 export function initThemeController(method) {
   const root = document.documentElement;
@@ -13,7 +13,7 @@ export function initThemeController(method) {
   let ready = false;
 
   function measure() {
-    const offset = innerHeight * .62;
+    const offset = innerHeight * themeActivationRatio;
     markers = sections.map(section => ({
       y: section.id === 'inicio' ? 0 : section.getBoundingClientRect().top + scrollY - offset,
       theme: section.dataset.sectionTheme,
