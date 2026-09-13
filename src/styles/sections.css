@@ -143,3 +143,6 @@
 .hero-cta .button-label{line-height:1.2;margin:20px 24px;padding:0;align-self:center}
 .hero-cta-arrow{display:grid;place-items:center;flex:0 0 var(--cta-height);min-height:var(--cta-height);background:var(--graphite);color:var(--yellow)}
 .hero-cta .icon{width:1.2em;height:1.2em;stroke-width:2.5;stroke-linecap:square;stroke-linejoin:miter}
+
+/* Sombra proyectada detras de la silueta transparente del cubo. */
+.hero-object canvas{filter:drop-shadow(14px 16px 10px rgb(40 40 40 / .28))}
