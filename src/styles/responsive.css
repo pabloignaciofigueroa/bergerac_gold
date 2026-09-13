@@ -65,3 +65,5 @@
 @media(max-width:600px){.hero-copy{display:contents}.hero-object{order:1}.hero-cta{order:2;align-self:flex-start;margin-top:8px}}
 
 @media(max-width:600px){.hero-object{margin-top:calc(10px - 6vw)}}
+
+@media(max-width:600px){.button.hero-cta{align-self:center;font-size:clamp(19px,5.6vw,24px);padding:14px 20px;gap:18px;min-height:60px}}
