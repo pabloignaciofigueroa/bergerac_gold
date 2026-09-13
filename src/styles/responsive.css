@@ -63,3 +63,5 @@
 @media(min-width:601px){.starting-grid{row-gap:0}.starting-copy{display:contents}.starting-grid>.social-symbols{grid-column:1;grid-row:1;align-self:center}.starting-copy>h2{grid-column:2;grid-row:1}.starting-copy>p{grid-column:2;grid-row:2}}
 
 @media(max-width:600px){.hero-copy{display:contents}.hero-object{order:1}.hero-cta{order:2;align-self:flex-start;margin-top:8px}}
+
+@media(max-width:600px){.hero-object{margin-top:calc(10px - 6vw)}}
