@@ -121,6 +121,7 @@
 .form-field textarea{resize:vertical;min-height:98px}
 .form-field input::placeholder,.form-field textarea::placeholder{color:inherit;opacity:.76;font-size:14px}
 .form-submit{font-size:13px;width:100%;margin-top:4px}
+.form-submit[data-state="sent"]{background:var(--yellow);color:#000}
 .form-privacy{font-size:11px;line-height:1.6;margin-top:18px;max-width:60ch}
 .form-status{font-size:14px;line-height:1.5;min-height:22px;margin-top:14px}
 .direct-contact{margin-top:140px;padding-block:0 85px;display:flex;flex-direction:column;gap:18px}
