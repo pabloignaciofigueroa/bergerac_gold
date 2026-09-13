@@ -12,7 +12,6 @@ export function initMethod() {
     if (current === index) return;
     current = index;
     section.dataset.activeStep = String(index);
-    document.getElementById('method-current').textContent = String(index + 1).padStart(2,'0');
     panels.forEach((panel,i)=>{
       panel.classList.toggle('is-active',i===index);
       // Keep every panel painted: the next stage physically enters from the right.
