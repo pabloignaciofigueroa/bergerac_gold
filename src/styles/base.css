@@ -6,7 +6,7 @@ body:has(dialog[open]){overflow:hidden}
 h1,h2,h3,p,figure{margin:0}
 a{color:inherit;text-decoration:none}
 button,input,textarea{font:inherit;color:inherit}
-button,a,input,textarea{-webkit-tap-highlight-color:transparent}
+button,a,input,textarea,#cube-stage{-webkit-tap-highlight-color:transparent}
 button{cursor:pointer;border:0;padding:0;background:transparent}
 button:disabled{cursor:default}
 :focus-visible{outline:2px solid currentColor;outline-offset:6px}
