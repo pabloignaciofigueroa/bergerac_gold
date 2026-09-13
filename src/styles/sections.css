@@ -140,6 +140,6 @@
 
 /* CTA de dos piezas con la tipografia del navbar. */
 .button.hero-cta{--cta-height:64px;font-family:var(--font-body);font-weight:750;font-size:var(--brand-action-size,20px);letter-spacing:-.035em;min-height:var(--cta-height);padding:0;gap:0;border-radius:8px;max-width:100%;overflow:hidden;align-items:stretch}
-.hero-cta .button-label{line-height:1.2;padding:20px 24px;align-self:center}
+.hero-cta .button-label{line-height:1.2;margin:20px 24px;padding:0;align-self:center}
 .hero-cta-arrow{display:grid;place-items:center;flex:0 0 var(--cta-height);min-height:var(--cta-height);background:var(--graphite);color:var(--yellow)}
-.hero-cta .icon{width:30px;height:30px;stroke-width:3;stroke-linecap:square;stroke-linejoin:miter}
+.hero-cta .icon{width:1.2em;height:1.2em;stroke-width:2.5;stroke-linecap:square;stroke-linejoin:miter}

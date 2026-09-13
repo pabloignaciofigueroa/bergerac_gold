@@ -66,7 +66,7 @@
 
 @media(max-width:600px){.hero-object{margin-top:calc(10px - 6vw)}}
 
-@media(max-width:600px){.button.hero-cta{--cta-height:60px;align-self:center;font-size:var(--brand-action-size,20px)}.hero-cta .button-label{padding:18px 20px}}
+@media(max-width:600px){.button.hero-cta{--cta-height:60px;align-self:center;font-size:var(--brand-action-size,20px)}.hero-cta .button-label{margin:18px 20px;padding:0}}
 
 :root{--brand-action-size:20px}
 .site-header .brand{font-size:var(--brand-action-size)}
