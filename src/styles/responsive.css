@@ -84,3 +84,5 @@
 
 /* Match the contact paragraph to the project descriptions on mobile. */
 @media(max-width:600px){.contact-copy{font-size:20px;font-weight:400;line-height:1.55;letter-spacing:normal;max-width:49ch}}
+
+@media(max-width:600px){.contact-copy-line{display:block}}
