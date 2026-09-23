@@ -86,3 +86,6 @@
 @media(max-width:600px){.contact-copy{font-size:20px;font-weight:400;line-height:1.55;letter-spacing:normal;max-width:49ch}}
 
 @media(max-width:600px){.contact-copy-line{display:block}}
+
+/* Reduce only vertical whitespace in the mobile contact form by 75%. */
+@media(max-width:600px){.contact-action{padding-block:6px}.contact-action .form-field{margin-bottom:7px}.contact-action .form-field label{margin-bottom:3px}.contact-action .form-submit{margin-top:1px}}
