@@ -97,3 +97,7 @@
 
 /* Reduce by half the mobile gap between the last project and Contact. */
 @media(max-width:600px){.works{padding-bottom:50px}.contact{padding-top:75px}}
+
+
+/* More breathing room across the mobile hero. */
+@media(max-width:600px){.hero-grid{padding-top:40px}.hero-wordmark{margin-bottom:44px}.hero-description{margin-top:32px}.hero-object{margin-top:clamp(44px,9vw,56px);margin-bottom:16px}}
