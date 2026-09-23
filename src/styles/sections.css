@@ -157,10 +157,3 @@
 .works .section-label,.works-title{color:var(--works-heading-fg,var(--graphite))}
 .works-accent{color:var(--works-heading-accent,var(--pink))}
 
-/* AS_ESTUDIO: title and yellow site link sit below the project image. */
-.project-meta--linked{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:18px}
-.project-meta--linked>h3{grid-column:1;grid-row:1;min-width:0}
-.project-meta--linked>.project-meta-action{grid-column:2;grid-row:1;display:flex;align-items:center;justify-self:end;gap:14px}
-.project-meta--linked>.project-meta-action .project-number{grid-column:auto;grid-row:auto}
-.project-meta--linked>.project-meta-action .project-open{background:var(--yellow);color:var(--graphite);box-shadow:none;border:0}
-.project-meta--linked>p{grid-column:1/-1;grid-row:2}
