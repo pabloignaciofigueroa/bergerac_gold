@@ -81,3 +81,6 @@
 
 /* Reduce the mobile spacing around the Rubik cube and the next section. */
 @media(max-width:600px){.hero-object{margin-top:clamp(32px,7vw,50px);margin-bottom:10px}.hero-grid{padding-bottom:16px}.about{padding-top:38px}}
+
+/* Match the contact paragraph to the project descriptions on mobile. */
+@media(max-width:600px){.contact-copy{font-size:20px;font-weight:400;line-height:1.55;letter-spacing:normal;max-width:49ch}}
