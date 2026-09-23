@@ -89,3 +89,7 @@
 
 /* Reduce only vertical whitespace in the mobile contact form by 75%. */
 @media(max-width:600px){.contact-action{padding-block:6px}.contact-action .form-field{margin-bottom:7px}.contact-action .form-field label{margin-bottom:3px}.contact-action .form-submit{margin-top:1px}}
+
+
+/* Project names and links share one row on mobile. */
+@media(max-width:600px){.project-meta{gap:12px}.project-meta h3{font-size:clamp(20px,5.8vw,26px)}.project-open{min-height:44px;font-size:14px;padding:9px 11px;gap:8px;white-space:nowrap}}
