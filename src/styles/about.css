@@ -13,7 +13,7 @@
 .about .about-picture img{grid-area:1/1;height:100%;min-height:420px}
 .about .image-clip .about-copy{grid-area:1/1;align-self:end;position:relative;z-index:1;max-width:none;padding:clamp(28px,4vw,64px);padding-top:100px;color:var(--paper);background:linear-gradient(transparent,rgba(20,24,28,.88));}
 .about .about-copy h3{max-width:24ch;margin-bottom:16px}
-.about .about-copy p{max-width:58ch}font-weight:500;
+.about .about-copy p{max-width:58ch;font-weight:500}
 @media(max-width:600px){
  .about .about-picture img{min-height:480px}
  .about .image-clip .about-copy{padding:90px 24px 28px}
