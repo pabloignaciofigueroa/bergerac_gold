@@ -93,3 +93,7 @@
 
 /* Project names and links share one row on mobile. */
 @media(max-width:600px){.project-meta{gap:12px}.project-meta h3{font-size:clamp(20px,5.8vw,26px)}.project-open{min-height:44px;font-size:14px;padding:9px 11px;gap:8px;white-space:nowrap}}
+
+
+/* Reduce by half the mobile gap between the last project and Contact. */
+@media(max-width:600px){.works{padding-bottom:50px}.contact{padding-top:75px}}
