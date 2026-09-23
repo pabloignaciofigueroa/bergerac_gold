@@ -23,8 +23,7 @@
 .mobile-menu::backdrop{background:rgb(40 40 40 / .24)}
 .menu-top{height:var(--header-height);display:flex;align-items:center;justify-content:flex-end;margin-bottom:55px}
 .mobile-menu nav{display:flex;flex-direction:column}
-.mobile-menu nav a{text-transform:uppercase;font-size:clamp(25px,6vw,40px);font-weight:650;letter-spacing:-.05em;display:flex;align-items:center;justify-content:space-between;padding:19px 0;border-bottom:1px solid color-mix(in srgb,currentColor 25%,transparent)}
-.mobile-menu nav a span{font-size:14px;letter-spacing:0}
+.mobile-menu nav a{text-transform:uppercase;font-size:clamp(25px,6vw,40px);font-weight:650;letter-spacing:-.05em;display:flex;align-items:center;justify-content:flex-start;padding:26px 0;line-height:1.2;border-bottom:1px solid color-mix(in srgb,currentColor 25%,transparent)}
 .menu-mail{display:inline-block;margin-top:45px;font-size:19px;font-weight:700}
 @media(hover:hover) and (pointer:fine){
   .nav-pill a:hover::before{opacity:1;transform:translateY(-50%) scale(1)}
