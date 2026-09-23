@@ -28,3 +28,5 @@ svg{display:block}
 .line-mask>span{display:block}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}html{scroll-behavior:auto}}
 @media print{html{background:var(--paper)!important;color:var(--graphite)!important}.site-header,.mobile-menu,.video-controls,.carousel-bottom,.method-art,.method-index,.hero-object,.scroll-cue{display:none!important}.section{min-height:0!important;height:auto!important;padding-block:36px!important}.method-stage{position:static!important}.method-step{position:static!important;visibility:visible!important;opacity:1!important;transform:none!important;page-break-inside:avoid}.method-content{display:block!important}.project-slider .swiper-wrapper{display:block!important;transform:none!important}.project{width:100%!important}.project-screen{display:none!important}[data-reveal]{opacity:1!important;transform:none!important}}
+
+.section-label.section-marker{border-top:0;padding-top:0}.section-label.section-marker>span:first-child,.section-label.section-marker .section-dot{display:none}
